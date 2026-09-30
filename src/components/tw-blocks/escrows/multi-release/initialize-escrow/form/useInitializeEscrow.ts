@@ -136,12 +136,11 @@ export function useInitializeEscrow() {
         return;
       }
 
-      // Find the trustline symbol and issuer from the address
+      // Find the trustline issuer from the address
       const selectedTrustline = trustlineOptions.find(
         (t) => t.value === payload.trustline?.address
       );
-      const trustlineSymbol = selectedTrustline?.label || "USDC";
-      const trustlineIssuer = (selectedTrustline as any)?.issuer;
+      const trustlineIssuer = (selectedTrustline as { issuer?: string } | undefined)?.issuer;
       
       // If the address is a Soroban contract (starts with C), use the issuer instead
       // The API may not accept Soroban contract addresses directly
@@ -152,7 +151,8 @@ export function useInitializeEscrow() {
       const receiverAddress = payload.roles?.serviceProvider || payload.roles?.receiver || "";
 
       // Remove receiver from roles (not allowed in multi-release API)
-      const { receiver, ...rolesWithoutReceiver } = payload.roles;
+      const { receiver: _receiver, ...rolesWithoutReceiver } = payload.roles;
+      void _receiver;
 
       /**
        * Create the final payload for the initialize escrow mutation

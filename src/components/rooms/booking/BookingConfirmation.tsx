@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { CheckCircle, Calendar, MapPin, Users, DollarSign, Copy } from "lucide-react"
+import { CheckCircle, Calendar, Users, DollarSign, Copy } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 interface BookingConfirmationProps {
@@ -115,4 +115,5 @@ const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
 }
 
 export { BookingConfirmation }
+export default BookingConfirmation
 export type { BookingConfirmationProps }

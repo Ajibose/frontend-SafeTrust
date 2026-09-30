@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { WalletType } from "./types/wallet.types";
 import { getWalletConfig } from "./utils/walletConfig";
-import { isWalletAvailable } from "./hooks/useWalletDetection";
 
 interface WalletOptionProps {
   walletType: WalletType;

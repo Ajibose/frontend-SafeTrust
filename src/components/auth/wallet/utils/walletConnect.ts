@@ -67,17 +67,19 @@ export const connectWalletConnect = async () => {
       chainId: parseInt(chainId as string, 16),
       provider,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Clean up provider on any error
     ethereumProvider = null;
 
+    const err = error as { message?: string; code?: number };
+
     // Handle specific WalletConnect errors gracefully
     if (
-      error?.message?.includes("Connection request reset") ||
-      error?.message?.includes("User rejected") ||
-      error?.message?.includes("User cancelled") ||
-      error?.message?.includes("User closed modal") ||
-      error?.code === 4001
+      err?.message?.includes("Connection request reset") ||
+      err?.message?.includes("User rejected") ||
+      err?.message?.includes("User cancelled") ||
+      err?.message?.includes("User closed modal") ||
+      err?.code === 4001
     ) {
       // User cancelled - don't throw error, just return null
       return null;

@@ -79,7 +79,7 @@ export const WalletSelectionModal: React.FC<WalletSelectionModalProps> = ({
   };
 
   const getInstallationSteps = (wallet: WalletInfo) => {
-    const { isMobile, isChrome, isFirefox, isSafari, isEdge } = getBrowserInfo();
+    const { isMobile, isChrome, isFirefox, isSafari } = getBrowserInfo();
     
     const steps = {
       freighter: isMobile ? [

@@ -7,31 +7,30 @@
  * deep imports); the old app/room/components and components/room/mobile
  * locations are gone.
  */
-export { default as RoomActionBar } from './actions/RoomActionBar';
-export { default as ShareButton } from './actions/ShareButton';
-export { default as ContactButton } from './actions/ContactButton';
-export { default as ReportButton } from './actions/ReportButton';
-export { default as FavoriteButton } from './actions/FavoriteButton';
+export { default as RoomActionBar } from "./actions/RoomActionBar";
+export { default as ShareButton } from "./actions/ShareButton";
+export { default as ContactButton } from "./actions/ContactButton";
+export { default as ReportButton } from "./actions/ReportButton";
+export { default as FavoriteButton } from "./actions/FavoriteButton";
 
-export { default as RoomBookingCard } from './RoomBookingCard';
-export { default as MobileBookingCard } from './booking/MobileBookingCard';
-export { default as BookingButton } from './booking/BookingButton';
-export { default as BookingConfirmation } from './booking/BookingConfirmation';
-export { default as AvailabilityChecker } from './booking/AvailabilityChecker';
-export { default as CustomDateRangePicker } from './booking/CustomDateRangePicker';
-export { default as PriceCalculator } from './booking/PriceCalculator';
+export { default as RoomBookingCard } from "./RoomBookingCard";
+export { default as MobileBookingCard } from "./booking/MobileBookingCard";
+export { default as BookingButton } from "./booking/BookingButton";
+export { default as BookingConfirmation } from "./booking/BookingConfirmation";
+export { default as AvailabilityChecker } from "./booking/AvailabilityChecker";
+export { default as CustomDateRangePicker } from "./booking/CustomDateRangePicker";
+export { default as PriceCalculator } from "./booking/PriceCalculator";
 
-export { default as RoomPhotos } from './gallery/RoomPhotos';
-export { default as AdditionalRoomPhotos } from './gallery/AdditionalRoomPhotos';
-export { default as ImageCarousel } from './gallery/ImageCarousel';
-export { default as ThumbnailNavigation } from './gallery/ThumbnailNavigation';
-export { default as FullscreenImageViewer } from './gallery/FullscreenImageViewer';
+export { default as RoomPhotos } from "./gallery/RoomPhotos";
+export { default as AdditionalRoomPhotos } from "./gallery/AdditionalRoomPhotos";
+export { default as ImageCarousel } from "./gallery/ImageCarousel";
+export { default as ThumbnailNavigation } from "./gallery/ThumbnailNavigation";
+export { default as FullscreenImageViewer } from "./gallery/FullscreenImageViewer";
 
-export { default as RoomPaymentDrawer } from './RoomPaymentDrawer';
 export {
-   AmenitiesCard,
-   LocationCard,
-   HostCard,
-   PolicyCard,
-   RoomDetailsCard,
-} from './cards';
+  AmenitiesCard,
+  LocationCard,
+  HostCard,
+  PolicyCard,
+  RoomDetailsCard,
+} from "./cards";

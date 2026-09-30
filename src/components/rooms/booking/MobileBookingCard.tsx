@@ -1,12 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import {
-  Calendar,
   Users,
   Star,
   Shield,
@@ -119,6 +116,7 @@ const MobileBookingCard = ({
             <div className="flex items-center gap-1">
               <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
               <span className="font-medium">{rating}</span>
+              <span className="text-muted-foreground text-sm">({reviewCount})</span>
             </div>
           </div>
           <Button variant="ghost" size="icon" onClick={handleClose}>

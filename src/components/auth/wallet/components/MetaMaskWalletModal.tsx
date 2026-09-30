@@ -11,10 +11,17 @@ import {
   RefreshCw
 } from "lucide-react";
 
+export interface MetaMaskWalletData {
+  address: string;
+  network: string;
+  balance: string;
+  provider: unknown;
+}
+
 interface MetaMaskWalletModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onWalletConnected: (walletData: any) => void;
+  onWalletConnected: (walletData: MetaMaskWalletData) => void;
 }
 
 export const MetaMaskWalletModal: React.FC<MetaMaskWalletModalProps> = ({
@@ -53,7 +60,7 @@ export const MetaMaskWalletModal: React.FC<MetaMaskWalletModalProps> = ({
       if (window.ethereum == null) {
         throw new Error("MetaMask is not installed");
       } else {
-        provider = new ethers.BrowserProvider(window.ethereum);
+        provider = new ethers.BrowserProvider(window.ethereum as unknown as ethers.Eip1193Provider);
         signer = await provider.getSigner();
       }
 
@@ -62,7 +69,7 @@ export const MetaMaskWalletModal: React.FC<MetaMaskWalletModalProps> = ({
       const network = await provider.getNetwork();
       const balance = await provider.getBalance(address);
 
-      const walletData = {
+      const walletData: MetaMaskWalletData = {
         address,
         network: network.name,
         balance: ethers.formatEther(balance),
@@ -70,8 +77,8 @@ export const MetaMaskWalletModal: React.FC<MetaMaskWalletModalProps> = ({
       };
 
       onWalletConnected(walletData);
-    } catch (error: any) {
-      setError(error.message || "Failed to connect to MetaMask");
+    } catch (err: unknown) {
+      setError((err as Error)?.message || "Failed to connect to MetaMask");
     } finally {
       setIsConnecting(false);
     }
@@ -79,11 +86,6 @@ export const MetaMaskWalletModal: React.FC<MetaMaskWalletModalProps> = ({
 
   const installMetaMask = () => {
     window.open("https://metamask.io/download/", "_blank");
-  };
-
-  const refreshConnection = () => {
-    setError(null);
-    setIsConnecting(false);
   };
 
   if (!isOpen) return null;

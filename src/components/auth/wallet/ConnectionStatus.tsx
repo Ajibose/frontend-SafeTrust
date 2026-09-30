@@ -1,6 +1,6 @@
 "use client";
 
-import { WalletInfo } from "./types/wallet.types";
+import { WalletInfo, WalletType } from "./types/wallet.types";
 import { formatAddress } from "./utils/walletValidation";
 import { getWalletConfig } from "./utils/walletConfig";
 
@@ -8,7 +8,7 @@ interface ConnectionStatusProps {
   connectedWallets: WalletInfo[];
   selectedWallet?: WalletInfo;
   onSelectWallet: (wallet: WalletInfo) => void;
-  onDisconnect: (walletType: any) => void;
+  onDisconnect: (walletType: WalletType) => void;
 }
 
 export default function ConnectionStatus({

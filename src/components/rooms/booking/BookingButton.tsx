@@ -188,4 +188,5 @@ const BookingButton: React.FC<BookingButtonProps> = ({
 };
 
 export { BookingButton };
+export default BookingButton;
 export type { BookingButtonProps };

@@ -7,7 +7,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Share,
@@ -31,6 +30,7 @@ export default function ShareButton({ onShare, className }: ShareButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const handleShare = async () => {
+    onShare?.();
     // Try native share first for mobile
     if (typeof navigator !== "undefined" && navigator.share) {
       try {

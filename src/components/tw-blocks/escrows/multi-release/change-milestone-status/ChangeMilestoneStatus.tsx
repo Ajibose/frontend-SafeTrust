@@ -12,13 +12,13 @@ import {
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type ChangeMilestoneStatusProps = {
+type ChangeMilestoneStatusProps<T = unknown> = {
   contractId: string;
   milestoneId: string | number;
   newStatus: string;
   walletAddress: string;
-  onSuccess?: (data?: any) => void;
-  customMetadata?: Record<string, any>;
+  onSuccess?: (data?: T) => void;
+  customMetadata?: Record<string, unknown>;
   confirmationMessage?: string;
   variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
   size?: "default" | "sm" | "lg" | "icon";
@@ -27,7 +27,7 @@ type ChangeMilestoneStatusProps = {
   evidence?: string;
 };
 
-export const ChangeMilestoneStatus = ({
+export const ChangeMilestoneStatus = <T = unknown>({
   contractId,
   milestoneId,
   newStatus,
@@ -40,7 +40,7 @@ export const ChangeMilestoneStatus = ({
   className,
   children,
   evidence,
-}: ChangeMilestoneStatusProps) => {
+}: ChangeMilestoneStatusProps<T>) => {
   const { changeMilestoneStatus } = useEscrowsMutations();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
@@ -74,7 +74,7 @@ export const ChangeMilestoneStatus = ({
       toast.success("Milestone status updated successfully");
 
       if (onSuccess) {
-        onSuccess({ ...payload, customMetadata });
+        onSuccess({ ...payload, customMetadata } as unknown as T);
       }
     } catch (error) {
       toast.error(handleError(error as ErrorResponse).message);

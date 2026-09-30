@@ -95,12 +95,19 @@ export default function GuestSuggestionsPage() {
 
             <div className="space-y-3">
               {STUB_APARTMENTS.map((apt) => (
-                <button
+                <div
                   key={apt.id}
-                  type="button"
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if ((e.key === "Enter" || e.key === " ") && e.target === e.currentTarget) {
+                      e.preventDefault();
+                      setSelectedId(apt.id);
+                    }
+                  }}
                   onClick={() => setSelectedId(apt.id)}
                   className={cn(
-                    "w-full text-left rounded-xl border p-3",
+                    "w-full text-left rounded-xl border p-3 cursor-pointer",
                     "flex items-start gap-3 transition-colors",
                     selectedId === apt.id
                       ? "border-orange-400 bg-orange-50 dark:bg-orange-900/10"
@@ -132,6 +139,7 @@ export default function GuestSuggestionsPage() {
                         {apt.name}
                       </p>
                       <button
+                        type="button"
                         onClick={(e) => {
                           e.stopPropagation();
                           toggleFavorite(apt.id);
@@ -171,7 +179,7 @@ export default function GuestSuggestionsPage() {
                       </span>
                     </div>
                   </div>
-                </button>
+                </div>
               ))}
             </div>
           </aside>

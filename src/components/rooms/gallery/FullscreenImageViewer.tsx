@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
-import { X, ZoomIn, ZoomOut, Minus, Maximize } from 'lucide-react';
+import { X, ZoomIn, ZoomOut, Maximize } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface FullscreenImageViewerProps {
@@ -26,6 +26,31 @@ export default function FullscreenImageViewer({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const imageRef = useRef<HTMLDivElement>(null);
+
+  const goToPrevious = useCallback(() => {
+    const nextIndex = (currentIndex - 1 + images.length) % images.length;
+    setCurrentIndex(nextIndex);
+    onChangeImage(nextIndex);
+  }, [currentIndex, images.length, onChangeImage]);
+
+  const goToNext = useCallback(() => {
+    const nextIndex = (currentIndex + 1) % images.length;
+    setCurrentIndex(nextIndex);
+    onChangeImage(nextIndex);
+  }, [currentIndex, images.length, onChangeImage]);
+
+  const zoomIn = useCallback(() => {
+    setScale((prev) => Math.min(prev + 0.5, 3));
+  }, []);
+
+  const zoomOut = useCallback(() => {
+    setScale((prev) => Math.max(prev - 0.5, 1));
+  }, []);
+
+  const resetZoom = useCallback(() => {
+    setScale(1);
+    setPosition({ x: 0, y: 0 });
+  }, []);
 
   // Handle keyboard navigation
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -53,7 +78,7 @@ export default function FullscreenImageViewer({
         resetZoom();
         break;
     }
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, goToPrevious, goToNext, zoomIn, zoomOut, resetZoom]);
 
   // Close on escape key
   useEffect(() => {
@@ -75,29 +100,6 @@ export default function FullscreenImageViewer({
     setScale(1);
     setPosition({ x: 0, y: 0 });
   }, [currentIndex]);
-
-  const goToPrevious = () => {
-    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
-    onChangeImage((currentIndex - 1 + images.length) % images.length);
-  };
-
-  const goToNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % images.length);
-    onChangeImage((currentIndex + 1) % images.length);
-  };
-
-  const zoomIn = () => {
-    setScale((prev) => Math.min(prev + 0.5, 3));
-  };
-
-  const zoomOut = () => {
-    setScale((prev) => Math.max(prev - 0.5, 1));
-  };
-
-  const resetZoom = () => {
-    setScale(1);
-    setPosition({ x: 0, y: 0 });
-  };
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (scale <= 1) return;

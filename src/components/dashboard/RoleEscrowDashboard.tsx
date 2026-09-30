@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronRight, SlidersHorizontal, Download } from "lucide-react";
+import { ChevronRight, SlidersHorizontal } from "lucide-react";
 import { useEffect, useRef, useState, useMemo } from "react";
 import {
   Popover,
@@ -9,8 +9,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { exportTransactionsToCSV } from "@/lib/exportToCSV";
-import type { TransactionRow } from "@/lib/exportToCSV";
 import { DashboardHeader } from "./DashboardHeader";
 import { EscrowsByStatus } from "./EscrowsByStatus";
 import { RecentActivity } from "./RecentActivity";
@@ -98,6 +96,22 @@ interface RoleEscrowDashboardProps {
   onRefresh?: () => void;
 }
 
+const STATUS_OPTIONS = [
+  "Completed",
+  "Check-In Approved",
+  "Check-out Approved",
+  "Cancelled",
+  "Pending",
+];
+
+const STATUS_MAP: Record<string, string> = {
+  "Completed": "completed",
+  "Check-In Approved": "check_in_approved",
+  "Check-out Approved": "check_out_approved",
+  "Cancelled": "cancelled",
+  "Pending": "pending",
+};
+
 export function RoleEscrowDashboard({
   userRole,
   escrows = [],
@@ -109,7 +123,6 @@ export function RoleEscrowDashboard({
   const [notifications, setNotifications] =
     useState<NotificationData[]>(initialNotifications);
   const [showAnalytics, setShowAnalytics] = useState(false);
-  const [isPolling, setIsPolling] = useState(false);
   const isMountedRef = useRef(true);
   const isPollingRef = useRef(false);
 
@@ -122,22 +135,6 @@ export function RoleEscrowDashboard({
   const [checkInTo, setCheckInTo] = useState("");
   const [checkOutFrom, setCheckOutFrom] = useState("");
   const [checkOutTo, setCheckOutTo] = useState("");
-
-  const STATUS_OPTIONS = [
-    "Completed",
-    "Check-In Approved",
-    "Check-out Approved",
-    "Cancelled",
-    "Pending",
-  ];
-
-  const STATUS_MAP: Record<string, string> = {
-    "Completed": "completed",
-    "Check-In Approved": "check_in_approved",
-    "Check-out Approved": "check_out_approved",
-    "Cancelled": "cancelled",
-    "Pending": "pending",
-  };
 
   const SORT_OPTIONS = [
     { label: "Most Recent", value: "recent" },
@@ -218,7 +215,6 @@ export function RoleEscrowDashboard({
       isPollingRef.current = true;
 
       try {
-        if (isMountedRef.current) setIsPolling(true);
         const pendingNotifications = await checkPendingNotifications();
         const milestoneUpdates = await checkMilestoneNotifications();
 
@@ -243,9 +239,6 @@ export function RoleEscrowDashboard({
         console.error("Error checking for updates:", error);
       } finally {
         isPollingRef.current = false;
-        if (isMountedRef.current) {
-          setIsPolling(false);
-        }
       }
     };
 

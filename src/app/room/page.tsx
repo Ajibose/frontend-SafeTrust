@@ -1,6 +1,6 @@
 "use client";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 import { useState } from "react";
 import {
@@ -36,7 +36,6 @@ export default function RoomPage() {
   // Keep the id explicit here so the booking link does not silently drift.
   const hotelId = "1";
   const [isLoading] = useState(false);
-  const [isBooking, setIsBooking] = useState(false);
   const [mobileBookingOpen, setMobileBookingOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(24);
@@ -78,16 +77,10 @@ export default function RoomPage() {
   } | null>(null);
 
   const handleBookingStart = () => {
-    setIsBooking(true);
     console.log("Booking process started");
   };
 
-  const handleBookingClick = () => {
-    setMobileBookingOpen(true);
-  };
-
   const handleBookingComplete = (bookingId: string) => {
-    setIsBooking(false);
     console.log("Booking completed:", bookingId);
 
     setBookingData({
@@ -100,7 +93,6 @@ export default function RoomPage() {
   };
 
   const handleBookingError = (error: string) => {
-    setIsBooking(false);
     console.error("Booking error:", error);
   };
 
@@ -109,6 +101,7 @@ export default function RoomPage() {
       router.push(`/hotels/${hotelId}/book?bookingId=${bookingData.bookingId}`);
     }
   };
+
   return (
     <div className="container mx-auto pb-8 max-w-7xl min-h-screen bg-background">
       {/* Navigation/Page Header */}

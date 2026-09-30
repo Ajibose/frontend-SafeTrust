@@ -7,14 +7,14 @@ import { useMultiWallet } from "./hooks/useMultiWallet";
 import WalletOption from "./WalletOption";
 import ConnectionStatus from "./ConnectionStatus";
 import { ETHEREUM_WALLETS } from "./utils/walletConfig";
-import { WalletType } from "./types/wallet.types";
+import { WalletInfo, WalletType } from "./types/wallet.types";
 import { toast } from "react-toastify";
 import { cleanupWalletConnect } from "./utils/walletConnect";
 
 interface SimpleWalletModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onWalletConnected?: (walletInfo: any) => void;
+  onWalletConnected?: (walletInfo: WalletInfo) => void;
 }
 
 export default function SimpleWalletModal({
@@ -120,8 +120,8 @@ export default function SimpleWalletModal({
         toast.success(`${walletType} connected!`);
         onClose();
       }
-    } catch (error: any) {
-      const msg = error?.message || "";
+    } catch (error: unknown) {
+      const msg = (error as { message?: string })?.message || "";
 
       // Don't show error if user cancelled
       if (

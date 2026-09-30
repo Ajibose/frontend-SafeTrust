@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import Illustration from "@/components/auth/ui/Illustration";
 import { useGlobalAuthenticationStore } from "@/core/store/data";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { FirebaseError } from "firebase/app";
@@ -48,13 +48,13 @@ export default function LoginPage() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const getSafeRedirect = () => {
+  const getSafeRedirect = useCallback(() => {
     const redirect = searchParams.get("redirect");
     if (redirect && redirect.startsWith("/") && !redirect.startsWith("//")) {
       return redirect;
     }
     return "/dashboard/escrow-dashboard";
-  };
+  }, [searchParams]);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -65,7 +65,7 @@ export default function LoginPage() {
     if ((address || token) && pathname === "/login") {
       router.push(getSafeRedirect());
     }
-  }, [address, token, router, pathname, searchParams]);
+  }, [address, token, router, pathname, getSafeRedirect]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

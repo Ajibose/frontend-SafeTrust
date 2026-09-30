@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useWalletDetection } from "./hooks/useWalletDetection";
@@ -12,12 +12,12 @@ import {
   ETHEREUM_WALLETS,
   POPULAR_WALLETS,
 } from "./utils/walletConfig";
-import { WalletType } from "./types/wallet.types";
+import { WalletInfo, WalletType } from "./types/wallet.types";
 
 interface WalletConnectionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onWalletConnected?: (walletInfo: any) => void;
+  onWalletConnected?: (walletInfo: WalletInfo) => void;
 }
 
 export default function WalletConnectionModal({

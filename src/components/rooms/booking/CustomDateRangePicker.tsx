@@ -50,7 +50,6 @@ const CustomDateRangePicker = React.forwardRef<
     ref
   ) => {
     const [isOpen, setIsOpen] = React.useState(false);
-    const [hoveredDate, setHoveredDate] = React.useState<Date | undefined>();
 
     React.useEffect(() => {
       const handleKeyDown = (event: KeyboardEvent) => {
@@ -289,4 +288,5 @@ const CustomDateRangePicker = React.forwardRef<
 CustomDateRangePicker.displayName = "CustomDateRangePicker";
 
 export { CustomDateRangePicker };
+export default CustomDateRangePicker;
 export type { CustomDateRangePickerProps };

@@ -2,9 +2,11 @@
 <img src="https://raw.githubusercontent.com/safetrustcr/frontend-SafeTrust/develop/public/img/logo.png" alt="SafeTrust Logo" width="80" />
 
 # frontend-SafeTrust
+
 **Decentralized P2P Escrow · Stellar Blockchain · Standalone Frontend**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-orange.svg)](https://opensource.org/licenses/MIT)
+[![CI](https://github.com/safetrustcr/frontend-SafeTrust/actions/workflows/ci.yml/badge.svg)](https://github.com/safetrustcr/frontend-SafeTrust/actions/workflows/ci.yml)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org)
 [![Hasura](https://img.shields.io/badge/Hasura-GraphQL-1EB4D4?logo=hasura)](https://hasura.io)
 [![Stellar](https://img.shields.io/badge/Stellar-Blockchain-7B2BF9?logo=stellar)](https://stellar.org)
@@ -105,6 +107,7 @@ NEXT_PUBLIC_TRUSTLESS_NETWORK=testnet
 ```
 
 **Get your API key:**
+
 1. Go to [dapp.trustlesswork.com](https://dapp.trustlesswork.com) → connect Freighter.
 2. **Settings → Profile** → fill in use-case field (required).
 3. **Settings → API Keys** → Request API Key → select **Testnet**.
@@ -116,11 +119,11 @@ Always use `testnet` for local development. Full guide: [docs.trustlesswork.com 
 
 ## Architecture
 
-| Setup | When to use |
-|---|---|
-| **This repo standalone** — `npm run dev`, remote Hasura + Firebase | UI work, components, dashboard features — most contributor tasks |
-| **`dApp-SafeTrust` monorepo** — frontend + backend together | Full-stack work touching schema, mutations, or webhook behavior |
-| **`backend-SafeTrust` standalone** — Hasura + Postgres + webhook via Docker | Backend-only contributors who don't need the UI |
+| Setup                                                                       | When to use                                                      |
+| --------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| **This repo standalone** — `npm run dev`, remote Hasura + Firebase          | UI work, components, dashboard features — most contributor tasks |
+| **`dApp-SafeTrust` monorepo** — frontend + backend together                 | Full-stack work touching schema, mutations, or webhook behavior  |
+| **`backend-SafeTrust` standalone** — Hasura + Postgres + webhook via Docker | Backend-only contributors who don't need the UI                  |
 
 ---
 
@@ -155,6 +158,8 @@ package manager; the repository pins its expected Node and npm versions in
 1. `npm run dev` — must start without errors.
 2. No `console.log` in production paths, no unexplained `any` or `@ts-ignore`.
 3. Link the issue your PR closes.
+
+Run `npm run check` before opening a PR. CI also enforces zero ESLint warnings.
 
 **Branch naming:** `feat/<issue-number>-short-description` · `fix/<issue-number>-short-description`
 

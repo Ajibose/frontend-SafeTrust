@@ -53,7 +53,7 @@ export const ProcessStepper = ({ currentStep }: ProcessStepperProps) => {
           aria-hidden="true"
         />
 
-        {steps.map((step, index) => {
+        {steps.map((step) => {
           const isActive = step.id === currentStep;
           const isCompleted = step.id < currentStep;
           const Icon = step.icon;

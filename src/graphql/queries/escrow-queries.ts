@@ -1,6 +1,6 @@
-import { graphql } from '@/graphql/generated';
+import { gql } from '@apollo/client';
 
-export const GET_ESCROW_TRANSACTIONS = graphql(`
+export const GET_ESCROW_TRANSACTIONS = gql`
   query GetEscrowTransactions($limit: Int = 10) {
     escrow_transactions(limit: $limit, order_by: { created_at: desc }) {
       id
@@ -15,9 +15,9 @@ export const GET_ESCROW_TRANSACTIONS = graphql(`
       }
     }
   }
-`);
+`;
 
-export const FUND_ESCROW_TRANSACTION = graphql(`
+export const FUND_ESCROW_TRANSACTION = gql`
   mutation FundEscrowTransaction(
     $escrow_transaction_id: UUID!
     $user_id: UUID!
@@ -32,4 +32,4 @@ export const FUND_ESCROW_TRANSACTION = graphql(`
       payload
     }
   }
-`);
+`;

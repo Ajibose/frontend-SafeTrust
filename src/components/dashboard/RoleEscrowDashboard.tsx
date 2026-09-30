@@ -288,6 +288,7 @@ export function RoleEscrowDashboard({
     checkIn: escrow.metadata?.checkInDate || "",
     checkOut: escrow.metadata?.checkOutDate || "",
     amount: escrow.amount,
+    asset: escrow.asset.code,
     status: escrow.status,
   }));
 

@@ -26,6 +26,7 @@ export default function FullscreenImageViewer({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const imageRef = useRef<HTMLDivElement>(null);
+  const previousIndexRef = useRef(initialIndex);
 
   // Reset zoom and position when changing images
   useEffect(() => {
@@ -36,18 +37,16 @@ export default function FullscreenImageViewer({
   const goToPrevious = useCallback(() => {
     setCurrentIndex((previousIndex) => {
       const nextIndex = (previousIndex - 1 + images.length) % images.length;
-      onChangeImage(nextIndex);
       return nextIndex;
     });
-  }, [images.length, onChangeImage]);
+  }, [images.length]);
 
   const goToNext = useCallback(() => {
     setCurrentIndex((previousIndex) => {
       const nextIndex = (previousIndex + 1) % images.length;
-      onChangeImage(nextIndex);
       return nextIndex;
     });
-  }, [images.length, onChangeImage]);
+  }, [images.length]);
 
   const zoomIn = useCallback(() => {
     setScale((prev) => Math.min(prev + 0.5, 3));
@@ -104,6 +103,12 @@ export default function FullscreenImageViewer({
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [isOpen, handleKeyDown]);
+
+  useEffect(() => {
+    if (previousIndexRef.current === currentIndex) return;
+    previousIndexRef.current = currentIndex;
+    onChangeImage(currentIndex);
+  }, [currentIndex, onChangeImage]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (scale <= 1) return;
@@ -249,7 +254,6 @@ export default function FullscreenImageViewer({
                 key={index}
                 onClick={() => {
                   setCurrentIndex(index);
-                  onChangeImage(index);
                 }}
                 className={`h-full aspect-video flex-shrink-0 overflow-hidden rounded-md border-2 transition-all ${
                   index === currentIndex

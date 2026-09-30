@@ -52,7 +52,13 @@ export default function LoginPage() {
 
   const getSafeRedirect = useCallback(() => {
     const redirect = searchParams.get("redirect");
-    if (redirect && redirect.startsWith("/") && !redirect.startsWith("//")) {
+    if (
+      redirect &&
+      redirect.startsWith("/") &&
+      !redirect.startsWith("//") &&
+      !redirect.startsWith("/\\") &&
+      !redirect.includes("://")
+    ) {
       return redirect;
     }
     return "/dashboard/escrow-dashboard";

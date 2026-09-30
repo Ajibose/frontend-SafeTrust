@@ -25,15 +25,15 @@ import { toast } from "sonner";
 
 const COUNTRY_CODES = [
   { code: "+506", country: "Costa Rica", flag: "🇨🇷" },
-  { code: "+1",   country: "United States", flag: "🇺🇸" },
-  { code: "+52",  country: "Mexico", flag: "🇲🇽" },
-  { code: "+34",  country: "Spain", flag: "🇪🇸" },
-  { code: "+44",  country: "United Kingdom", flag: "🇬🇧" },
-  { code: "+49",  country: "Germany", flag: "🇩🇪" },
-  { code: "+55",  country: "Brazil", flag: "🇧🇷" },
-  { code: "+57",  country: "Colombia", flag: "🇨🇴" },
-  { code: "+51",  country: "Peru", flag: "🇵🇪" },
-  { code: "+54",  country: "Argentina", flag: "🇦🇷" },
+  { code: "+1", country: "United States", flag: "🇺🇸" },
+  { code: "+52", country: "Mexico", flag: "🇲🇽" },
+  { code: "+34", country: "Spain", flag: "🇪🇸" },
+  { code: "+44", country: "United Kingdom", flag: "🇬🇧" },
+  { code: "+49", country: "Germany", flag: "🇩🇪" },
+  { code: "+55", country: "Brazil", flag: "🇧🇷" },
+  { code: "+57", country: "Colombia", flag: "🇨🇴" },
+  { code: "+51", country: "Peru", flag: "🇵🇪" },
+  { code: "+54", country: "Argentina", flag: "🇦🇷" },
 ];
 
 const ERROR_MESSAGES: Record<string, string> = {
@@ -118,7 +118,8 @@ export default function RegisterPage() {
     } catch (err: unknown) {
       if (err instanceof FirebaseError) {
         toast.error(
-          ERROR_MESSAGES[err.code] ?? "An unexpected error occurred. Please try again.",
+          ERROR_MESSAGES[err.code] ??
+            "An unexpected error occurred. Please try again.",
           { duration: 4000 },
         );
         setError(
@@ -141,14 +142,21 @@ export default function RegisterPage() {
         <div className="w-full max-w-sm space-y-6">
           <div className="flex items-center justify-between w-full mb-2">
             <div className="flex items-center space-x-2">
-              <Image src="/img/logo.png" alt="SafeTrust" width={32} height={32} />
+              <Image
+                src="/img/logo.png"
+                alt="SafeTrust"
+                width={32}
+                height={32}
+              />
               <h1 className="text-2xl font-bold">SafeTrust</h1>
             </div>
             <ThemeToggle />
           </div>
 
-          <form className="space-y-5 overflow-visible" onSubmit={handleRegister}>
-
+          <form
+            className="space-y-5 overflow-visible"
+            onSubmit={handleRegister}
+          >
             {/* First Name + Last Name */}
             <div className="flex gap-2">
               <div className="space-y-2 flex-1">
@@ -158,7 +166,10 @@ export default function RegisterPage() {
                   placeholder="First name"
                   required
                   value={firstName}
-                  onChange={(e) => { setFirstName(e.target.value); clearError(); }}
+                  onChange={(e) => {
+                    setFirstName(e.target.value);
+                    clearError();
+                  }}
                 />
               </div>
               <div className="space-y-2 flex-1">
@@ -168,7 +179,10 @@ export default function RegisterPage() {
                   placeholder="Last name"
                   required
                   value={lastName}
-                  onChange={(e) => { setLastName(e.target.value); clearError(); }}
+                  onChange={(e) => {
+                    setLastName(e.target.value);
+                    clearError();
+                  }}
                 />
               </div>
             </div>
@@ -179,7 +193,10 @@ export default function RegisterPage() {
               <div className="flex gap-2">
                 <Select
                   value={phoneCountryCode}
-                  onValueChange={(v) => { setPhoneCountryCode(v); clearError(); }}
+                  onValueChange={(v) => {
+                    setPhoneCountryCode(v);
+                    clearError();
+                  }}
                 >
                   <SelectTrigger className="w-[120px]">
                     <SelectValue placeholder="Code" />
@@ -198,7 +215,10 @@ export default function RegisterPage() {
                   placeholder="Enter your phone number"
                   required
                   value={phone}
-                  onChange={(e) => { setPhone(e.target.value); clearError(); }}
+                  onChange={(e) => {
+                    setPhone(e.target.value);
+                    clearError();
+                  }}
                 />
               </div>
             </div>
@@ -208,7 +228,10 @@ export default function RegisterPage() {
               <Label htmlFor="location">Location</Label>
               <Select
                 value={location}
-                onValueChange={(v) => { setLocation(v); clearError(); }}
+                onValueChange={(v) => {
+                  setLocation(v);
+                  clearError();
+                }}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select your location" />
@@ -231,7 +254,10 @@ export default function RegisterPage() {
                 placeholder="Enter your email"
                 required
                 value={email}
-                onChange={(e) => { setEmail(e.target.value); clearError(); }}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  clearError();
+                }}
               />
             </div>
 
@@ -245,26 +271,25 @@ export default function RegisterPage() {
                 required
                 minLength={6}
                 value={password}
-                onChange={(e) => { setPassword(e.target.value); clearError(); }}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  clearError();
+                }}
               />
             </div>
 
-            <Button
-              type="submit"
-              className="w-full bg-[#2857B8] hover:bg-[#2857B8]/90"
-              disabled={isLoading}
-            >
+            <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Creating account..." : "Sign Up"}
             </Button>
 
             {error && (
-              <p className="text-center text-sm text-red-600">{error}</p>
+              <p className="text-center text-sm text-destructive">{error}</p>
             )}
           </form>
 
           <div className="text-center text-sm">
             Already have an account?{" "}
-            <Link href="/login" className="text-[#2857B8] hover:underline">
+            <Link href="/login" className="text-primary hover:underline">
               Sign in
             </Link>
           </div>

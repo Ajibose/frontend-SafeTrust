@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Heart, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -13,11 +14,13 @@ interface HotelCardProps {
 export default function HotelCard({ hotel, onToggleFavorite }: HotelCardProps) {
   return (
     <Card className="overflow-hidden">
-      <div className="relative">
-        <img
-          src={hotel.image || "/placeholder.svg"}
+      <div className="relative h-[150px] w-full">
+        <Image
+          src={hotel.image || "/img/placeholder.svg"}
           alt={hotel.name}
-          className="w-full h-[150px] object-cover"
+          fill
+          sizes="(max-width: 768px) 100vw, 33vw"
+          className="object-cover"
         />
         <Button
           variant="ghost"

@@ -1,6 +1,6 @@
-import { graphql } from "@/graphql/generated";
+import { gql } from "@apollo/client";
 
-export const GET_APARTMENTS = graphql(`
+export const GET_APARTMENTS = gql`
   query GetApartments(
     $limit: Int
     $offset: Int
@@ -36,9 +36,9 @@ export const GET_APARTMENTS = graphql(`
       }
     }
   }
-`);
+`;
 
-export const GET_APARTMENT_BY_ID = graphql(`
+export const GET_APARTMENT_BY_ID = gql`
   query GetApartmentById($id: Int!) {
     apartments_by_pk(id: $id) {
       id
@@ -54,9 +54,9 @@ export const GET_APARTMENT_BY_ID = graphql(`
       updated_at
     }
   }
-`);
+`;
 
-export const GET_RENTAL_OFFERS = graphql(`
+export const GET_RENTAL_OFFERS = gql`
   query GetRentalOffers(
     $apartment_id: Int!
     $limit: Int
@@ -83,4 +83,4 @@ export const GET_RENTAL_OFFERS = graphql(`
       }
     }
   }
-`);
+`;

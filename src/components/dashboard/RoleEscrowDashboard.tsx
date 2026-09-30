@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronRight, SlidersHorizontal, Download } from "lucide-react";
+import { ChevronRight, SlidersHorizontal } from "lucide-react";
 import { useEffect, useRef, useState, useMemo } from "react";
 import {
   Popover,
@@ -9,15 +9,38 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { exportTransactionsToCSV } from "@/lib/exportToCSV";
-import type { TransactionRow } from "@/lib/exportToCSV";
 import { DashboardHeader } from "./DashboardHeader";
 import { EscrowsByStatus } from "./EscrowsByStatus";
 import { RecentActivity } from "./RecentActivity";
 import { QuickActions } from "./QuickActions";
 import { EscrowTable } from "./EscrowTable";
-import { AnalyticsDashboard } from "./analytics";
 import { Button } from "@/components/ui/button";
+import dynamic from "next/dynamic";
+
+const AnalyticsDashboard = dynamic(
+  () => import("./analytics").then((module) => module.AnalyticsDashboard),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        className="space-y-4 rounded-xl border border-slate-700 bg-slate-900 p-6"
+        role="status"
+        aria-label="Loading analytics"
+      >
+        <div className="h-8 w-48 animate-pulse rounded-lg bg-slate-700" />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[...Array(4)].map((_, index) => (
+            <div
+              key={index}
+              className="h-28 animate-pulse rounded-xl bg-slate-800"
+            />
+          ))}
+        </div>
+        <div className="h-64 animate-pulse rounded-xl bg-slate-800" />
+      </div>
+    ),
+  },
+);
 
 // Placeholder functions for notifications - in a real app, these would be API calls
 async function checkPendingNotifications(): Promise<NotificationData[]> {
@@ -90,14 +113,6 @@ const formatNotificationTimestamp = (timestamp: string) => {
   return isNaN(date.getTime()) ? "—" : date.toLocaleString();
 };
 
-const STATUS_MAP: Record<string, string> = {
-  "Completed": "completed",
-  "Check-In Approved": "check_in_approved",
-  "Check-out Approved": "check_out_approved",
-  "Cancelled": "cancelled",
-  "Pending": "pending",
-};
-
 interface RoleEscrowDashboardProps {
   userRole: "guest" | "hotel" | "admin";
   escrows?: EscrowData[];
@@ -106,6 +121,22 @@ interface RoleEscrowDashboardProps {
   error?: string | null;
   onRefresh?: () => void;
 }
+
+const STATUS_OPTIONS = [
+  "Completed",
+  "Check-In Approved",
+  "Check-out Approved",
+  "Cancelled",
+  "Pending",
+];
+
+const STATUS_MAP: Record<string, string> = {
+  "Completed": "completed",
+  "Check-In Approved": "check_in_approved",
+  "Check-out Approved": "check_out_approved",
+  "Cancelled": "cancelled",
+  "Pending": "pending",
+};
 
 export function RoleEscrowDashboard({
   userRole,
@@ -130,14 +161,6 @@ export function RoleEscrowDashboard({
   const [checkInTo, setCheckInTo] = useState("");
   const [checkOutFrom, setCheckOutFrom] = useState("");
   const [checkOutTo, setCheckOutTo] = useState("");
-
-  const STATUS_OPTIONS = [
-    "Completed",
-    "Check-In Approved",
-    "Check-out Approved",
-    "Cancelled",
-    "Pending",
-  ];
 
   const SORT_OPTIONS = [
     { label: "Most Recent", value: "recent" },

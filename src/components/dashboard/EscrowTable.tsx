@@ -45,7 +45,7 @@ const statusText = {
   cancelled: 'Cancelled',
 } as const;
 
-export function EscrowTable({ escrows, userRole }: EscrowTableProps) {
+export function EscrowTable({ escrows }: EscrowTableProps) {
   const router = useRouter();
 
   const handleViewDetails = (escrowId: string) => {
@@ -68,46 +68,6 @@ export function EscrowTable({ escrows, userRole }: EscrowTableProps) {
     } catch {
       return 'Invalid date';
     }
-  };
-
-  const getActionButton = (escrow: EscrowData) => {
-    if (userRole === 'hotel' && escrow.status === 'funded' && escrow.nextMilestone === 'check_in') {
-      return (
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="w-full"
-          onClick={() => handleViewDetails(escrow.id)}
-        >
-          Approve Check-in
-        </Button>
-      );
-    }
-    
-    if (userRole === 'admin' && escrow.status === 'check_in_approved') {
-      return (
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="w-full"
-          onClick={() => handleViewDetails(escrow.id)}
-        >
-          Complete Check-out
-        </Button>
-      );
-    }
-    
-    return (
-      <Button 
-        variant="ghost" 
-        size="sm"
-        className="w-full justify-start"
-        onClick={() => handleViewDetails(escrow.id)}
-      >
-        <Eye className="h-4 w-4 mr-2" />
-        View
-      </Button>
-    );
   };
 
   return (

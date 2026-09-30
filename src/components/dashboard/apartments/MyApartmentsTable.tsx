@@ -33,7 +33,7 @@ export function MyApartmentsTable() {
   const apartments = data.apartments;
   const total = data.apartments_aggregate.aggregate.count;
 
-  const handleDeleteConfirmed = (id: number) => {
+  const handleDeleteConfirmed = (id: string) => {
     console.log("(stub) Apartment deleted:", id);
   };
 
@@ -121,11 +121,7 @@ export function MyApartmentsTable() {
                     <ApartmentActionsMenu
                         apartmentId={apartment.id}
                         apartmentName={apartment.name}
-                        onDeleteConfirm={(id) => {
-                          // Remove from local stub state for now
-                          // TODO: trigger Hasura DELETE mutation
-                          console.warn(`Delete apartment ${id} — not yet wired to backend`);
-                        }}
+                        onDeleteConfirm={handleDeleteConfirmed}
                     />
                   </TableCell>
                 </TableRow>

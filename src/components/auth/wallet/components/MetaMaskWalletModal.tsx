@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { ethers } from "ethers";
 import { Button } from "@/components/ui/button";
 import { 
@@ -10,10 +11,17 @@ import {
   RefreshCw
 } from "lucide-react";
 
+export interface MetaMaskWalletData {
+  address: string;
+  network: string;
+  balance: string;
+  provider: unknown;
+}
+
 interface MetaMaskWalletModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onWalletConnected: (walletData: any) => void;
+  onWalletConnected: (walletData: MetaMaskWalletData) => void;
 }
 
 export const MetaMaskWalletModal: React.FC<MetaMaskWalletModalProps> = ({
@@ -52,7 +60,7 @@ export const MetaMaskWalletModal: React.FC<MetaMaskWalletModalProps> = ({
       if (window.ethereum == null) {
         throw new Error("MetaMask is not installed");
       } else {
-        provider = new ethers.BrowserProvider(window.ethereum);
+        provider = new ethers.BrowserProvider(window.ethereum as unknown as ethers.Eip1193Provider);
         signer = await provider.getSigner();
       }
 
@@ -61,7 +69,7 @@ export const MetaMaskWalletModal: React.FC<MetaMaskWalletModalProps> = ({
       const network = await provider.getNetwork();
       const balance = await provider.getBalance(address);
 
-      const walletData = {
+      const walletData: MetaMaskWalletData = {
         address,
         network: network.name,
         balance: ethers.formatEther(balance),
@@ -69,8 +77,8 @@ export const MetaMaskWalletModal: React.FC<MetaMaskWalletModalProps> = ({
       };
 
       onWalletConnected(walletData);
-    } catch (error: any) {
-      setError(error.message || "Failed to connect to MetaMask");
+    } catch (err: unknown) {
+      setError((err as Error)?.message || "Failed to connect to MetaMask");
     } finally {
       setIsConnecting(false);
     }
@@ -78,11 +86,6 @@ export const MetaMaskWalletModal: React.FC<MetaMaskWalletModalProps> = ({
 
   const installMetaMask = () => {
     window.open("https://metamask.io/download/", "_blank");
-  };
-
-  const refreshConnection = () => {
-    setError(null);
-    setIsConnecting(false);
   };
 
   if (!isOpen) return null;
@@ -106,10 +109,13 @@ export const MetaMaskWalletModal: React.FC<MetaMaskWalletModalProps> = ({
             /* MetaMask Not Installed */
             <div className="space-y-6 text-center">
               <div className="flex justify-center">
-                <img 
-                  src="/img/wallet/metamask.png" 
+                <Image 
+                  src="https://stellar.creit.tech/wallet-icons/default.png" 
                   alt="MetaMask"
-                  className="w-16 h-16 rounded-lg"
+                  width={64}
+                  height={64}
+                  className="w-16 h-16 rounded-lg object-contain"
+                  unoptimized
                 />
               </div>
               
@@ -140,10 +146,13 @@ export const MetaMaskWalletModal: React.FC<MetaMaskWalletModalProps> = ({
             /* MetaMask Installed - Troubleshooting */
             <div className="space-y-6 text-center">
               <div className="flex justify-center">
-                <img 
-                  src="/img/wallet/metamask.png" 
+                <Image 
+                  src="https://stellar.creit.tech/wallet-icons/default.png" 
                   alt="MetaMask"
-                  className="w-16 h-16 rounded-lg"
+                  width={64}
+                  height={64}
+                  className="w-16 h-16 rounded-lg object-contain"
+                  unoptimized
                 />
               </div>
               

@@ -2,9 +2,11 @@
 <img src="https://raw.githubusercontent.com/safetrustcr/frontend-SafeTrust/develop/public/img/logo.png" alt="SafeTrust Logo" width="80" />
 
 # frontend-SafeTrust
+
 **Decentralized P2P Escrow · Stellar Blockchain · Standalone Frontend**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-orange.svg)](https://opensource.org/licenses/MIT)
+[![CI](https://github.com/safetrustcr/frontend-SafeTrust/actions/workflows/ci.yml/badge.svg)](https://github.com/safetrustcr/frontend-SafeTrust/actions/workflows/ci.yml)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org)
 [![Hasura](https://img.shields.io/badge/Hasura-GraphQL-1EB4D4?logo=hasura)](https://hasura.io)
 [![Stellar](https://img.shields.io/badge/Stellar-Blockchain-7B2BF9?logo=stellar)](https://stellar.org)
@@ -28,7 +30,8 @@ SafeTrust is a decentralized P2P escrow platform for rental transactions. Funds 
 
 | Tool | Version |
 |---|---|
-| Node.js | ≥ 18 |
+| Node.js | 20.18 - 22.x |
+| npm | 10.9.2 |
 | A Stellar wallet | [Freighter](https://freighter.app) recommended |
 
 ### 1. Clone and install
@@ -104,6 +107,7 @@ NEXT_PUBLIC_TRUSTLESS_NETWORK=testnet
 ```
 
 **Get your API key:**
+
 1. Go to [dapp.trustlesswork.com](https://dapp.trustlesswork.com) → connect Freighter.
 2. **Settings → Profile** → fill in use-case field (required).
 3. **Settings → API Keys** → Request API Key → select **Testnet**.
@@ -115,11 +119,11 @@ Always use `testnet` for local development. Full guide: [docs.trustlesswork.com 
 
 ## Architecture
 
-| Setup | When to use |
-|---|---|
-| **This repo standalone** — `npm run dev`, remote Hasura + Firebase | UI work, components, dashboard features — most contributor tasks |
-| **`dApp-SafeTrust` monorepo** — frontend + backend together | Full-stack work touching schema, mutations, or webhook behavior |
-| **`backend-SafeTrust` standalone** — Hasura + Postgres + webhook via Docker | Backend-only contributors who don't need the UI |
+| Setup                                                                       | When to use                                                      |
+| --------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| **This repo standalone** — `npm run dev`, remote Hasura + Firebase          | UI work, components, dashboard features — most contributor tasks |
+| **`dApp-SafeTrust` monorepo** — frontend + backend together                 | Full-stack work touching schema, mutations, or webhook behavior  |
+| **`backend-SafeTrust` standalone** — Hasura + Postgres + webhook via Docker | Backend-only contributors who don't need the UI                  |
 
 ---
 
@@ -137,11 +141,15 @@ Always use `testnet` for local development. Full guide: [docs.trustlesswork.com 
 
 ```bash
 npm test              # unit and integration tests
-npm run test:e2e      # E2E tests (Cypress)
-npm run test:coverage # coverage report
+npm run test:ci       # CI test run with coverage
+npm run typecheck     # TypeScript validation
+npm run lint          # ESLint
+npm run check         # lint, typecheck, tests, and production build
 ```
 
-Tests live in `__tests__/` or as `.test.ts(x)` files. E2E tests in `cypress/e2e/`. API requests mocked via MSW (`mocks/handlers.ts`).
+Tests live in `__tests__/` or as `.test.ts(x)` files. npm is the supported
+package manager; the repository pins its expected Node and npm versions in
+`.nvmrc` and `package.json`.
 
 ---
 
@@ -150,6 +158,8 @@ Tests live in `__tests__/` or as `.test.ts(x)` files. E2E tests in `cypress/e2e/
 1. `npm run dev` — must start without errors.
 2. No `console.log` in production paths, no unexplained `any` or `@ts-ignore`.
 3. Link the issue your PR closes.
+
+Run `npm run check` before opening a PR. CI also enforces zero ESLint warnings.
 
 **Branch naming:** `feat/<issue-number>-short-description` · `fix/<issue-number>-short-description`
 

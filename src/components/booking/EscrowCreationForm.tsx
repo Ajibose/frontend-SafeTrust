@@ -320,9 +320,28 @@ export function EscrowCreationForm({
   className = "",
 }: EscrowCreationFormProps) {
   const { address: walletAddress, connectWallet } = useWallet();
-  const { selectedEscrow } = useEscrowContext();
+  const { selectedEscrow, clearEscrow } = useEscrowContext();
   const [showForm, setShowForm] = useState(false);
   const reportedContractId = useRef<string | null>(null);
+
+  useEffect(() => {
+    clearEscrow();
+  }, [clearEscrow]);
+
+  useEffect(() => {
+    if (
+      showForm &&
+      selectedEscrow?.contractId &&
+      reportedContractId.current !== selectedEscrow.contractId
+    ) {
+      reportedContractId.current = selectedEscrow.contractId;
+      onEscrowCreated({
+        contractId: selectedEscrow.contractId,
+        status: "created",
+        unsignedXDR: (selectedEscrow as { unsignedXDR?: string }).unsignedXDR,
+      });
+    }
+  }, [selectedEscrow, showForm, onEscrowCreated]);
 
   const {
     milestones,
@@ -336,20 +355,6 @@ export function EscrowCreationForm({
 
   // Determine if wallet is connected
   const isWalletConnected = useMemo(() => Boolean(walletAddress), [walletAddress]);
-
-  // The Trustless Work form writes the created escrow to the shared provider.
-  // Report that result once so the booking flow can advance to confirmation.
-  useEffect(() => {
-    const contractId = selectedEscrow?.contractId;
-    if (!contractId || reportedContractId.current === contractId) return;
-
-    reportedContractId.current = contractId;
-    onEscrowCreated({
-      contractId,
-      status: "created",
-      unsignedXDR: "",
-    });
-  }, [onEscrowCreated, selectedEscrow?.contractId]);
 
   // Wallet not connected state
   if (!isWalletConnected) {

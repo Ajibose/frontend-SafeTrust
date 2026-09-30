@@ -61,7 +61,7 @@ export function DashboardHeader({
             )}
           </div>
           <p className="hidden sm:block text-sm text-muted-foreground">
-            Welcome back! You're logged in as {roleLabels[userRole]}
+            Welcome back! You&rsquo;re logged in as {roleLabels[userRole]}
           </p>
         </div>
 

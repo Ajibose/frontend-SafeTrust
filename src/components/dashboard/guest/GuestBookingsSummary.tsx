@@ -20,7 +20,7 @@ export default function GuestBookingsSummary() {
             </div>
             <div>
               <h4 className="font-semibold text-gray-900">No active bookings</h4>
-              <p className="text-sm text-gray-500">You don't have any upcoming stays yet.</p>
+              <p className="text-sm text-gray-500">You don&rsquo;t have any upcoming stays yet.</p>
             </div>
           </div>
           <Button variant="outline" className="mt-4 md:mt-0" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>

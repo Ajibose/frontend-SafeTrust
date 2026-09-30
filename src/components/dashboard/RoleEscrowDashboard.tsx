@@ -14,7 +14,32 @@ import { EscrowsByStatus } from "./EscrowsByStatus";
 import { RecentActivity } from "./RecentActivity";
 import { QuickActions } from "./QuickActions";
 import { EscrowTable } from "./EscrowTable";
-import { AnalyticsDashboard } from "./analytics";
+import dynamic from "next/dynamic";
+
+const AnalyticsDashboard = dynamic(
+  () => import("./analytics").then((module) => module.AnalyticsDashboard),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        className="space-y-4 rounded-xl border border-slate-700 bg-slate-900 p-6"
+        role="status"
+        aria-label="Loading analytics"
+      >
+        <div className="h-8 w-48 animate-pulse rounded-lg bg-slate-700" />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[...Array(4)].map((_, index) => (
+            <div
+              key={index}
+              className="h-28 animate-pulse rounded-xl bg-slate-800"
+            />
+          ))}
+        </div>
+        <div className="h-64 animate-pulse rounded-xl bg-slate-800" />
+      </div>
+    ),
+  },
+);
 
 // Placeholder functions for notifications - in a real app, these would be API calls
 async function checkPendingNotifications(): Promise<NotificationData[]> {

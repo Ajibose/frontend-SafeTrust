@@ -45,23 +45,49 @@ describe("GoogleSignInButton", () => {
     (completeGoogleRedirect as jest.Mock).mockResolvedValue(null);
   });
 
-  it("renders with default label", () => {
+  it("renders with default label", async () => {
     render(<GoogleSignInButton redirectTo="/dashboard" />);
-    expect(
-      screen.getByRole("button", { name: /continue with google/i }),
-    ).toBeInTheDocument();
+    const button = screen.getByRole("button", {
+      name: /continue with google/i,
+    });
+    expect(button).toBeInTheDocument();
+    await waitFor(() => {
+      expect(button).not.toBeDisabled();
+    });
   });
 
-  it("renders with custom label", () => {
+  it("renders with custom label", async () => {
     render(
       <GoogleSignInButton
         redirectTo="/dashboard"
         label="Sign up with Google"
       />,
     );
-    expect(
-      screen.getByRole("button", { name: /sign up with google/i }),
-    ).toBeInTheDocument();
+    const button = screen.getByRole("button", { name: /sign up with google/i });
+    expect(button).toBeInTheDocument();
+    await waitFor(() => {
+      expect(button).not.toBeDisabled();
+    });
+  });
+
+  it("locks loading and notifies parent during completeGoogleRedirect on mount", async () => {
+    const onLoadingChange = jest.fn();
+    (completeGoogleRedirect as jest.Mock).mockReturnValue(
+      new Promise((resolve) => setTimeout(() => resolve(null), 10)),
+    );
+
+    render(
+      <GoogleSignInButton
+        redirectTo="/dashboard"
+        onLoadingChange={onLoadingChange}
+      />,
+    );
+
+    expect(onLoadingChange).toHaveBeenCalledWith(true);
+
+    await waitFor(() => {
+      expect(onLoadingChange).toHaveBeenCalledWith(false);
+    });
   });
 
   it("completes redirect on mount and redirects user if user exists", async () => {
@@ -96,6 +122,11 @@ describe("GoogleSignInButton", () => {
     const button = screen.getByRole("button", {
       name: /continue with google/i,
     });
+
+    await waitFor(() => {
+      expect(button).not.toBeDisabled();
+    });
+
     fireEvent.click(button);
 
     expect(onLoadingChange).toHaveBeenCalledWith(true);
@@ -118,6 +149,11 @@ describe("GoogleSignInButton", () => {
     const button = screen.getByRole("button", {
       name: /continue with google/i,
     });
+
+    await waitFor(() => {
+      expect(button).not.toBeDisabled();
+    });
+
     fireEvent.click(button);
 
     await waitFor(() => {
@@ -140,6 +176,11 @@ describe("GoogleSignInButton", () => {
     const button = screen.getByRole("button", {
       name: /continue with google/i,
     });
+
+    await waitFor(() => {
+      expect(button).not.toBeDisabled();
+    });
+
     fireEvent.click(button);
 
     await waitFor(() => {
@@ -159,6 +200,11 @@ describe("GoogleSignInButton", () => {
     const button = screen.getByRole("button", {
       name: /continue with google/i,
     });
+
+    await waitFor(() => {
+      expect(button).not.toBeDisabled();
+    });
+
     fireEvent.click(button);
 
     await waitFor(() => {
@@ -168,12 +214,15 @@ describe("GoogleSignInButton", () => {
     });
   });
 
-  it("respects disabled prop", () => {
+  it("respects disabled prop", async () => {
     render(<GoogleSignInButton redirectTo="/dashboard" disabled={true} />);
 
     const button = screen.getByRole("button", {
       name: /continue with google/i,
     });
     expect(button).toBeDisabled();
+    await waitFor(() => {
+      expect(completeGoogleRedirect).toHaveBeenCalled();
+    });
   });
 });

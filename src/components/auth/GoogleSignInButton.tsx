@@ -33,9 +33,17 @@ export function GoogleSignInButton({
   };
 
   useEffect(() => {
+    updateLoading(true);
     completeGoogleRedirect()
-      .then((user) => user && router.replace(redirectTo))
-      .catch(handleError);
+      .then((user) => {
+        if (user) {
+          router.replace(redirectTo);
+        }
+      })
+      .catch(handleError)
+      .finally(() => {
+        updateLoading(false);
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
   }, []);
 

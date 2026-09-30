@@ -1,5 +1,16 @@
 import "@testing-library/jest-dom";
 
+// Ensure Web Fetch API primitives are attached to global in Jest JSDOM environment
+if (
+  typeof global.Request === "undefined" &&
+  typeof globalThis.Request !== "undefined"
+) {
+  global.Request = globalThis.Request;
+  global.Response = globalThis.Response;
+  global.Headers = globalThis.Headers;
+  global.fetch = globalThis.fetch;
+}
+
 process.env.NEXT_PUBLIC_FIREBASE_API_KEY =
   process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "dummy-api-key";
 process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN =

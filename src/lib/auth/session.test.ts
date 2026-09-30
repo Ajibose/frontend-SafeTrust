@@ -3,9 +3,19 @@ import {
   setSessionCookie,
   clearSessionCookie,
   getSessionCookie,
+  initSessionListener,
   SESSION_COOKIE_NAME,
 } from "./session";
 import { useGlobalAuthenticationStore } from "@/core/store/data";
+import { onIdTokenChanged, type Auth, type User } from "firebase/auth";
+
+jest.mock("@/lib/firebase", () => ({
+  auth: { name: "mock-auth" },
+}));
+
+jest.mock("firebase/auth", () => ({
+  onIdTokenChanged: jest.fn(),
+}));
 
 jest.mock("js-cookie", () => ({
   set: jest.fn(),
@@ -53,5 +63,52 @@ describe("session helper", () => {
     const token = getSessionCookie();
     expect(Cookies.get).toHaveBeenCalledWith(SESSION_COOKIE_NAME);
     expect(token).toBe("cookie-token-val");
+  });
+
+  describe("initSessionListener", () => {
+    it("subscribes onIdTokenChanged and updates session when token is refreshed", async () => {
+      let listenerCallback: (
+        user: User | null,
+      ) => Promise<void> = async () => {};
+      const mockUnsubscribe = jest.fn();
+
+      (onIdTokenChanged as jest.Mock).mockImplementation((_auth, callback) => {
+        listenerCallback = callback;
+        return mockUnsubscribe;
+      });
+
+      const mockAuth = { name: "custom-auth" } as unknown as Auth;
+      const unsubscribe = initSessionListener(mockAuth);
+
+      expect(onIdTokenChanged).toHaveBeenCalledWith(
+        mockAuth,
+        expect.any(Function),
+      );
+
+      // Simulate refreshed user token
+      const mockUser = {
+        getIdToken: jest.fn().mockResolvedValue("refreshed-id-token-999"),
+      } as unknown as User;
+
+      await listenerCallback(mockUser);
+
+      expect(mockUser.getIdToken).toHaveBeenCalledTimes(1);
+      expect(Cookies.set).toHaveBeenCalledWith(
+        SESSION_COOKIE_NAME,
+        "refreshed-id-token-999",
+        expect.any(Object),
+      );
+      expect(useGlobalAuthenticationStore.getState().token).toBe(
+        "refreshed-id-token-999",
+      );
+
+      // Simulate user sign-out
+      await listenerCallback(null);
+      expect(Cookies.remove).toHaveBeenCalledWith(SESSION_COOKIE_NAME);
+      expect(useGlobalAuthenticationStore.getState().token).toBe("");
+
+      unsubscribe();
+      expect(mockUnsubscribe).toHaveBeenCalledTimes(1);
+    });
   });
 });

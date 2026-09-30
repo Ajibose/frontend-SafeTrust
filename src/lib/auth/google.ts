@@ -18,8 +18,12 @@ async function finishSignIn(cred: UserCredential) {
   setSessionCookie(idToken); // before navigating, so middleware sees it
   if (getAdditionalUserInfo(cred)?.isNewUser) {
     // Same backend sync as email registration; best-effort (backend may be offline in skeleton mode).
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
     await fetch("/api/auth/sync-user", {
       method: "POST",
+      signal: controller.signal,
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${idToken}`,
@@ -29,7 +33,9 @@ async function finishSignIn(cred: UserCredential) {
         first_name: cred.user.displayName?.split(" ")[0] ?? "",
         last_name: cred.user.displayName?.split(" ").slice(1).join(" ") ?? "",
       }),
-    }).catch(() => undefined);
+    })
+      .catch(() => undefined)
+      .finally(() => clearTimeout(timeoutId));
   }
   return cred.user;
 }

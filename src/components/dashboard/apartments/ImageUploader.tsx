@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
-import { cn } from '@/lib/utils';
-import { Plus } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { cn } from "@/lib/utils";
+import Image from "next/image";
+import { Plus } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 interface ImageUploaderProps {
   files: Array<File | null>;
@@ -10,10 +11,10 @@ interface ImageUploaderProps {
 }
 
 const SLOT_LABELS = [
-  'Main apartment image',
-  'Apartment image 2',
-  'Apartment image 3',
-  'Apartment image 4',
+  "Main apartment image",
+  "Apartment image 2",
+  "Apartment image 3",
+  "Apartment image 4",
 ] as const;
 
 function ImageSlot({
@@ -41,23 +42,29 @@ function ImageSlot({
       <button
         type="button"
         onClick={(event) => {
-          const input = event.currentTarget.previousElementSibling as HTMLInputElement | null;
+          const input = event.currentTarget
+            .previousElementSibling as HTMLInputElement | null;
           input?.click();
         }}
         aria-label={label}
         className={cn(
-          'relative flex w-full items-center justify-center overflow-hidden rounded-xl bg-gray-200 text-gray-500 transition hover:bg-gray-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300 border border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-600',
-          large ? 'min-h-[240px]' : 'min-h-[74px]'
+          "relative flex w-full items-center justify-center overflow-hidden rounded-xl bg-gray-200 text-gray-500 transition hover:bg-gray-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300 border border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-600",
+          large ? "min-h-[240px]" : "min-h-[74px]",
         )}
       >
         {previewUrl ? (
-          <img
+          <Image
             src={previewUrl}
             alt={label}
-            className="absolute inset-0 h-full w-full object-cover"
+            fill
+            unoptimized
+            className="object-cover"
           />
         ) : (
-          <Plus className={cn(large ? 'h-8 w-8' : 'h-6 w-6')} aria-hidden="true" />
+          <Plus
+            className={cn(large ? "h-8 w-8" : "h-6 w-6")}
+            aria-hidden="true"
+          />
         )}
       </button>
     </>
@@ -70,7 +77,7 @@ export function ImageUploader({ files, onChange }: ImageUploaderProps) {
 
   useEffect(() => {
     const nextPreviewUrls = files.map((file) =>
-      file ? URL.createObjectURL(file) : ''
+      file ? URL.createObjectURL(file) : "",
     );
 
     setPreviewUrls(nextPreviewUrls);
@@ -99,7 +106,7 @@ export function ImageUploader({ files, onChange }: ImageUploaderProps) {
 
     const input = inputRefs.current[index];
     if (input) {
-      input.value = '';
+      input.value = "";
     }
   };
 

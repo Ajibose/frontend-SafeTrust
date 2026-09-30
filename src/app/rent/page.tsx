@@ -1,12 +1,21 @@
 "use client";
 
 import type { HotelListing } from "@/@types/hotel";
-import { ApartmentGrid, BedroomTabs, FilterSidebar, HotelHeader } from "@/components/hotel";
+import {
+  ApartmentGrid,
+  BedroomTabs,
+  FilterSidebar,
+  HotelHeader,
+} from "@/components/listings";
 import { STUB_HOTELS } from "@/lib/mockData/hotels";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { LayoutDashboard, Lightbulb, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -41,7 +50,9 @@ export default function HotelListingPage() {
       const matchesPrice =
         apartment.price >= minPrice && apartment.price <= maxPrice;
 
-      return matchesCategory && matchesLocation && matchesBedroom && matchesPrice;
+      return (
+        matchesCategory && matchesLocation && matchesBedroom && matchesPrice
+      );
     });
 
     if (sortOption === "price-low") {
@@ -55,10 +66,19 @@ export default function HotelListingPage() {
     return [...apartments].sort(
       (left, right) => Number(right.promoted) - Number(left.promoted),
     );
-  }, [maxPrice, minPrice, selectedBedrooms, selectedCategories, selectedLocations, sortOption]);
+  }, [
+    maxPrice,
+    minPrice,
+    selectedBedrooms,
+    selectedCategories,
+    selectedLocations,
+    sortOption,
+  ]);
 
   const toggleValue = (values: string[], value: string) =>
-    values.includes(value) ? values.filter((item) => item !== value) : [...values, value];
+    values.includes(value)
+      ? values.filter((item) => item !== value)
+      : [...values, value];
 
   const handleApartmentClick = (apartment: HotelListing) => {
     router.push(`/rent/${apartment.id}`);
@@ -88,10 +108,12 @@ export default function HotelListingPage() {
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
             <div>
               <h1 className="text-[24px] leading-tight text-gray-900 dark:text-white sm:text-[30px]">
-                Available for rent in{' '}
+                Available for rent in{" "}
                 <span className="font-semibold">Costa Rica, San José</span>
               </h1>
-              <p className="mt-3 text-sm text-gray-500 dark:text-gray-400">204 units available</p>
+              <p className="mt-3 text-sm text-gray-500 dark:text-gray-400">
+                204 units available
+              </p>
             </div>
 
             <div className="flex flex-wrap items-center gap-4">
@@ -102,7 +124,7 @@ export default function HotelListingPage() {
                 <LayoutDashboard className="h-4 w-4" />
                 Switch to Host view
               </button>
-              
+
               <Link
                 href="/guest/suggestions"
                 className="flex items-center gap-1.5 text-sm font-medium text-orange-500 transition-colors hover:text-orange-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
@@ -113,21 +135,25 @@ export default function HotelListingPage() {
 
               <Popover>
                 <PopoverTrigger asChild>
-                  <button className="flex items-center gap-2 text-sm
+                  <button
+                    className="flex items-center gap-2 text-sm
                                      border border-gray-200 dark:border-slate-700
                                      rounded-lg px-3 py-2 hover:bg-gray-50
                                      dark:hover:bg-slate-800 transition-colors
-                                     text-gray-700 dark:text-gray-300">
+                                     text-gray-700 dark:text-gray-300"
+                  >
                     <SlidersHorizontal className="h-4 w-4" />
                     <span>Sort & Filter</span>
                     <span className="text-orange-500 font-medium">
-                      {(sortOption !== "relevance" ||
-                        minPrice !== 3200 ||
-                        maxPrice !== 206000 ||
-                        selectedBedrooms !== "all" ||
-                        selectedCategories.length !== 2 ||
-                        !selectedCategories.includes("Family") ||
-                        !selectedCategories.includes("Students")) ? "•" : ""}
+                      {sortOption !== "relevance" ||
+                      minPrice !== 3200 ||
+                      maxPrice !== 206000 ||
+                      selectedBedrooms !== "all" ||
+                      selectedCategories.length !== 2 ||
+                      !selectedCategories.includes("Family") ||
+                      !selectedCategories.includes("Students")
+                        ? "•"
+                        : ""}
                     </span>
                   </button>
                 </PopoverTrigger>
@@ -139,8 +165,10 @@ export default function HotelListingPage() {
                 >
                   {/* Sort by */}
                   <div className="space-y-2">
-                    <p className="text-xs font-semibold uppercase tracking-wide
-                                  text-gray-500 dark:text-gray-400">
+                    <p
+                      className="text-xs font-semibold uppercase tracking-wide
+                                  text-gray-500 dark:text-gray-400"
+                    >
                       Sort by
                     </p>
                     {[
@@ -155,7 +183,7 @@ export default function HotelListingPage() {
                           "w-full text-left text-sm px-3 py-2 rounded-lg transition-colors",
                           sortOption === opt.value
                             ? "bg-orange-500 text-white"
-                            : "hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300"
+                            : "hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300",
                         )}
                       >
                         {opt.label}
@@ -167,8 +195,10 @@ export default function HotelListingPage() {
 
                   {/* Category */}
                   <div className="space-y-2">
-                    <p className="text-xs font-semibold uppercase tracking-wide
-                                  text-gray-500 dark:text-gray-400">
+                    <p
+                      className="text-xs font-semibold uppercase tracking-wide
+                                  text-gray-500 dark:text-gray-400"
+                    >
                       Category
                     </p>
                     <div className="flex flex-wrap gap-2">
@@ -178,7 +208,7 @@ export default function HotelListingPage() {
                           "text-xs px-3 py-1.5 rounded-full transition-colors border",
                           selectedCategories.length === 0
                             ? "bg-orange-500 border-orange-500 text-white"
-                            : "border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300"
+                            : "border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300",
                         )}
                       >
                         All
@@ -186,12 +216,16 @@ export default function HotelListingPage() {
                       {["Family", "Students", "Travelers"].map((cat) => (
                         <button
                           key={cat}
-                          onClick={() => setSelectedCategories((prev) => toggleValue(prev, cat))}
+                          onClick={() =>
+                            setSelectedCategories((prev) =>
+                              toggleValue(prev, cat),
+                            )
+                          }
                           className={cn(
                             "text-xs px-3 py-1.5 rounded-full transition-colors border",
                             selectedCategories.includes(cat)
                               ? "bg-orange-500 border-orange-500 text-white"
-                              : "border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300"
+                              : "border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300",
                           )}
                         >
                           {cat}
@@ -204,8 +238,10 @@ export default function HotelListingPage() {
 
                   {/* Bedrooms */}
                   <div className="space-y-2">
-                    <p className="text-xs font-semibold uppercase tracking-wide
-                                  text-gray-500 dark:text-gray-400">
+                    <p
+                      className="text-xs font-semibold uppercase tracking-wide
+                                  text-gray-500 dark:text-gray-400"
+                    >
                       Bedrooms
                     </p>
                     <div className="flex flex-wrap gap-2">
@@ -222,7 +258,7 @@ export default function HotelListingPage() {
                             "text-xs px-3 py-1.5 rounded-full transition-colors border",
                             selectedBedrooms === bd.value
                               ? "bg-orange-500 border-orange-500 text-white"
-                              : "border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300"
+                              : "border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300",
                           )}
                         >
                           {bd.label}
@@ -235,8 +271,10 @@ export default function HotelListingPage() {
 
                   {/* Price range */}
                   <div className="space-y-2">
-                    <p className="text-xs font-semibold uppercase tracking-wide
-                                  text-gray-500 dark:text-gray-400">
+                    <p
+                      className="text-xs font-semibold uppercase tracking-wide
+                                  text-gray-500 dark:text-gray-400"
+                    >
                       Price Range
                     </p>
                     <div className="flex items-center gap-2">
@@ -291,15 +329,20 @@ export default function HotelListingPage() {
           </div>
 
           <div className="mt-6">
-            <BedroomTabs selected={selectedBedrooms} onSelect={setSelectedBedrooms} />
+            <BedroomTabs
+              selected={selectedBedrooms}
+              onSelect={setSelectedBedrooms}
+            />
           </div>
 
           <div className="mt-8">
-            <ApartmentGrid apartments={filteredApartments} onApartmentClick={handleApartmentClick} />
+            <ApartmentGrid
+              apartments={filteredApartments}
+              onApartmentClick={handleApartmentClick}
+            />
           </div>
         </main>
       </div>
-      
     </div>
   );
 }

@@ -1,29 +1,23 @@
 "use client";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 import { useState } from "react";
-import RoomPhotos from "@/components/rooms/RoomPhotos";
-import RoomDetails, { RoomDetailsInfo } from "@/components/rooms/RoomDetails";
-import AditionalRoomPhotos from "@/components/rooms/AditionalRoomPhotos";
-import { RoomBookingCard } from "@/components/rooms/RoomBookingCard";
-import { BookingConfirmation } from "@/components/rooms/BookingConfirmation";
 import {
+  RoomPhotos,
+  AdditionalRoomPhotos,
   RoomDetailsCard,
   RoomActionBar,
-  MobileRoomGallery,
   MobileBookingCard,
-} from "./components";
-import {
+  RoomBookingCard,
+  BookingConfirmation,
   AmenitiesCard,
   LocationCard,
   HostCard,
   PolicyCard,
-} from "@/components/rooms/cards";
+} from "@/components/rooms";
 import { useRouter } from "next/navigation";
 import { NavigationHeader } from "@/components/navigation/NavigationHeader";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, Share, Heart } from "lucide-react";
 
 const additionalImages = [
   "/img/room1.png",
@@ -38,8 +32,10 @@ const breadcrumbs = [
 
 export default function RoomPage() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const [isBooking, setIsBooking] = useState(false);
+  // Static demo room: no dynamic hotel id is available on /room yet.
+  // Keep the id explicit here so the booking link does not silently drift.
+  const hotelId = "1";
+  const [isLoading] = useState(false);
   const [mobileBookingOpen, setMobileBookingOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(24);
@@ -81,16 +77,10 @@ export default function RoomPage() {
   } | null>(null);
 
   const handleBookingStart = () => {
-    setIsBooking(true);
     console.log("Booking process started");
   };
 
-  const handleBookingClick = () => {
-    setMobileBookingOpen(true);
-  };
-
   const handleBookingComplete = (bookingId: string) => {
-    setIsBooking(false);
     console.log("Booking completed:", bookingId);
 
     setBookingData({
@@ -103,41 +93,13 @@ export default function RoomPage() {
   };
 
   const handleBookingError = (error: string) => {
-    setIsBooking(false);
     console.error("Booking error:", error);
   };
 
   const handleViewBooking = () => {
     if (bookingData) {
-      router.push(
-        `/dashboard/hotel/payment?bookingId=${bookingData.bookingId}`,
-      );
+      router.push(`/hotels/${hotelId}/book?bookingId=${bookingData.bookingId}`);
     }
-  };
-
-  const detailsInfo: RoomDetailsInfo = {
-    hotelName: "Shikara Hotel",
-    address: "124 Colte Street, Downtown Center, San José",
-    beds: 2,
-    baths: 1,
-    mapImageSrc: "/img/image 16.png?height=195&width=300",
-    detailsDescription:
-      "Lorem ipsum is simply random text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
-    payment: {
-      priceLabel: "$40.18 / night",
-      locationTag: "Limón",
-      propertyTitle: "Puerto Viejo House",
-      monthlyAmount: 18000,
-      occupancyTaxes: 200,
-      totalPerMonth: 18200,
-      depositAmount: 14000,
-      billingDescription:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-      depositStatusText:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-      rentalStatusText:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-    },
   };
 
   return (
@@ -164,7 +126,7 @@ export default function RoomPage() {
 
         {/* Additional Hotel Images */}
         <div className="lg:col-span-4">
-          <AditionalRoomPhotos images={additionalImages} />
+          <AdditionalRoomPhotos images={additionalImages} />
         </div>
       </div>
 
@@ -200,6 +162,7 @@ export default function RoomPage() {
                 <BookingConfirmation
                   bookingId={bookingData.bookingId}
                   hotelName="Shikara Hotel"
+                  hotelId={hotelId}
                   checkIn={bookingData.checkIn}
                   checkOut={bookingData.checkOut}
                   guestCount={bookingData.guestCount}

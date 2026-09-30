@@ -1,13 +1,13 @@
 "use client";
 
-import { Suspense, useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { KeyRound } from 'lucide-react';
-import Buildings from '@/components/auth/ui/Buildings';
-import ResetPasswordForm from '@/components/auth/ResetPasswordForm';
-import InvalidResetToken from '@/components/auth/InvalidResetToken';
+import { Suspense, useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { KeyRound } from "lucide-react";
+import Buildings from "@/components/auth/ui/Buildings";
+import ResetPasswordForm from "@/components/auth/ResetPasswordForm";
+import InvalidResetToken from "@/components/auth/InvalidResetToken";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 function ResetPasswordContent() {
   const [isValidToken, setIsValidToken] = useState(false);
@@ -32,7 +32,7 @@ function ResetPasswordContent() {
         }
 
         setIsValidToken(true);
-      } catch (error) {
+      } catch {
         setIsValidToken(false);
       }
     };

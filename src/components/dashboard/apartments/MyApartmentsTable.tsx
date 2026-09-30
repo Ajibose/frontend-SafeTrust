@@ -33,7 +33,7 @@ export function MyApartmentsTable() {
   const apartments = data.apartments;
   const total = data.apartments_aggregate.aggregate.count;
 
-  const handleDeleteConfirmed = (id: number) => {
+  const handleDeleteConfirmed = (id: string) => {
     console.log("(stub) Apartment deleted:", id);
   };
 
@@ -43,7 +43,10 @@ export function MyApartmentsTable() {
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
           My apartments
         </h1>
-        <Button asChild className="w-fit bg-orange-500 text-white hover:bg-orange-600">
+        <Button
+          asChild
+          className="w-fit bg-orange-500 text-white hover:bg-orange-600"
+        >
           <Link href="/dashboard/apartments/new">
             <Home className="mr-2 h-4 w-4" />
             New apartment
@@ -85,7 +88,10 @@ export function MyApartmentsTable() {
           <TableBody>
             {apartments.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="py-10 text-center text-muted-foreground">
+                <TableCell
+                  colSpan={8}
+                  className="py-10 text-center text-muted-foreground"
+                >
                   No apartments found.
                 </TableCell>
               </TableRow>
@@ -109,7 +115,10 @@ export function MyApartmentsTable() {
                   </TableCell>
                   <TableCell>
                     {apartment.promoted && (
-                      <span className="text-lg text-orange-500" aria-label="Promoted listing">
+                      <span
+                        className="text-lg text-orange-500"
+                        aria-label="Promoted listing"
+                      >
                         🔥
                       </span>
                     )}
@@ -119,13 +128,9 @@ export function MyApartmentsTable() {
                   </TableCell>
                   <TableCell>
                     <ApartmentActionsMenu
-                        apartmentId={apartment.id}
-                        apartmentName={apartment.name}
-                        onDeleteConfirm={(id) => {
-                          // Remove from local stub state for now
-                          // TODO: trigger Hasura DELETE mutation
-                          console.warn(`Delete apartment ${id} — not yet wired to backend`);
-                        }}
+                      apartmentId={apartment.id}
+                      apartmentName={apartment.name}
+                      onDeleteConfirm={handleDeleteConfirmed}
                     />
                   </TableCell>
                 </TableRow>
@@ -151,7 +156,9 @@ export function MyApartmentsTable() {
             >
               ←
             </button>
-            <span className="text-sm text-muted-foreground">Page {page + 1}</span>
+            <span className="text-sm text-muted-foreground">
+              Page {page + 1}
+            </span>
             <button
               type="button"
               aria-label="Next page"

@@ -54,7 +54,7 @@ export function useInitializeEscrow() {
 
   const milestones = form.watch("milestones");
   const isAnyMilestoneEmpty = milestones.some(
-    (milestone) => milestone.description === ""
+    (milestone) => milestone.description === "",
   );
 
   const handleAddMilestone = () => {
@@ -117,7 +117,7 @@ export function useInitializeEscrow() {
       // Use the approver address as the signer (they're the same - the person initiating)
       // Priority: 1) roles.approver from form, 2) walletAddress from context, 3) localStorage
       let signerAddress = payload.roles?.approver || walletAddress;
-      
+
       if (!signerAddress) {
         try {
           const stored = localStorage.getItem("address-wallet");
@@ -136,27 +136,31 @@ export function useInitializeEscrow() {
         return;
       }
 
-      // Find the trustline symbol and issuer from the address
+      // Find the trustline issuer from the address
       const selectedTrustline = trustlineOptions.find(
-        (t) => t.value === payload.trustline?.address
+        (t) => t.value === payload.trustline?.address,
       );
-      const trustlineSymbol = selectedTrustline?.label || "USDC";
-      const trustlineIssuer = (selectedTrustline as any)?.issuer;
-      
+      const trustlineIssuer = (
+        selectedTrustline as { issuer?: string } | undefined
+      )?.issuer;
+
       // If the address is a Soroban contract (starts with C), use the issuer instead
       // The API may not accept Soroban contract addresses directly
       const trustlineAddress = payload.trustline?.address || "";
-      const useIssuerAsAddress = trustlineAddress.startsWith("C") && trustlineIssuer;
+      const useIssuerAsAddress =
+        trustlineAddress.startsWith("C") && trustlineIssuer;
 
       // Get receiver address (service provider receives the funds)
-      const receiverAddress = payload.roles?.serviceProvider || payload.roles?.receiver || "";
+      const receiverAddress =
+        payload.roles?.serviceProvider || payload.roles?.receiver || "";
 
       // Remove receiver from roles (not allowed in multi-release API)
-      const { receiver, ...rolesWithoutReceiver } = payload.roles;
+      const { receiver: _receiver, ...rolesWithoutReceiver } = payload.roles;
+      void _receiver;
 
       /**
        * Create the final payload for the initialize escrow mutation
-       * 
+       *
        * IMPORTANT for Multi-Release:
        * - Do NOT include roles.receiver (API rejects it)
        * - Each milestone MUST have receiver field

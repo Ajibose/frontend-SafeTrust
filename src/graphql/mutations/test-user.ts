@@ -1,6 +1,6 @@
-import { graphql } from "@/graphql/generated";
+import { gql } from "@apollo/client";
 
-export const CREATE_TEST_USER = graphql(`
+export const CREATE_TEST_USER = gql`
   mutation CreateTestUser(
     $email: String!
     $firstName: String!
@@ -16,9 +16,9 @@ export const CREATE_TEST_USER = graphql(`
       created_at
     }
   }
-`);
+`;
 
-export const UPDATE_USER = graphql(`
+export const UPDATE_USER = gql`
   mutation UpdateUser($id: uuid!, $firstName: String, $lastName: String) {
     update_users_by_pk(
       pk_columns: { id: $id }
@@ -31,13 +31,13 @@ export const UPDATE_USER = graphql(`
       updated_at
     }
   }
-`);
+`;
 
-export const DELETE_USER = graphql(`
+export const DELETE_USER = gql`
   mutation DeleteUser($id: uuid!) {
     delete_users_by_pk(id: $id) {
       id
       email
     }
   }
-`);
+`;

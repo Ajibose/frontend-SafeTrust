@@ -58,6 +58,6 @@ export function getStubEscrow(escrowId: string): StubEscrowDetail {
     escrowJustification:
       "Tenant completed checkout. No damages reported. Deposit approved for release to property owner.",
     claimsPlaceholder: "Describe any claims or notes for this release…",
-    apartment: { name: "La sabana apartment", image: "/img/apt-1.jpg" },
+    apartment: { name: "La sabana apartment", image: "/img/room1.png" },
   };
 }

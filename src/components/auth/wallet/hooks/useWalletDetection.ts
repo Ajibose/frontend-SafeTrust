@@ -43,7 +43,7 @@ export const useWalletDetection = (): WalletDetectionResult & {
   });
 
   const [isLoading, setIsLoading] = useState(true);
-  
+
   useEffect(() => {
     const detectWallets = async () => {
       setIsLoading(true);
@@ -60,7 +60,9 @@ export const useWalletDetection = (): WalletDetectionResult & {
           freighterAddress = await retrieveFreighterAddress();
 
           if (freighterAddress) {
-            useGlobalAuthenticationStore.getState().connectWalletStore(freighterAddress, "Freighter");
+            useGlobalAuthenticationStore
+              .getState()
+              .connectWalletStore(freighterAddress, "Freighter");
           }
         }
 
@@ -132,7 +134,13 @@ const detectMetaMask = async (): Promise<boolean> => {
   try {
     if (typeof window === "undefined") return false;
 
-    const ethereum = (window as any).ethereum;
+    const win = window as unknown as {
+      ethereum?: {
+        isMetaMask?: boolean;
+        providers?: Array<{ isMetaMask?: boolean }>;
+      };
+    };
+    const ethereum = win.ethereum;
     if (!ethereum) return false;
 
     if (ethereum.isMetaMask) {
@@ -140,7 +148,7 @@ const detectMetaMask = async (): Promise<boolean> => {
     }
 
     if (ethereum.providers) {
-      return ethereum.providers.some((provider: any) => provider.isMetaMask);
+      return ethereum.providers.some((provider) => provider.isMetaMask);
     }
 
     return false;

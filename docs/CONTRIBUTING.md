@@ -24,11 +24,11 @@ If you need data that doesn't exist in mock data yet, add it to the appropriate 
 
 ## Mock data files
 
-| File | Exports | Description |
-|---|---|---|
-| `src/lib/mockData/apartments.ts` | `MOCK_APARTMENTS` | Apartment listings |
-| `src/lib/mockData/hotels.ts` | `STUB_HOTELS` | Hotel listings for `/rent` |
-| `src/lib/mockData/messages.ts` | `MOCK_CONVERSATIONS`, `MOCK_MESSAGES` | Conversation & message data |
+| File                             | Exports                               | Description                 |
+| -------------------------------- | ------------------------------------- | --------------------------- |
+| `src/lib/mockData/apartments.ts` | `MOCK_APARTMENTS`                     | Apartment listings          |
+| `src/lib/mockData/hotels.ts`     | `STUB_HOTELS`                         | Hotel listings for `/rent`  |
+| `src/lib/mockData/messages.ts`   | `MOCK_CONVERSATIONS`, `MOCK_MESSAGES` | Conversation & message data |
 
 ## Hook abstraction pattern
 
@@ -59,6 +59,23 @@ isConnected: true
 ```
 
 No login is required to access `/dashboard` in development.
+
+## Routes
+
+Guest browsing is public; booking payment/escrow requires login. Host management stays under `/dashboard/hotels`.
+
+```text
+/hotels                    public  (browse)
+/hotels/search             public  (search)
+/hotels/[id]               public  (details)
+/hotels/[id]/book          protected (payment, ?bookingId=…)
+/bookings/new/escrow       protected (create escrow)
+/bookings/[bookingId]/escrow protected (booking escrow)
+/dashboard/hotels/**       protected (host CRUD: list, [id], [id]/edit, new)
+```
+
+Walkthrough: `/rent` → `/room` → Book → `/hotels/{id}/book?bookingId=…` → `/bookings/{bookingId}/escrow`.
+Legacy `/dashboard/hotel/*` URLs redirect via `next.config.ts`.
 
 ## Sidebar navigation order
 

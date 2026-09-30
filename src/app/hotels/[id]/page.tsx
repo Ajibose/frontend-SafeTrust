@@ -1,11 +1,27 @@
 "use client";
+
 import { use } from "react";
+import dynamic from "next/dynamic";
 import Header from "@/components/layouts/Header";
 import { SideBar } from "@/components/layouts/SideBar";
 import Gallery from "@/components/hotels/details/Gallery";
 import Information from "@/components/hotels/details/Information";
 import Details from "@/components/hotels/details/Details";
-import HotelMap from "@/components/hotels/payment/Map";
+
+const HotelMap = dynamic(
+  () => import("@/components/hotels/payment/Map"),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        className="flex h-full min-h-[250px] items-center justify-center rounded-lg bg-gray-200 text-sm text-gray-600 dark:bg-gray-800 dark:text-gray-300"
+        role="status"
+      >
+        Loading map...
+      </div>
+    ),
+  },
+);
 
 export default function HotelPage({
   params,

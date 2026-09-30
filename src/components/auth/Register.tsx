@@ -19,21 +19,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Illustration from "@/components/auth/ui/Illustration";
-import Cookies from "js-cookie";
+import { setSessionCookie } from "@/lib/auth/session";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { toast } from "sonner";
 
 const COUNTRY_CODES = [
   { code: "+506", country: "Costa Rica", flag: "🇨🇷" },
-  { code: "+1",   country: "United States", flag: "🇺🇸" },
-  { code: "+52",  country: "Mexico", flag: "🇲🇽" },
-  { code: "+34",  country: "Spain", flag: "🇪🇸" },
-  { code: "+44",  country: "United Kingdom", flag: "🇬🇧" },
-  { code: "+49",  country: "Germany", flag: "🇩🇪" },
-  { code: "+55",  country: "Brazil", flag: "🇧🇷" },
-  { code: "+57",  country: "Colombia", flag: "🇨🇴" },
-  { code: "+51",  country: "Peru", flag: "🇵🇪" },
-  { code: "+54",  country: "Argentina", flag: "🇦🇷" },
+  { code: "+1", country: "United States", flag: "🇺🇸" },
+  { code: "+52", country: "Mexico", flag: "🇲🇽" },
+  { code: "+34", country: "Spain", flag: "🇪🇸" },
+  { code: "+44", country: "United Kingdom", flag: "🇬🇧" },
+  { code: "+49", country: "Germany", flag: "🇩🇪" },
+  { code: "+55", country: "Brazil", flag: "🇧🇷" },
+  { code: "+57", country: "Colombia", flag: "🇨🇴" },
+  { code: "+51", country: "Peru", flag: "🇵🇪" },
+  { code: "+54", country: "Argentina", flag: "🇦🇷" },
 ];
 
 const ERROR_MESSAGES: Record<string, string> = {
@@ -101,11 +101,7 @@ export default function RegisterPage() {
       }
 
       // Step 3 — set cookie and store token
-      Cookies.set("firebase-token", token, {
-        expires: 7,
-        secure: true,
-        sameSite: "strict",
-      });
+      setSessionCookie(token);
 
       useGlobalAuthenticationStore.getState().setToken(token);
 
@@ -118,7 +114,8 @@ export default function RegisterPage() {
     } catch (err: unknown) {
       if (err instanceof FirebaseError) {
         toast.error(
-          ERROR_MESSAGES[err.code] ?? "An unexpected error occurred. Please try again.",
+          ERROR_MESSAGES[err.code] ??
+            "An unexpected error occurred. Please try again.",
           { duration: 4000 },
         );
         setError(
@@ -141,34 +138,51 @@ export default function RegisterPage() {
         <div className="w-full max-w-sm space-y-6">
           <div className="flex items-center justify-between w-full mb-2">
             <div className="flex items-center space-x-2">
-              <Image src="/img/logo.png" alt="SafeTrust" width={32} height={32} />
+              <Image
+                src="/img/logo.png"
+                alt="SafeTrust"
+                width={32}
+                height={32}
+              />
               <h1 className="text-2xl font-bold">SafeTrust</h1>
             </div>
             <ThemeToggle />
           </div>
 
-          <form className="space-y-5 overflow-visible" onSubmit={handleRegister}>
-
+          <form
+            className="space-y-5 overflow-visible"
+            onSubmit={handleRegister}
+          >
             {/* First Name + Last Name */}
             <div className="flex gap-2">
               <div className="space-y-2 flex-1">
                 <Label htmlFor="firstName">First Name</Label>
                 <Input
                   id="firstName"
+                  name="given-name"
+                  autoComplete="given-name"
                   placeholder="First name"
                   required
                   value={firstName}
-                  onChange={(e) => { setFirstName(e.target.value); clearError(); }}
+                  onChange={(e) => {
+                    setFirstName(e.target.value);
+                    clearError();
+                  }}
                 />
               </div>
               <div className="space-y-2 flex-1">
                 <Label htmlFor="lastName">Last Name</Label>
                 <Input
                   id="lastName"
+                  name="family-name"
+                  autoComplete="family-name"
                   placeholder="Last name"
                   required
                   value={lastName}
-                  onChange={(e) => { setLastName(e.target.value); clearError(); }}
+                  onChange={(e) => {
+                    setLastName(e.target.value);
+                    clearError();
+                  }}
                 />
               </div>
             </div>
@@ -178,8 +192,12 @@ export default function RegisterPage() {
               <Label htmlFor="phone">Phone Number</Label>
               <div className="flex gap-2">
                 <Select
+                  name="country-code"
                   value={phoneCountryCode}
-                  onValueChange={(v) => { setPhoneCountryCode(v); clearError(); }}
+                  onValueChange={(v) => {
+                    setPhoneCountryCode(v);
+                    clearError();
+                  }}
                 >
                   <SelectTrigger className="w-[120px]">
                     <SelectValue placeholder="Code" />
@@ -194,11 +212,17 @@ export default function RegisterPage() {
                 </Select>
                 <Input
                   id="phone"
+                  name="tel-national"
                   type="tel"
+                  inputMode="tel"
+                  autoComplete="tel-national"
                   placeholder="Enter your phone number"
                   required
                   value={phone}
-                  onChange={(e) => { setPhone(e.target.value); clearError(); }}
+                  onChange={(e) => {
+                    setPhone(e.target.value);
+                    clearError();
+                  }}
                 />
               </div>
             </div>
@@ -207,10 +231,15 @@ export default function RegisterPage() {
             <div className="space-y-2">
               <Label htmlFor="location">Location</Label>
               <Select
+                name="country-name"
+                autoComplete="country-name"
                 value={location}
-                onValueChange={(v) => { setLocation(v); clearError(); }}
+                onValueChange={(v) => {
+                  setLocation(v);
+                  clearError();
+                }}
               >
-                <SelectTrigger>
+                <SelectTrigger id="location">
                   <SelectValue placeholder="Select your location" />
                 </SelectTrigger>
                 <SelectContent position="popper" sideOffset={4}>
@@ -227,11 +256,17 @@ export default function RegisterPage() {
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
+                name="email"
                 type="email"
+                inputMode="email"
+                autoComplete="email"
                 placeholder="Enter your email"
                 required
                 value={email}
-                onChange={(e) => { setEmail(e.target.value); clearError(); }}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  clearError();
+                }}
               />
             </div>
 
@@ -240,12 +275,17 @@ export default function RegisterPage() {
               <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
+                name="password"
                 type="password"
+                autoComplete="new-password"
                 placeholder="Enter your password"
                 required
                 minLength={6}
                 value={password}
-                onChange={(e) => { setPassword(e.target.value); clearError(); }}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  clearError();
+                }}
               />
             </div>
 

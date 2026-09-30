@@ -94,7 +94,10 @@ export default function ForgotPasswordForm() {
             </Label>
             <Input
               id="email"
+              name="email"
               type="email"
+              inputMode="email"
+              autoComplete="email"
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}

@@ -5,6 +5,7 @@ import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { clearSessionCookie } from "@/lib/auth/session";
 import { useGlobalAuthenticationStore } from "@/core/store/data";
 import { useWallet } from "@/components/tw-blocks/wallet-kit/useWallet";
 
@@ -20,6 +21,7 @@ export function LogoutButton() {
     } catch (error) {
       console.error("Error signing out:", error);
     } finally {
+      clearSessionCookie();
       clearAuth();
       router.push("/login");
     }

@@ -11,7 +11,6 @@ import { useWallet } from "@/components/tw-blocks/wallet-kit/useWallet";
 
 export function LogoutButton() {
   const router = useRouter();
-  const clearAuth = useGlobalAuthenticationStore((state) => state.clearAuth);
   const { handleDisconnect } = useWallet();
 
   const handleLogout = async () => {

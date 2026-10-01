@@ -7,10 +7,12 @@ import { useRouter } from "next/navigation";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { FirebaseError } from "firebase/app";
 import { auth } from "@/lib/firebase";
-import { useGlobalAuthenticationStore } from "@/core/store/data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
+import { setSessionCookie } from "@/lib/auth/session";
 import {
   Select,
   SelectContent,
@@ -52,7 +54,10 @@ export default function RegisterPage() {
   const [phone, setPhone] = useState("");
   const [location, setLocation] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const isAnyAuthLoading = isLoading || isGoogleLoading;
 
   const clearError = () => setError("");
 
@@ -292,7 +297,7 @@ export default function RegisterPage() {
             <Button
               type="submit"
               className="w-full bg-[#2857B8] hover:bg-[#2857B8]/90"
-              disabled={isLoading}
+              disabled={isAnyAuthLoading}
             >
               {isLoading ? "Creating account..." : "Sign Up"}
             </Button>

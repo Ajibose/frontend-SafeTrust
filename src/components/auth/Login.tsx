@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import Illustration from "@/components/auth/ui/Illustration";
+import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
+import { setSessionCookie } from "@/lib/auth/session";
 import { useGlobalAuthenticationStore } from "@/core/store/data";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
@@ -56,7 +58,13 @@ export default function LoginPage() {
 
   const getSafeRedirect = useCallback(() => {
     const redirect = searchParams.get("redirect");
-    if (redirect && redirect.startsWith("/") && !redirect.startsWith("//")) {
+    if (
+      redirect &&
+      redirect.startsWith("/") &&
+      !redirect.startsWith("//") &&
+      !redirect.startsWith("/\\") &&
+      !redirect.includes("://")
+    ) {
       return redirect;
     }
     return "/dashboard/escrow-dashboard";
@@ -66,7 +74,10 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const isAnyAuthLoading = isLoading || isGoogleLoading;
 
   useEffect(() => {
     if ((address || token) && pathname === "/login") {
@@ -238,7 +249,7 @@ export default function LoginPage() {
             <Button
               type="submit"
               className="w-full bg-[#2857B8] hover:bg-[#2857B8]/90"
-              disabled={isLoading}
+              disabled={isAnyAuthLoading}
             >
               {isLoading ? "Signing in..." : "Login"}
             </Button>
@@ -297,6 +308,7 @@ export default function LoginPage() {
               variant="outline"
               className="w-full bg-black text-white"
               onClick={handleConnect}
+              disabled={isAnyAuthLoading}
             >
               <Wallet className="mr-2 h-4 w-4" />
               Login with wallet

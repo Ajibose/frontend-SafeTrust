@@ -24,8 +24,14 @@ jest.mock("next/image", () => {
 
 jest.mock("firebase/auth", () => ({
   signInWithEmailAndPassword: jest.fn(),
-  GoogleAuthProvider: jest.fn(),
+  GoogleAuthProvider: jest.fn().mockImplementation(() => ({
+    setCustomParameters: jest.fn(),
+  })),
   signInWithPopup: jest.fn(),
+}));
+
+jest.mock("@/components/auth/GoogleSignInButton", () => ({
+  GoogleSignInButton: () => <button>Continue with Google</button>,
 }));
 
 jest.mock("@/lib/firebase", () => ({

@@ -21,7 +21,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Illustration from "@/components/auth/ui/Illustration";
-import { setSessionCookie } from "@/lib/auth/session";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { toast } from "sonner";
 
@@ -108,8 +107,6 @@ export default function RegisterPage() {
       // Step 3 — set cookie and store token
       setSessionCookie(token);
 
-      useGlobalAuthenticationStore.getState().setToken(token);
-
       toast.success("Account created successfully!", {
         description: "Please sign in with your new credentials.",
         duration: 4000,
@@ -152,6 +149,24 @@ export default function RegisterPage() {
               <h1 className="text-2xl font-bold">SafeTrust</h1>
             </div>
             <ThemeToggle />
+          </div>
+
+          <GoogleSignInButton
+            redirectTo="/dashboard/escrow-dashboard"
+            label="Sign up with Google"
+            disabled={isAnyAuthLoading}
+            onLoadingChange={setIsGoogleLoading}
+          />
+
+          <div className="relative my-4">
+            <div className="absolute inset-0 flex items-center">
+              <Separator />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-white dark:bg-[#0a0a0a] px-2 text-muted-foreground dark:text-gray-400">
+                or
+              </span>
+            </div>
           </div>
 
           <form

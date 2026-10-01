@@ -13,6 +13,14 @@ jest.mock("js-cookie", () => ({
   remove: jest.fn(),
 }));
 
+jest.mock("@/lib/firebase", () => ({
+  auth: { name: "mock-auth" },
+}));
+
+jest.mock("firebase/auth", () => ({
+  onIdTokenChanged: jest.fn(),
+}));
+
 jest.mock("../persistence", () => ({
   getRememberMe: jest.fn(),
 }));

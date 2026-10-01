@@ -12,6 +12,7 @@ import {
   PlusCircle,
   PlusSquare,
   Shield,
+  User,
   Users,
   Users2,
 } from "lucide-react";
@@ -185,6 +186,21 @@ export function SideBar({
           {/* Tooltip for rail mode */}
           <span className="hidden md:group-hover:block lg:group-hover:hidden absolute left-14 bg-popover text-popover-foreground px-2 py-1 rounded shadow-md text-xs z-50 whitespace-nowrap">
             Favorite
+          </span>
+        </Link>
+        <Link
+          href="/dashboard/profile"
+          onClick={onClose}
+          className={cn(
+            "flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors duration-200 w-full group relative dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white",
+            pathname === "/dashboard/profile" &&
+              "bg-accent font-medium dark:bg-gray-800 dark:text-white",
+          )}
+        >
+          <User className="w-6 h-6 shrink-0 dark:text-gray-400" />
+          <span className="md:hidden lg:block">Profile</span>
+          <span className="hidden md:group-hover:block lg:group-hover:hidden absolute left-14 bg-popover text-popover-foreground px-2 py-1 rounded shadow-md text-xs z-50 whitespace-nowrap">
+            Profile
           </span>
         </Link>
         <Link

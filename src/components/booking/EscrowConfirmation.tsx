@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   BookingData,
   HotelData,
-  EscrowResponse,
   EscrowConfirmationProps,
 } from "@/interfaces/booking-escrow.interface";
 
@@ -15,11 +14,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  CardFooter,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 
 // Icons
 import {
@@ -228,14 +225,6 @@ export function EscrowConfirmation({
   onComplete,
   onViewDetails,
 }: EscrowConfirmationProps) {
-  const [showConfetti, setShowConfetti] = useState(true);
-
-  useEffect(() => {
-    // Hide confetti after animation
-    const timer = setTimeout(() => setShowConfetti(false), 3000);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <div className="space-y-6">
       {/* Success Header */}

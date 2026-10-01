@@ -32,11 +32,16 @@ export default function InterestedPeoplePage() {
       .fill(null)
       .map((_, i) => ({
         id: i + 1,
+        tenant_id: `tenant-${i + 1}`,
         tenant_name: "Diego Duarte Fernández",
         tenant_phone: "+506 6483252",
         tenant_wallet_address: "XR6...32D",
         offer_date: new Date(2024, 8, 12 + i).toISOString(),
-        bid_status: i === 1 ? "accepted" : i === 5 ? "rejected" : "pending",
+        bid_status: (i === 1
+          ? "accepted"
+          : i === 5
+            ? "rejected"
+            : "pending") as RentalOffer["bid_status"],
       })),
     rental_offers_aggregate: { aggregate: { count: 10 } },
   };
@@ -48,8 +53,7 @@ export default function InterestedPeoplePage() {
 
   const apartment = apartmentData?.apartments_by_pk;
   const offers = offersData?.rental_offers || [];
-  const totalCount =
-    offersData?.rental_offers_aggregate?.aggregate?.count || 0;
+  const totalCount = offersData?.rental_offers_aggregate?.aggregate?.count || 0;
 
   // Handle invalid apartment ID
   useEffect(() => {
@@ -97,14 +101,17 @@ export default function InterestedPeoplePage() {
     return null;
   }
 
-  const mappedOffers: RentalOffer[] = offers.map((offer: any) => ({
+  const mappedOffers: RentalOffer[] = offers.map((offer) => ({
     id: offer.id,
-    tenant_id: offer.tenant_id ?? null,
+    tenant_id:
+      "tenant_id" in offer && typeof offer.tenant_id === "string"
+        ? offer.tenant_id
+        : null,
     tenant_name: offer.tenant_name,
-    tenant_phone: offer.tenant_phone,
-    tenant_wallet_address: offer.tenant_wallet_address,
+    tenant_phone: offer.tenant_phone ?? null,
+    tenant_wallet_address: offer.tenant_wallet_address ?? null,
     offer_date: offer.offer_date,
-    bid_status: offer.bid_status,
+    bid_status: offer.bid_status as RentalOffer["bid_status"],
   }));
 
   const formatCurrency = (amount: number) =>
@@ -149,7 +156,8 @@ export default function InterestedPeoplePage() {
                 <Bed className="h-4 w-4 text-orange-500" />
                 {apartment.bedrooms} bd.
               </span>
-              {(apartment as any).pet_friendly !== false && (
+              {(apartment as unknown as { pet_friendly?: boolean })
+                .pet_friendly !== false && (
                 <span className="flex items-center gap-1">
                   <PawPrint className="h-4 w-4 text-orange-500" />
                   pet friendly

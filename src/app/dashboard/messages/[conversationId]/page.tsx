@@ -1,8 +1,37 @@
 "use client";
 
 import { use } from "react";
-import { ConversationThread } from "@/components/messages/ConversationThread";
+import dynamic from "next/dynamic";
 import { MOCK_CONVERSATIONS } from "@/lib/mockData/messages";
+
+const ConversationThread = dynamic(
+  () =>
+    import("@/components/messages/ConversationThread").then((m) => ({
+      default: m.ConversationThread,
+    })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex-1 p-4 space-y-3">
+        {[...Array(5)].map((_, i) => (
+          <div
+            key={i}
+            className={`flex gap-3 ${i % 2 === 0 ? "" : "justify-end"}`}
+          >
+            {i % 2 === 0 && (
+              <div className="h-8 w-8 rounded-full bg-muted animate-pulse shrink-0" />
+            )}
+            <div
+              className={`h-12 rounded-xl bg-muted animate-pulse ${
+                i % 2 === 0 ? "w-48" : "w-40"
+              }`}
+            />
+          </div>
+        ))}
+      </div>
+    ),
+  },
+);
 
 export default function ConversationPage({
   params,
@@ -10,22 +39,20 @@ export default function ConversationPage({
   params: Promise<{ conversationId: string }>;
 }) {
   const { conversationId } = use(params);
-  const conversation = MOCK_CONVERSATIONS.find((item) => item.id === conversationId);
-
-  if (!conversation) {
-    return <div className="p-4">Conversation not found.</div>;
-  }
+  const conversation = MOCK_CONVERSATIONS.find((c) => c.id === conversationId);
 
   return (
     <div className="h-full flex flex-col">
-      <div className="p-4 border-b flex items-center gap-3">
-        <div>
-          <h2 className="font-semibold">{conversation.apartment.name}</h2>
-          <p className="text-sm text-muted-foreground">
-            Host: {conversation.host.first_name} {conversation.host.last_name}
-          </p>
+      {conversation && (
+        <div className="p-4 border-b flex items-center gap-3">
+          <div>
+            <h2 className="font-semibold">{conversation.apartment.name}</h2>
+            <p className="text-sm text-muted-foreground">
+              Host: {conversation.host.first_name} {conversation.host.last_name}
+            </p>
+          </div>
         </div>
-      </div>
+      )}
       <ConversationThread
         conversationId={conversationId}
         apartmentId="mock-apartment-1"

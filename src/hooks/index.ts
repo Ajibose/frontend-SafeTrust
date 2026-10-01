@@ -10,4 +10,3 @@ export type { UseBookingEscrowOptions, UseBookingEscrowReturn } from "@/interfac
 
 // Subscription Hooks
 export { useEscrowSubscription } from "./useEscrowSubscription";
-export { useConnectionStatus } from "./useConnectionStatus";

@@ -32,7 +32,7 @@ function ResetPasswordContent() {
         }
 
         setIsValidToken(true);
-      } catch (error) {
+      } catch {
         setIsValidToken(false);
       }
     };

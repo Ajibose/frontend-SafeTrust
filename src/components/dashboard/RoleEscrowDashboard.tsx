@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronRight, SlidersHorizontal, Download } from "lucide-react";
+import { ChevronRight, SlidersHorizontal } from "lucide-react";
 import { useEffect, useRef, useState, useMemo } from "react";
 import {
   Popover,
@@ -9,14 +9,37 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { exportTransactionsToCSV } from "@/lib/exportToCSV";
-import type { TransactionRow } from "@/lib/exportToCSV";
 import { DashboardHeader } from "./DashboardHeader";
 import { EscrowsByStatus } from "./EscrowsByStatus";
 import { RecentActivity } from "./RecentActivity";
 import { QuickActions } from "./QuickActions";
 import { EscrowTable } from "./EscrowTable";
-import { AnalyticsDashboard } from "./analytics";
+import dynamic from "next/dynamic";
+
+const AnalyticsDashboard = dynamic(
+  () => import("./analytics").then((module) => module.AnalyticsDashboard),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        className="space-y-4 rounded-xl border border-slate-700 bg-slate-900 p-6"
+        role="status"
+        aria-label="Loading analytics"
+      >
+        <div className="h-8 w-48 animate-pulse rounded-lg bg-slate-700" />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[...Array(4)].map((_, index) => (
+            <div
+              key={index}
+              className="h-28 animate-pulse rounded-xl bg-slate-800"
+            />
+          ))}
+        </div>
+        <div className="h-64 animate-pulse rounded-xl bg-slate-800" />
+      </div>
+    ),
+  },
+);
 
 // Placeholder functions for notifications - in a real app, these would be API calls
 async function checkPendingNotifications(): Promise<NotificationData[]> {
@@ -98,6 +121,22 @@ interface RoleEscrowDashboardProps {
   onRefresh?: () => void;
 }
 
+const STATUS_OPTIONS = [
+  "Completed",
+  "Check-In Approved",
+  "Check-out Approved",
+  "Cancelled",
+  "Pending",
+];
+
+const STATUS_MAP: Record<string, string> = {
+  "Completed": "completed",
+  "Check-In Approved": "check_in_approved",
+  "Check-out Approved": "check_out_approved",
+  "Cancelled": "cancelled",
+  "Pending": "pending",
+};
+
 export function RoleEscrowDashboard({
   userRole,
   escrows = [],
@@ -109,7 +148,6 @@ export function RoleEscrowDashboard({
   const [notifications, setNotifications] =
     useState<NotificationData[]>(initialNotifications);
   const [showAnalytics, setShowAnalytics] = useState(false);
-  const [isPolling, setIsPolling] = useState(false);
   const isMountedRef = useRef(true);
   const isPollingRef = useRef(false);
 
@@ -122,22 +160,6 @@ export function RoleEscrowDashboard({
   const [checkInTo, setCheckInTo] = useState("");
   const [checkOutFrom, setCheckOutFrom] = useState("");
   const [checkOutTo, setCheckOutTo] = useState("");
-
-  const STATUS_OPTIONS = [
-    "Completed",
-    "Check-In Approved",
-    "Check-out Approved",
-    "Cancelled",
-    "Pending",
-  ];
-
-  const STATUS_MAP: Record<string, string> = {
-    "Completed": "completed",
-    "Check-In Approved": "check_in_approved",
-    "Check-out Approved": "check_out_approved",
-    "Cancelled": "cancelled",
-    "Pending": "pending",
-  };
 
   const SORT_OPTIONS = [
     { label: "Most Recent", value: "recent" },
@@ -218,7 +240,6 @@ export function RoleEscrowDashboard({
       isPollingRef.current = true;
 
       try {
-        if (isMountedRef.current) setIsPolling(true);
         const pendingNotifications = await checkPendingNotifications();
         const milestoneUpdates = await checkMilestoneNotifications();
 
@@ -243,9 +264,6 @@ export function RoleEscrowDashboard({
         console.error("Error checking for updates:", error);
       } finally {
         isPollingRef.current = false;
-        if (isMountedRef.current) {
-          setIsPolling(false);
-        }
       }
     };
 

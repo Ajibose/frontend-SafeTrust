@@ -2,13 +2,15 @@
 
 ## Two-repo strategy
 
-| | frontend-SafeTrust | dApp-SafeTrust |
-|---|---|---|
-| **Purpose** | UI skeleton | Full E2E integration |
-| **Data** | Mock data | Real Hasura GraphQL |
-| **Docker** | Not needed | Requires Docker + Hasura |
-| **Dev port** | `localhost:3000` | `localhost:3001` |
-| **Points** | 4× points (Drips Stellar Waves) | 2× points (Drips Stellar Waves) |
+|              | frontend-SafeTrust              | dApp-SafeTrust                  |
+| ------------ | ------------------------------- | ------------------------------- |
+| **Purpose**  | UI skeleton                     | Full E2E integration            |
+| **Data**     | Mock data                       | Real Hasura GraphQL             |
+| **Docker**   | Not needed                      | Requires Docker + Hasura        |
+| **Dev port** | `localhost:3000`                | `localhost:3001`                |
+| **Points**   | 4× points (Drips Stellar Waves) | 2× points (Drips Stellar Waves) |
+
+**Webhooks:** frontend-SafeTrust exposes no webhook endpoints. Trustless Work webhooks are configured to hit `backend-SafeTrust` (`trustless_work_webhook_events`), which is the single write authority for escrow state. The UI observes changes through `useEscrowSubscription` (mock here, Hasura subscription in dApp-SafeTrust).
 
 ## Data layer
 
@@ -38,9 +40,9 @@ components that use Trustless Work escrow features, such as
 ```typescript
 // src/core/store/data/index.ts
 // Pre-seeded with mock values:
-address:     "mock-owner-1"
-token:       "mock-jwt-token"
-isConnected: true
+address: "mock-owner-1";
+token: "mock-jwt-token";
+isConnected: true;
 ```
 
 `disconnectWalletStore()` resets to these same values — so the user is never truly logged out in skeleton mode.
@@ -76,14 +78,14 @@ This is the **"slice" pattern** — frontend-SafeTrust is the design/UX source o
 
 ## Dependency rules
 
-| Package | Allowed | Notes |
-|---|---|---|
-| `lucide-react` | ✅ | Icons — use this, not `react-icons` |
-| `sonner` | ✅ | Toast notifications |
-| `zustand` | ✅ | Auth store |
-| `date-fns` | ✅ | Date formatting in messages |
-| `firebase` | ✅ | Client SDK only (login/register forms) |
-| `@apollo/client` | ❌ | dApp only |
-| `react-icons` | ❌ | Use `lucide-react` |
-| `@trustless-work/escrow` | ❌ | dApp only |
-| `@stellar/freighter-api` | ❌ | dApp only |
+| Package                  | Allowed | Notes                                  |
+| ------------------------ | ------- | -------------------------------------- |
+| `lucide-react`           | ✅      | Icons — use this, not `react-icons`    |
+| `sonner`                 | ✅      | Toast notifications                    |
+| `zustand`                | ✅      | Auth store                             |
+| `date-fns`               | ✅      | Date formatting in messages            |
+| `firebase`               | ✅      | Client SDK only (login/register forms) |
+| `@apollo/client`         | ❌      | dApp only                              |
+| `react-icons`            | ❌      | Use `lucide-react`                     |
+| `@trustless-work/escrow` | ❌      | dApp only                              |
+| `@stellar/freighter-api` | ❌      | dApp only                              |

@@ -64,7 +64,7 @@ export function NewApartmentForm({ initialData, onSubmit, title = "New apartment
   const [street, setStreet] = useState(initialData?.location || "");
   const [neighborhood, setNeighborhood] = useState("");
   const [city, setCity] = useState("San José");
-  const [country, setCountry] = useState("Costa Rica");
+  const [country] = useState("Costa Rica");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
   const [bedrooms, setBedrooms] = useState(initialData?.rooms || "2");
@@ -159,6 +159,7 @@ export function NewApartmentForm({ initialData, onSubmit, title = "New apartment
     };
 
     // TODO: wire to Hasura mutation → INSERT INTO public.apartments using payload
+    void payload;
 
     try {
       if (onSubmit) {

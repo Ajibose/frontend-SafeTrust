@@ -332,7 +332,13 @@ export const WalletSelectionModal: React.FC<WalletSelectionModalProps> = ({
                   </Card>
 
                   <div className="flex space-x-3">
-                    <Button onClick={refresh} className="flex-1">
+                    <Button
+                      onClick={async () => {
+                        await refresh();
+                        setSelectedItem(null);
+                      }}
+                      className="flex-1"
+                    >
                       <RefreshCw className="h-4 w-4 mr-2" />
                       I&apos;ve switched networks
                     </Button>

@@ -7,10 +7,12 @@ import { useRouter } from "next/navigation";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { FirebaseError } from "firebase/app";
 import { auth } from "@/lib/firebase";
-import { useGlobalAuthenticationStore } from "@/core/store/data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
+import { setSessionCookie } from "@/lib/auth/session";
 import {
   Select,
   SelectContent,
@@ -19,7 +21,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Illustration from "@/components/auth/ui/Illustration";
-import Cookies from "js-cookie";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { toast } from "sonner";
 
@@ -52,7 +53,10 @@ export default function RegisterPage() {
   const [phone, setPhone] = useState("");
   const [location, setLocation] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const isAnyAuthLoading = isLoading || isGoogleLoading;
 
   const clearError = () => setError("");
 
@@ -101,13 +105,7 @@ export default function RegisterPage() {
       }
 
       // Step 3 — set cookie and store token
-      Cookies.set("firebase-token", token, {
-        expires: 7,
-        secure: true,
-        sameSite: "strict",
-      });
-
-      useGlobalAuthenticationStore.getState().setToken(token);
+      setSessionCookie(token);
 
       toast.success("Account created successfully!", {
         description: "Please sign in with your new credentials.",
@@ -153,6 +151,23 @@ export default function RegisterPage() {
             <ThemeToggle />
           </div>
 
+          <GoogleSignInButton
+            redirectTo="/dashboard/escrow-dashboard"
+            label="Sign up with Google"
+            disabled={isAnyAuthLoading}
+            onLoadingChange={setIsGoogleLoading}
+          />
+
+          <div className="relative my-4">
+            <div className="absolute inset-0 flex items-center">
+              <Separator />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                or
+              </span>
+            </div>
+          </div>
           <form
             className="space-y-5 overflow-visible"
             onSubmit={handleRegister}
@@ -278,7 +293,11 @@ export default function RegisterPage() {
               />
             </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={isAnyAuthLoading}
+            >
               {isLoading ? "Creating account..." : "Sign Up"}
             </Button>
 

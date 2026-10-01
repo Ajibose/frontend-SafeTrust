@@ -10,12 +10,15 @@ export function useWalletOptions(enabled: boolean) {
   const [options, setOptions] = useState<WalletWithReadiness[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const seq = useRef(0);
   const refresh = useCallback(async () => {
+    const id = ++seq.current;
     setLoading(true);
     try {
-      setOptions(await listWalletsWithReadiness());
+      const result = await listWalletsWithReadiness();
+      if (id === seq.current) setOptions(result);
     } finally {
-      setLoading(false);
+      if (id === seq.current) setLoading(false);
     }
   }, []);
 

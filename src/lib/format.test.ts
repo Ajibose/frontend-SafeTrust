@@ -23,6 +23,11 @@ describe("Money formatters", () => {
       expect(formatAmount(4058.5)).toBe("$4,058.50");
       expect(formatAmount(4058.99)).toBe("$4,058.99");
     });
+
+    it("formats escrow and warranty deposit amounts with two decimal places", () => {
+      const warrantyDeposit = 2400;
+      expect(formatAmount(warrantyDeposit)).toBe("$2,400.00");
+    });
   });
 
   describe("formatListingPrice compatibility", () => {

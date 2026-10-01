@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MOCK_APARTMENTS } from "@/lib/mockData/apartments";
-import { formatPrice } from "@/lib/format";
+import { formatAmount } from "@/lib/format";
 
 export default function EscrowCreatePage({
   params,
@@ -21,8 +21,8 @@ export default function EscrowCreatePage({
     <div className="min-h-screen flex items-center justify-center bg-background p-6">
       <div className="max-w-md w-full rounded-xl border border-border bg-card p-8 text-center space-y-6 shadow-sm">
         <div className="flex justify-center">
-          <div className="h-16 w-16 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
-            <Lock className="h-8 w-8 text-orange-500" />
+          <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
+            <Lock className="h-8 w-8 text-primary" />
           </div>
         </div>
 
@@ -45,7 +45,7 @@ export default function EscrowCreatePage({
           <div className="flex justify-between">
             <span className="text-muted-foreground">Warranty deposit</span>
             <span className="font-medium text-foreground">
-              {formatPrice(apartment?.warranty_deposit ?? 2400)}
+              {formatAmount(apartment?.warranty_deposit ?? 2400)}
             </span>
           </div>
           <div className="flex justify-between">
@@ -70,7 +70,7 @@ export default function EscrowCreatePage({
             ← Back to browse
           </Button>
           <Button
-            className="flex-1 bg-orange-500 hover:bg-orange-600 text-white"
+            className="flex-1"
             onClick={() => router.push("/dashboard")}
           >
             Go to Dashboard →

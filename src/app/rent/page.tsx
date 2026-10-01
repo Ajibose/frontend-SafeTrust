@@ -1,6 +1,6 @@
 "use client";
 
-import type { HotelListing } from "@/@types/hotel";
+import type { _HotelListing } from "@/@types/hotel";
 import {
   ApartmentGrid,
   BedroomTabs,

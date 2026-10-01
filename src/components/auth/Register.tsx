@@ -163,12 +163,11 @@ export default function RegisterPage() {
               <Separator />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white dark:bg-[#0a0a0a] px-2 text-muted-foreground dark:text-gray-400">
+              <span className="bg-background px-2 text-muted-foreground">
                 or
               </span>
             </div>
           </div>
-
           <form
             className="space-y-5 overflow-visible"
             onSubmit={handleRegister}
@@ -296,20 +295,20 @@ export default function RegisterPage() {
 
             <Button
               type="submit"
-              className="w-full bg-[#2857B8] hover:bg-[#2857B8]/90"
+              className="w-full"
               disabled={isAnyAuthLoading}
             >
               {isLoading ? "Creating account..." : "Sign Up"}
             </Button>
 
             {error && (
-              <p className="text-center text-sm text-red-600">{error}</p>
+              <p className="text-center text-sm text-destructive">{error}</p>
             )}
           </form>
 
           <div className="text-center text-sm">
             Already have an account?{" "}
-            <Link href="/login" className="text-[#2857B8] hover:underline">
+            <Link href="/login" className="text-primary hover:underline">
               Sign in
             </Link>
           </div>

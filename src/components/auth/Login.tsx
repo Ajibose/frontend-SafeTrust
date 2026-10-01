@@ -166,7 +166,7 @@ export default function LoginPage() {
               </div>
               <Link
                 href="/forgot-password"
-                className="text-sm text-[#2857B8] hover:underline"
+                className="text-sm text-primary hover:underline"
               >
                 Forgot your password?
               </Link>
@@ -174,14 +174,14 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              className="w-full bg-[#2857B8] hover:bg-[#2857B8]/90"
+              className="w-full"
               disabled={isAnyAuthLoading}
             >
               {isLoading ? "Signing in..." : "Login"}
             </Button>
 
             {error && (
-              <p className="text-center text-sm text-red-600">{error}</p>
+              <p className="text-center text-sm text-destructive">{error}</p>
             )}
           </form>
 
@@ -190,7 +190,7 @@ export default function LoginPage() {
               <Separator />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white dark:bg-[#0a0a0a] px-2 text-muted-foreground dark:text-gray-400">
+              <span className="bg-background px-2 text-muted-foreground">
                 or
               </span>
             </div>
@@ -217,7 +217,7 @@ export default function LoginPage() {
 
           <div className="text-center text-sm">
             Don&apos;t have an account?{" "}
-            <Link href="/register" className="text-[#2857B8] hover:underline">
+            <Link href="/register" className="text-primary hover:underline">
               Register here
             </Link>
           </div>

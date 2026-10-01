@@ -10,46 +10,59 @@ jest.mock("next/navigation", () => ({
 
 const mockPush = jest.fn();
 
-describe("ApartmentCard – Message host", () => {
+describe("ApartmentCard – Interactions and Accessibility", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
   });
 
-  it("renders Book and Message host for a mapped apartment", () => {
+  it("asserts no button-in-button, anchor-in-button, or button-in-anchor nesting", () => {
+    const { container } = render(<ApartmentCard apartment={STUB_HOTELS[0]} />);
+
+    expect(
+      container.querySelector("button button, a button, button a"),
+    ).toBeNull();
+  });
+
+  it("renders Book and Message host as valid links/buttons with correct destinations", () => {
     render(<ApartmentCard apartment={STUB_HOTELS[0]} />);
 
-    expect(screen.getByRole("button", { name: /Book/i })).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /Message host/i }),
-    ).toBeInTheDocument();
+    const bookLink = screen.getByRole("link", { name: /Book/i });
+    expect(bookLink).toBeInTheDocument();
+    expect(bookLink).toHaveAttribute("href", `/rent/${STUB_HOTELS[0].id}/escrow/create`);
+
+    const messageLink = screen.getByRole("link", { name: /Message host/i });
+    expect(messageLink).toBeInTheDocument();
+    expect(messageLink).toHaveAttribute("href", "/dashboard/messages/conv-4");
   });
 
-  it("navigates to the matching conversation thread when Message host is clicked", () => {
+  it("renders primary title as a link stretching over the card via after pseudo-element", () => {
     render(<ApartmentCard apartment={STUB_HOTELS[0]} />);
 
-    fireEvent.click(screen.getByRole("button", { name: /Message host/i }));
-
-    expect(mockPush).toHaveBeenCalledWith("/dashboard/messages/conv-4");
+    const titleLink = screen.getByRole("link", { name: STUB_HOTELS[0].name });
+    expect(titleLink).toBeInTheDocument();
+    expect(titleLink).toHaveAttribute("href", `/rent/${STUB_HOTELS[0].id}`);
+    expect(titleLink.className).toContain("after:absolute");
+    expect(titleLink.className).toContain("after:inset-0");
   });
 
-  it("does not trigger the card onClick when Message host is clicked", () => {
-    const onClick = jest.fn();
-    render(<ApartmentCard apartment={STUB_HOTELS[0]} onClick={onClick} />);
+  it("supports favorite toggle button with aria-label and aria-pressed when provided", () => {
+    const onToggleFavorite = jest.fn();
+    render(
+      <ApartmentCard
+        apartment={STUB_HOTELS[0]}
+        isFavorite={false}
+        onToggleFavorite={onToggleFavorite}
+      />,
+    );
 
-    fireEvent.click(screen.getByRole("button", { name: /Message host/i }));
+    const favButton = screen.getByRole("button", {
+      name: new RegExp(`Save ${STUB_HOTELS[0].name} to favorites`, "i"),
+    });
+    expect(favButton).toBeInTheDocument();
+    expect(favButton).toHaveAttribute("aria-pressed", "false");
 
-    expect(onClick).not.toHaveBeenCalled();
-    expect(mockPush).toHaveBeenCalledWith("/dashboard/messages/conv-4");
-  });
-
-  it("hides the Message host button when no conversation exists for the apartment", () => {
-    const unmapped = { ...STUB_HOTELS[0], name: "Nonexistent Villa" };
-    render(<ApartmentCard apartment={unmapped} />);
-
-    expect(screen.getByRole("button", { name: /Book/i })).toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: /Message host/i }),
-    ).not.toBeInTheDocument();
+    fireEvent.click(favButton);
+    expect(onToggleFavorite).toHaveBeenCalledWith(STUB_HOTELS[0].id);
   });
 });

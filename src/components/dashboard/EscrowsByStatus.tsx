@@ -7,11 +7,61 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { EscrowData } from "@/types/dashboard";
+import { useInView } from "@/hooks/useInView";
 import { formatAmount } from "@/lib/format";
+import type { LucideIcon } from "lucide-react";
 
 interface EscrowsByStatusProps {
   escrows: EscrowData[];
   userRole: "guest" | "hotel" | "admin";
+}
+
+interface EscrowStatCardProps {
+  title: string;
+  value: string | number;
+  description: string;
+  icon: LucideIcon;
+  color: string;
+}
+
+function EscrowStatCard({
+  title,
+  value,
+  description,
+  icon: Icon,
+  color,
+}: EscrowStatCardProps) {
+  const { ref, isInView } = useInView<HTMLDivElement>();
+
+  return (
+    <div ref={ref}>
+      {isInView ? (
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium dark:text-white">
+              {title}
+            </CardTitle>
+            <Icon className={`h-4 w-4 ${color}`} />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold dark:text-white">{value}</div>
+            <p className="text-xs text-muted-foreground">{description}</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card role="status" aria-label={`Loading ${title}`} aria-busy="true">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <div className="h-4 w-28 animate-pulse rounded bg-muted" />
+            <div className="h-4 w-4 animate-pulse rounded bg-muted" />
+          </CardHeader>
+          <CardContent>
+            <div className="mb-2 h-8 w-20 animate-pulse rounded bg-muted" />
+            <div className="h-3 w-36 animate-pulse rounded bg-muted" />
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
 }
 
 export function EscrowsByStatus({ escrows, userRole }: EscrowsByStatusProps) {
@@ -98,41 +148,24 @@ export function EscrowsByStatus({ escrows, userRole }: EscrowsByStatusProps) {
 
   return (
     <div className="space-y-4">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm font-medium dark:text-white">
-            Total Escrow Value
-          </CardTitle>
-          <DollarSign className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold dark:text-white">
-            {formatAmount(getTotalAmount())}
-          </div>
-          <p className="text-xs text-muted-foreground">
-            {stats.total} total {stats.total === 1 ? "escrow" : "escrows"}
-          </p>
-        </CardContent>
-      </Card>
+      <EscrowStatCard
+        title="Total Escrow Value"
+        value={formatAmount(getTotalAmount())}
+        description={`${stats.total} total ${stats.total === 1 ? "escrow" : "escrows"}`}
+        icon={DollarSign}
+        color="text-muted-foreground"
+      />
 
       <div className="grid gap-4">
-        {getStatusStats().map((stat, i) => (
-          <Card key={i}>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium dark:text-white">
-                {stat.title}
-              </CardTitle>
-              <stat.icon className={`h-4 w-4 ${stat.color}`} />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold dark:text-white">
-                {stat.value}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                {stat.description}
-              </p>
-            </CardContent>
-          </Card>
+        {getStatusStats().map((stat) => (
+          <EscrowStatCard
+            key={stat.title}
+            title={stat.title}
+            value={stat.value}
+            description={stat.description}
+            icon={stat.icon}
+            color={stat.color}
+          />
         ))}
       </div>
     </div>

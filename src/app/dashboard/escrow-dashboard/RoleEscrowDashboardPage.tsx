@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
-import type { EscrowData, NotificationData } from "@/types/dashboard";
+import type { EscrowData, NotificationData } from "@/types";
 import {
   fetchMockEscrows,
   generateMockNotifications,

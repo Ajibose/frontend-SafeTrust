@@ -45,9 +45,10 @@ describe("GuestSuggestionsPage – Message host", () => {
   it("updates the target conversation when another apartment is selected", () => {
     render(<GuestSuggestionsPage />);
 
-    fireEvent.click(
-      screen.getByRole("button", { name: /Los yoses/i }),
-    );
+    const losYosesButtons = screen.getAllByRole("button", {
+      name: /Los yoses/i,
+    });
+    fireEvent.click(losYosesButtons[0]);
     fireEvent.click(screen.getByRole("button", { name: /Message host/i }));
 
     expect(mockPush).toHaveBeenCalledWith("/dashboard/messages/conv-5");

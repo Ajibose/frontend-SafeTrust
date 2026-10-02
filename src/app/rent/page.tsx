@@ -269,10 +269,7 @@ export default function ApartmentListingPage() {
           </div>
 
           <div className="mt-8">
-            <BedroomTabs
-              selectedBedrooms={selectedBedrooms}
-              onSelectBedroom={setSelectedBedrooms}
-            />
+            <BedroomTabs selected={selectedBedrooms} onSelect={setSelectedBedrooms} />
           </div>
 
           <div className="mt-8">

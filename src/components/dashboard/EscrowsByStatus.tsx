@@ -6,7 +6,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { EscrowData } from "./RoleEscrowDashboard";
+import type { EscrowData } from "@/types/dashboard";
 import { formatAmount } from "@/lib/format";
 
 interface EscrowsByStatusProps {

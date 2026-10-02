@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { EscrowProcessStepper } from "./EscrowProcessStepper";
 import { InvoiceMetadata } from "./InvoiceMetadata";
 import { PaymentBatchTable } from "./PaymentBatchTable";
-import type { StubEscrowDetail } from "./types";
+import type { StubEscrowDetail } from "@/types/escrow";
 
 export function EscrowPaidView({ data }: { data: StubEscrowDetail }) {
   return (

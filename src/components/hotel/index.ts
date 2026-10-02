@@ -11,4 +11,10 @@ export { default as AmenityIcons } from './AmenityIcons';
 export { CheckInApproval } from './CheckInApproval';
 export { CheckOutProcess } from './CheckOutProcess';
 export { HotelMilestoneActions } from './HotelMilestoneActions';
-export * from './types';
+export type * from '@/types/hotel-booking';
+export type {
+  ApartmentAmenitySummary,
+  ApartmentListing,
+  ApartmentOwner,
+  HotelSearchResult,
+} from '@/types/hotel';

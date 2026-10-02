@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { CheckInApproval } from './CheckInApproval';
 import { CheckOutProcess } from './CheckOutProcess';
-import { Booking, EscrowMetadata } from './types';
-import { EscrowData } from '@/components/dashboard/RoleEscrowDashboard';
+import type { Booking, HotelMilestoneMetadata } from '@/types/hotel-booking';
+import type { EscrowData } from '@/types/dashboard';
 
 interface HotelMilestoneActionsProps {
   escrow: EscrowData;
@@ -31,7 +31,7 @@ export function HotelMilestoneActions({ escrow, userRole, onComplete }: HotelMil
            escrow.status === 'cancelled' ? 'cancelled' : 'pending',
   };
 
-  const escrowMetadata: EscrowMetadata = {
+  const escrowMetadata: HotelMilestoneMetadata = {
     bookingId: booking.id,
     hotelName: escrow.metadata?.hotelName || 'Hotel',
     checkInDate: booking.checkInDate,

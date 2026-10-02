@@ -5,7 +5,7 @@ export interface Booking {
   checkInDate: string;
   checkOutDate: string;
   roomNumber?: string;
-  status: 'pending' | 'checked_in' | 'checked_out' | 'completed' | 'cancelled';
+  status: "pending" | "checked_in" | "checked_out" | "completed" | "cancelled";
 }
 
 export interface CheckInData {
@@ -19,12 +19,12 @@ export interface CheckInData {
 export interface CheckOutData {
   checkOutTime: string;
   staffMember?: string;
-  roomCondition?: 'excellent' | 'good' | 'fair' | 'poor';
+  roomCondition?: "excellent" | "good" | "fair" | "poor";
 }
 
 export interface DamageAssessment {
   hasDamage: boolean;
-  condition: 'excellent' | 'good' | 'fair' | 'poor';
+  condition: "excellent" | "good" | "fair" | "poor";
   description?: string;
   damagePhotos?: string[];
 }
@@ -44,7 +44,7 @@ export interface MilestoneStatusData {
   timestamp: string;
 }
 
-export interface EscrowMetadata {
+export interface HotelMilestoneMetadata {
   bookingId: string;
   hotelName: string;
   checkInDate: string;
@@ -64,7 +64,7 @@ export interface CheckInApprovalProps {
   escrow: {
     contractId: string;
     milestoneId?: string;
-    metadata?: EscrowMetadata;
+    metadata?: HotelMilestoneMetadata;
   };
   onSuccess?: (data: MilestoneApprovalData) => void;
   onError?: (error: Error) => void;
@@ -75,7 +75,7 @@ export interface CheckOutProcessProps {
   escrow: {
     contractId: string;
     milestoneId?: string;
-    metadata?: EscrowMetadata;
+    metadata?: HotelMilestoneMetadata;
   };
   onSuccess?: (data: MilestoneStatusData) => void;
   onError?: (error: Error) => void;

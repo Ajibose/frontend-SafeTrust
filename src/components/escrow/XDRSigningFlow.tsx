@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useWallet } from "@/components/auth/wallet/hooks/wallet.hook";
 import { TransactionPreview } from "./TransactionPreview";
-import { XDRSigningFlowProps, TransactionResult } from "./types";
+import type { XDRSigningFlowProps, TransactionResult } from "@/types/escrow";
 import { Loader2, AlertCircle, CheckCircle } from "lucide-react";
 import { WalletNetwork } from "@creit.tech/stellar-wallets-kit";
 

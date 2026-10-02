@@ -1,20 +1,20 @@
 "use client";
 
-import type { HotelListing } from "@/@types/hotel";
+import type { ApartmentListing } from "@/types/hotel";
 import {
   ApartmentGrid,
   BedroomTabs,
   FilterSidebar,
   HotelHeader,
 } from "@/components/hotel";
-import { STUB_HOTELS } from "@/lib/mockData/hotels";
+import { APARTMENT_LISTINGS } from "@/lib/mockData/apartmentListings";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { BsSortDownAlt } from "react-icons/bs";
 
 type SortOption = "relevance" | "price-low" | "price-high";
 
-export default function HotelListingPage() {
+export default function ApartmentListingPage() {
   const router = useRouter();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([
     "Family",
@@ -30,7 +30,7 @@ export default function HotelListingPage() {
   const [maxPrice, setMaxPrice] = useState(206000);
 
   const filteredApartments = useMemo(() => {
-    const apartments = STUB_HOTELS.filter((apartment) => {
+    const apartments = APARTMENT_LISTINGS.filter((apartment) => {
       const matchesCategory =
         selectedCategories.length === 0 ||
         selectedCategories.includes(apartment.category);
@@ -73,7 +73,7 @@ export default function HotelListingPage() {
       ? values.filter((item) => item !== value)
       : [...values, value];
 
-  const handleApartmentClick = (apartment: HotelListing) => {
+  const handleApartmentClick = (apartment: ApartmentListing) => {
     router.push(`/rent/${apartment.id}`);
   };
 

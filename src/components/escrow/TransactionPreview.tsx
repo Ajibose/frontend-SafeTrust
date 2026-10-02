@@ -3,7 +3,7 @@
 import React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TransactionPreviewProps } from "./types";
+import type { TransactionPreviewProps } from "@/types/escrow";
 
 export const TransactionPreview: React.FC<TransactionPreviewProps> = ({ action }) => {
   const getActionLabel = (type: string) => {

@@ -2,14 +2,11 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { RoleEscrowDashboard } from "@/components/dashboard/RoleEscrowDashboard";
-import type {
-  EscrowData,
-  NotificationData,
-} from "@/components/dashboard/RoleEscrowDashboard";
+import type { EscrowData, NotificationData } from "@/types/dashboard";
 import {
   fetchMockEscrows,
   generateMockNotifications,
-} from "@/lib/mockData";
+} from "@/lib/mockData/dashboard";
 import { getUserRole } from "@/utils/role-utils";
 
 export function RoleEscrowDashboardPage() {

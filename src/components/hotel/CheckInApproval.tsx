@@ -5,7 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ApproveMilestone } from '@/components/tw-blocks/escrows/multi-release/approve-milestone/ApproveMilestone';
-import { CheckInApprovalProps, CheckInData, MilestoneApprovalData } from './types';
+import type {
+  CheckInApprovalProps,
+  CheckInData,
+  MilestoneApprovalData,
+} from '@/types/hotel-booking';
 import { useGlobalAuthenticationStore } from '@/core/store/data';
 import { useWalletContext } from '@/components/tw-blocks/wallet-kit/WalletProvider';
 // import { updateBookingStatus, sendGuestNotification } from '@/services/hotel.service';

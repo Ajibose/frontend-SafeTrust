@@ -1,6 +1,6 @@
 'use client';
 
-import type { HotelListing } from '@/@types/hotel';
+import type { ApartmentListing } from '@/types/hotel';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { AiOutlineHeart } from 'react-icons/ai';
@@ -9,7 +9,7 @@ import AmenityIcons from './AmenityIcons';
 import { formatListingPrice } from './formatListingPrice';
 
 interface ApartmentCardProps {
-  apartment: HotelListing;
+  apartment: ApartmentListing;
   onClick?: () => void;
 }
 

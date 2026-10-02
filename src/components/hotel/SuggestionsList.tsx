@@ -1,11 +1,11 @@
 'use client';
 
-import type { HotelListing } from '@/@types/hotel';
+import type { ApartmentListing } from '@/types/hotel';
 import { useEffect, useState } from 'react';
 import SuggestionCard from './SuggestionCard';
 
 interface SuggestionsListProps {
-  apartments: HotelListing[];
+  apartments: ApartmentListing[];
   onSelect?: (id: string) => void;
 }
 

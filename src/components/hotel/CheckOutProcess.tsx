@@ -13,7 +13,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ChangeMilestoneStatus } from '@/components/tw-blocks/escrows/multi-release/change-milestone-status/ChangeMilestoneStatus';
-import { CheckOutProcessProps, CheckOutData, DamageAssessment, MilestoneStatusData } from './types';
+import type {
+  CheckOutProcessProps,
+  CheckOutData,
+  DamageAssessment,
+  MilestoneStatusData,
+} from '@/types/hotel-booking';
 import { useGlobalAuthenticationStore } from '@/core/store/data';
 import { useWalletContext } from '@/components/tw-blocks/wallet-kit/WalletProvider';
 // import { updateBookingStatus, sendGuestNotification, initiateDispute } from '@/services/hotel.service';

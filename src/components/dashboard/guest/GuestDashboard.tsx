@@ -1,10 +1,10 @@
 "use client";
 
-import type { HotelListing } from "@/@types/hotel";
+import type { ApartmentListing } from "@/types/hotel";
 import ApartmentGrid from "@/components/hotel/ApartmentGrid";
 import BedroomTabs from "@/components/hotel/BedroomTabs";
 import FilterSidebar from "@/components/hotel/FilterSidebar";
-import { STUB_HOTELS } from "@/lib/mockData/hotels";
+import { APARTMENT_LISTINGS } from "@/lib/mockData/apartmentListings";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { BsSortDownAlt } from "react-icons/bs";
@@ -15,7 +15,7 @@ export default function GuestDashboard() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
   const [selectedBedrooms, setSelectedBedrooms] = useState<string>("all");
-  const PRICES = STUB_HOTELS.map((a) => a.price);
+  const PRICES = APARTMENT_LISTINGS.map((a) => a.price);
   const [minPrice, setMinPrice] = useState<number>(Math.min(...PRICES));
   const [maxPrice, setMaxPrice] = useState<number>(Math.max(...PRICES));
 
@@ -35,12 +35,12 @@ export default function GuestDashboard() {
     );
   };
 
-  const handleApartmentClick = (apartment: HotelListing) => {
+  const handleApartmentClick = (apartment: ApartmentListing) => {
     router.push(`/rent/${apartment.id}`);
   };
 
   // Derived filtered state
-  const filteredApartments = STUB_HOTELS.filter((apt) => {
+  const filteredApartments = APARTMENT_LISTINGS.filter((apt) => {
     // Category filter
     if (
       selectedCategories.length > 0 &&

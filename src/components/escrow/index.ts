@@ -25,4 +25,4 @@ export type {
   TransactionResult,
   XDRSigningFlowProps,
   TransactionPreviewProps
-} from "./types";
+} from "@/types/escrow";

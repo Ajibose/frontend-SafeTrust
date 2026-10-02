@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
 import { useWallet } from "@/components/auth/wallet/hooks/wallet.hook";
 import { useBookingEscrow } from "@/hooks/useBookingEscrow";
 import {
@@ -27,6 +26,7 @@ import { Separator } from "@/components/ui/separator";
 // Trustless Work blocks
 import { InitializeEscrowForm as SingleReleaseForm } from "@/components/tw-blocks/escrows/single-release/initialize-escrow/form/InitializeEscrow";
 import { InitializeEscrowForm as MultiReleaseForm } from "@/components/tw-blocks/escrows/multi-release/initialize-escrow/form/InitializeEscrow";
+import { useEscrowContext } from "@/components/tw-blocks/providers/EscrowProvider";
 
 // Icons
 import {
@@ -319,14 +319,36 @@ export function EscrowCreationForm({
   onCancel,
   className = "",
 }: EscrowCreationFormProps) {
-  const router = useRouter();
   const { address: walletAddress, connectWallet } = useWallet();
   const [showForm, setShowForm] = useState(false);
+  const { selectedEscrow, clearEscrow } = useEscrowContext();
+  const isMountedRef = React.useRef(false);
+  const lastCreatedIdRef = React.useRef<string | null>(null);
+
+  React.useEffect(() => {
+    clearEscrow();
+    isMountedRef.current = true;
+  }, [clearEscrow]);
+
+  React.useEffect(() => {
+    if (
+      showForm &&
+      isMountedRef.current &&
+      selectedEscrow?.contractId &&
+      selectedEscrow.contractId !== lastCreatedIdRef.current &&
+      onEscrowCreated
+    ) {
+      lastCreatedIdRef.current = selectedEscrow.contractId;
+      onEscrowCreated({
+        contractId: selectedEscrow.contractId,
+        status: "created",
+        unsignedXDR: (selectedEscrow as { unsignedXDR?: string }).unsignedXDR,
+      });
+    }
+  }, [selectedEscrow, showForm, onEscrowCreated]);
 
   const {
-    escrowFormData,
     milestones,
-    totalAmount,
     isValid,
     validationErrors,
   } = useBookingEscrow({
@@ -337,18 +359,6 @@ export function EscrowCreationForm({
 
   // Determine if wallet is connected
   const isWalletConnected = useMemo(() => Boolean(walletAddress), [walletAddress]);
-
-  // Handle escrow creation success
-  const handleSuccess = (data: unknown) => {
-    console.log("✅ Escrow created successfully:", data);
-    onEscrowCreated(data as EscrowResponse);
-  };
-
-  // Handle escrow creation error
-  const handleError = (error: unknown) => {
-    console.error("❌ Escrow creation failed:", error);
-    // Error handling is done by the form component
-  };
 
   // Wallet not connected state
   if (!isWalletConnected) {

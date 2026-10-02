@@ -1,3 +1,5 @@
+import type { GeoPoint } from "@/types/destination";
+
 export interface ApartmentAmenitySummary {
   bedrooms: number;
   bathrooms: number;
@@ -13,6 +15,7 @@ export interface ApartmentListing extends ApartmentAmenitySummary {
   id: string;
   name: string;
   address: string;
+  coordinates: GeoPoint;
   price: number;
   promoted: boolean;
   images: string[];

@@ -1,90 +1,97 @@
-import { DollarSign, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { EscrowData } from './RoleEscrowDashboard';
+import {
+  DollarSign,
+  Clock,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EscrowData } from "./RoleEscrowDashboard";
+import { formatAmount } from "@/lib/format";
 
 interface EscrowsByStatusProps {
   escrows: EscrowData[];
-  userRole: 'guest' | 'hotel' | 'admin';
+  userRole: "guest" | "hotel" | "admin";
 }
 
 export function EscrowsByStatus({ escrows, userRole }: EscrowsByStatusProps) {
   const stats = {
     total: escrows.length,
-    pending: escrows.filter(e => e.status === 'pending').length,
-    funded: escrows.filter(e => e.status === 'funded').length,
-    completed: escrows.filter(e => e.status === 'completed').length,
-    cancelled: escrows.filter(e => e.status === 'cancelled').length,
+    pending: escrows.filter((e) => e.status === "pending").length,
+    funded: escrows.filter((e) => e.status === "funded").length,
+    completed: escrows.filter((e) => e.status === "completed").length,
+    cancelled: escrows.filter((e) => e.status === "cancelled").length,
   };
 
   const getTotalAmount = () => {
     return escrows.reduce((sum, escrow) => {
       // Skip cancelled escrows from total
-      if (escrow.status === 'cancelled') return sum;
+      if (escrow.status === "cancelled") return sum;
       return sum + escrow.amount;
     }, 0);
   };
 
   const getStatusStats = () => {
-    if (userRole === 'guest') {
+    if (userRole === "guest") {
       return [
-        { 
-          title: 'Active Bookings',
+        {
+          title: "Active Bookings",
           value: stats.pending + stats.funded,
           icon: Clock,
-          color: 'text-blue-500',
-          description: 'Your active reservations',
+          color: "text-blue-500",
+          description: "Your active reservations",
         },
-        { 
-          title: 'Completed Stays',
+        {
+          title: "Completed Stays",
           value: stats.completed,
           icon: CheckCircle,
-          color: 'text-green-500',
-          description: 'Successfully completed',
+          color: "text-green-500",
+          description: "Successfully completed",
         },
       ];
     }
 
-    if (userRole === 'hotel') {
+    if (userRole === "hotel") {
       return [
-        { 
-          title: 'Pending Check-ins',
+        {
+          title: "Pending Check-ins",
           value: stats.pending,
           icon: Clock,
-          color: 'text-yellow-500',
-          description: 'Awaiting guest confirmation',
+          color: "text-yellow-500",
+          description: "Awaiting guest confirmation",
         },
-        { 
-          title: 'Active Stays',
+        {
+          title: "Active Stays",
           value: stats.funded,
           icon: AlertCircle,
-          color: 'text-blue-500',
-          description: 'Guests currently staying',
+          color: "text-blue-500",
+          description: "Guests currently staying",
         },
       ];
     }
 
     // Admin view
     return [
-      { 
-        title: 'Active Escrows',
+      {
+        title: "Active Escrows",
         value: stats.pending + stats.funded,
         icon: AlertCircle,
-        color: 'text-blue-500',
-        description: 'Active in the system',
+        color: "text-blue-500",
+        description: "Active in the system",
       },
-      { 
-        title: 'Completed',
+      {
+        title: "Completed",
         value: stats.completed,
         icon: CheckCircle,
-        color: 'text-green-500',
-        description: 'Successfully completed',
+        color: "text-green-500",
+        description: "Successfully completed",
       },
-      { 
-        title: 'Cancelled',
+      {
+        title: "Cancelled",
         value: stats.cancelled,
         icon: XCircle,
-        color: 'text-red-500',
-        description: 'Cancelled or refunded',
+        color: "text-red-500",
+        description: "Cancelled or refunded",
       },
     ];
   };
@@ -100,10 +107,10 @@ export function EscrowsByStatus({ escrows, userRole }: EscrowsByStatusProps) {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold dark:text-white">
-            ${getTotalAmount().toLocaleString()}
+            {formatAmount(getTotalAmount())}
           </div>
           <p className="text-xs text-muted-foreground">
-            {stats.total} total {stats.total === 1 ? 'escrow' : 'escrows'}
+            {stats.total} total {stats.total === 1 ? "escrow" : "escrows"}
           </p>
         </CardContent>
       </Card>
@@ -118,8 +125,12 @@ export function EscrowsByStatus({ escrows, userRole }: EscrowsByStatusProps) {
               <stat.icon className={`h-4 w-4 ${stat.color}`} />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold dark:text-white">{stat.value}</div>
-              <p className="text-xs text-muted-foreground">{stat.description}</p>
+              <div className="text-2xl font-bold dark:text-white">
+                {stat.value}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {stat.description}
+              </p>
             </CardContent>
           </Card>
         ))}

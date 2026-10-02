@@ -1,7 +1,6 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { EscrowProcessStepper } from "./EscrowProcessStepper";
 import { InvoiceMetadata } from "./InvoiceMetadata";
 import { PaymentBatchTable } from "./PaymentBatchTable";

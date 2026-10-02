@@ -1,10 +1,25 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Bell, Building2, Heart, Home, PlusSquare, Shield, Users } from "lucide-react";
+import {
+  Bell,
+  Building2,
+  Heart,
+  Home,
+  Hotel,
+  LayoutDashboard,
+  MessageSquare,
+  PlusCircle,
+  PlusSquare,
+  Shield,
+  User,
+  Users,
+  Users2,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogoutButton } from "@/components/auth/LogoutButton";
+import { UnreadBadge } from "@/components/messages/UnreadBadge";
 
 interface SideBarProps {
   className?: string;
@@ -22,6 +37,7 @@ export function SideBar({
   variant = "permanent",
 }: SideBarProps) {
   const pathname = usePathname();
+  const user = { uid: "mock-guest-1" };
 
   return (
     <div
@@ -36,7 +52,7 @@ export function SideBar({
         className,
       )}
     >
-      <div className="flex flex-1 flex-col items-start gap-4 py-4 px-2 lg:px-4">
+      <div className="flex flex-1 flex-col items-start gap-4 py-4 px-2 lg:px-4 overflow-y-auto scrollbar-scroball">
         <Link
           href="/dashboard/escrow"
           className={cn(
@@ -65,6 +81,21 @@ export function SideBar({
           </span>
         </Link>
         <Link
+          href="/guest/suggestions"
+          onClick={onClose}
+          className={cn(
+            "flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors duration-200 w-full group relative dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white",
+            pathname === "/guest/suggestions" &&
+              "bg-accent font-medium dark:bg-gray-800 dark:text-white",
+          )}
+        >
+          <LayoutDashboard className="w-6 h-6 shrink-0 dark:text-gray-400" />
+          <span className="md:hidden lg:block">Suggestions view</span>
+          <span className="hidden md:group-hover:block lg:group-hover:hidden absolute left-14 bg-popover text-popover-foreground px-2 py-1 rounded shadow-md text-xs z-50 whitespace-nowrap">
+            Guest view
+          </span>
+        </Link>
+        <Link
           href="/rent"
           onClick={onClose}
           aria-label="Rent"
@@ -80,8 +111,40 @@ export function SideBar({
             Rent
           </span>
         </Link>
+        {/* Hotels list */}
         <Link
-          href="/notifications"
+          href="/dashboard/hotels"
+          onClick={onClose}
+          className={cn(
+            "flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors duration-200 w-full group relative dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white",
+            pathname?.startsWith("/dashboard/hotels") &&
+              "bg-accent font-medium dark:bg-gray-800 dark:text-white",
+          )}
+        >
+          <Hotel className="w-6 h-6 shrink-0 dark:text-gray-400" />
+          <span className="md:hidden lg:block">Hotels</span>
+          <span className="hidden md:group-hover:block lg:group-hover:hidden absolute left-14 bg-popover text-popover-foreground px-2 py-1 rounded shadow-md text-xs z-50 whitespace-nowrap">
+            Hotels
+          </span>
+        </Link>
+        {/* New Hotel */}
+        <Link
+          href="/dashboard/hotels/new"
+          onClick={onClose}
+          className={cn(
+            "flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors duration-200 w-full group relative dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white",
+            pathname === "/dashboard/hotels/new" &&
+              "bg-accent font-medium dark:bg-gray-800 dark:text-white",
+          )}
+        >
+          <PlusCircle className="w-6 h-6 shrink-0 dark:text-gray-400" />
+          <span className="md:hidden lg:block">New Hotel</span>
+          <span className="hidden md:group-hover:block lg:group-hover:hidden absolute left-14 bg-popover text-popover-foreground px-2 py-1 rounded shadow-md text-xs z-50 whitespace-nowrap">
+            New Hotel
+          </span>
+        </Link>
+        <Link
+          href="/dashboard/notifications"
           onClick={onClose}
           className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors duration-200 w-full relative group dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
         >
@@ -98,6 +161,22 @@ export function SideBar({
           </span>
         </Link>
         <Link
+          href="/dashboard/messages"
+          onClick={onClose}
+          className={cn(
+            "flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors duration-200 w-full relative group dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white",
+            pathname?.startsWith("/dashboard/messages") &&
+              "bg-accent font-medium dark:bg-gray-800 dark:text-white",
+          )}
+        >
+          <MessageSquare className="w-6 h-6 shrink-0 dark:text-gray-400" />
+          <span className="md:hidden lg:block">Messages</span>
+          <UnreadBadge userId={user.uid} />
+          <span className="hidden md:group-hover:block lg:group-hover:hidden absolute left-14 bg-popover text-popover-foreground px-2 py-1 rounded shadow-md text-xs z-50 whitespace-nowrap">
+            Messages
+          </span>
+        </Link>
+        <Link
           href="/dashboard/favorites"
           onClick={onClose}
           className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors duration-200 w-full group relative dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
@@ -110,6 +189,21 @@ export function SideBar({
           </span>
         </Link>
         <Link
+          href="/dashboard/profile"
+          onClick={onClose}
+          className={cn(
+            "flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors duration-200 w-full group relative dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white",
+            pathname === "/dashboard/profile" &&
+              "bg-accent font-medium dark:bg-gray-800 dark:text-white",
+          )}
+        >
+          <User className="w-6 h-6 shrink-0 dark:text-gray-400" />
+          <span className="md:hidden lg:block">Profile</span>
+          <span className="hidden md:group-hover:block lg:group-hover:hidden absolute left-14 bg-popover text-popover-foreground px-2 py-1 rounded shadow-md text-xs z-50 whitespace-nowrap">
+            Profile
+          </span>
+        </Link>
+        <Link
           href="/dashboard/users"
           className={cn(
             "flex items-center gap-2 p-2 rounded-lg hover:bg-accent transition-colors duration-200 w-full dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white",
@@ -119,6 +213,55 @@ export function SideBar({
         >
           <Users className="w-6 h-6 dark:text-gray-400" />
           <span>Users</span>
+        </Link>
+        <Link
+          href="/dashboard/apartments"
+          onClick={onClose}
+          className={cn(
+            "flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors duration-200 w-full group relative dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white",
+            pathname?.startsWith("/dashboard/apartments") &&
+              !pathname?.includes("/offers") &&
+              pathname !== "/dashboard/apartments/new" &&
+              "bg-accent font-medium dark:bg-gray-800 dark:text-white",
+          )}
+        >
+          <Home className="w-6 h-6 shrink-0 dark:text-gray-400" />
+          <span className="md:hidden lg:block">My apartments</span>
+          <span className="hidden md:group-hover:block lg:group-hover:hidden absolute left-14 bg-popover text-popover-foreground px-2 py-1 rounded shadow-md text-xs z-50 whitespace-nowrap">
+            My apartments
+          </span>
+        </Link>
+        <Link
+          href="/dashboard/apartments/new"
+          onClick={onClose}
+          className={cn(
+            "flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors duration-200 w-full group relative dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white",
+            pathname === "/dashboard/apartments/new" &&
+              "bg-accent font-medium dark:bg-gray-800 dark:text-white",
+          )}
+        >
+          <PlusSquare className="w-6 h-6 shrink-0 dark:text-gray-400" />
+          <span className="md:hidden lg:block">New Apartment</span>
+          <span className="hidden md:group-hover:block lg:group-hover:hidden absolute left-14 bg-popover text-popover-foreground px-2 py-1 rounded shadow-md text-xs z-50 whitespace-nowrap">
+            New Apartment
+          </span>
+        </Link>
+        <Link
+          href="/dashboard/apartments"
+          onClick={onClose}
+          aria-label="Interested People"
+          className={cn(
+            "flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors duration-200 w-full group relative dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white",
+            pathname?.startsWith("/dashboard/apartments") &&
+              pathname?.includes("/offers") &&
+              "bg-accent font-medium dark:bg-gray-800 dark:text-white",
+          )}
+        >
+          <Users2 className="w-6 h-6 shrink-0 dark:text-gray-400" />
+          <span className="md:hidden lg:block">Interested People</span>
+          <span className="hidden md:group-hover:block lg:group-hover:hidden md:group-focus-within:block lg:group-focus-within:hidden absolute left-14 bg-popover text-popover-foreground px-2 py-1 rounded shadow-md text-xs z-50 whitespace-nowrap">
+            Interested People
+          </span>
         </Link>
       </div>
       <div className="mt-auto w-full px-2 pb-4 pt-4 lg:px-4">

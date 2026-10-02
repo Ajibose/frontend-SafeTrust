@@ -1,9 +1,9 @@
 "use client";
 
 import type { ApartmentListing } from "@/types/hotel";
-import ApartmentGrid from "@/components/hotel/ApartmentGrid";
-import BedroomTabs from "@/components/hotel/BedroomTabs";
-import FilterSidebar from "@/components/hotel/FilterSidebar";
+import ApartmentGrid from "@/components/listings/ApartmentGrid";
+import BedroomTabs from "@/components/listings/BedroomTabs";
+import FilterSidebar from "@/components/listings/FilterSidebar";
 import { APARTMENT_LISTINGS } from "@/lib/mockData/apartmentListings";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -72,7 +72,7 @@ export default function GuestDashboard() {
   });
 
   return (
-    <div className="flex flex-col lg:flex-row w-full max-w-[1400px] mx-auto bg-white rounded-[20px] overflow-hidden border border-[#e8e1da] shadow-sm mt-6">
+    <div className="flex flex-col lg:flex-row w-full max-w-[1400px] mx-auto bg-card rounded-[20px] overflow-hidden border border-border shadow-sm mt-6">
       {/* Sidebar */}
       <FilterSidebar
         selectedCategories={selectedCategories}
@@ -88,20 +88,20 @@ export default function GuestDashboard() {
       {/* Main Content */}
       <main className="flex-1 flex flex-col gap-8 p-6 md:p-10">
         <div>
-          <h1 className="text-[28px]  text-[#1d1d1d] mb-1">
+          <h1 className="text-[28px] text-foreground mb-1">
             Available for rent in{" "}
             <span className="font-bold">Costa Rica, San José</span>
           </h1>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <p className="text-[#8a8a8a] text-sm">
+            <p className="text-muted-foreground text-sm">
               {filteredApartments.length} units available
             </p>
             <div className="flex items-center text-sm font-medium">
-              <span className="text-[#8a8a8a] mr-2 flex items-center gap-1">
+              <span className="text-muted-foreground mr-2 flex items-center gap-1">
                 <BsSortDownAlt className="h-4 w-4" />
                 Sort by:
               </span>
-              <span className="text-[#ff6a00] cursor-pointer flex items-center gap-1">
+              <span className="text-primary cursor-pointer flex items-center gap-1">
                 Relevance
                 <svg
                   width="10"
@@ -112,7 +112,7 @@ export default function GuestDashboard() {
                 >
                   <path
                     d="M1 1L5 5L9 1"
-                    stroke="#FF6A00"
+                    stroke="currentColor"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />

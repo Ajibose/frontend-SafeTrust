@@ -1,74 +1,129 @@
-import { Plus, Hotel, User, Settings, CreditCard, FileText, HelpCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+"use client";
+
+import { Plus, Hotel, User, Settings, CreditCard, FileText, HelpCircle, Zap, Bell, type LucideIcon } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 interface QuickActionsProps {
   userRole: 'guest' | 'hotel' | 'admin';
 }
 
+interface Action {
+  title: string;
+  icon: LucideIcon;
+  route: string;
+  description: string;
+}
+
+interface ActionButtonProps {
+  action: Action;
+  variant?: "outline" | "ghost";
+  onClick: () => void;
+}
+
+function ActionButton({
+  action,
+  variant = "outline",
+  onClick,
+}: ActionButtonProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "w-full flex items-center gap-3 rounded-lg px-4 py-3 text-left",
+        "transition-all duration-150 hover:shadow-sm",
+        variant === "outline"
+          ? "border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
+          : "hover:bg-gray-50 dark:hover:bg-gray-800",
+      )}
+    >
+      <div className="p-1.5 rounded-md bg-primary/10 text-primary dark:bg-primary/20 shrink-0">
+        <action.icon className="h-4 w-4" />
+      </div>
+      <div className="min-w-0">
+        <p className="text-sm font-medium text-gray-900 dark:text-white">
+          {action.title}
+        </p>
+        <p className="text-xs text-muted-foreground truncate">
+          {action.description}
+        </p>
+      </div>
+    </button>
+  );
+}
+
 export function QuickActions({ userRole }: QuickActionsProps) {
   const router = useRouter();
 
-  const guestActions = [
+  const handleRoute = (route: string) => {
+    if (route.startsWith("http")) {
+      window.open(route, "_blank", "noopener,noreferrer");
+    } else {
+      router.push(route);
+    }
+  };
+
+  const guestActions: Action[] = [
     {
       title: 'New Booking',
       icon: Plus,
-      onClick: () => router.push('/book'),
+      route: '/rent',
       description: 'Start a new hotel booking',
     },
     {
       title: 'My Profile',
       icon: User,
-      onClick: () => router.push('/profile'),
+      route: '/dashboard/profile',
       description: 'Update your profile',
     },
     {
       title: 'Payment Methods',
       icon: CreditCard,
-      onClick: () => router.push('/payment-methods'),
+      route: '/dashboard/escrow',
       description: 'Manage payment options',
     },
   ];
 
-  const hotelActions = [
+  const hotelActions: Action[] = [
     {
-      title: 'Add Property',
+      title: 'New Apartment',
       icon: Plus,
-      onClick: () => router.push('/hotel/properties/add'),
+      route: '/dashboard/apartments/new',
       description: 'List a new property',
     },
     {
-      title: 'Manage Bookings',
-      icon: FileText,
-      onClick: () => router.push('/hotel/bookings'),
-      description: 'View and manage bookings',
+      title: 'My Apartments',
+      icon: Hotel,
+      route: '/dashboard/apartments',
+      description: 'View and manage apartments',
     },
     {
-      title: 'Hotel Settings',
-      icon: Settings,
-      onClick: () => router.push('/hotel/settings'),
-      description: 'Update property details',
+      title: 'My Profile',
+      icon: User,
+      route: '/dashboard/profile',
+      description: 'Update your profile',
     },
   ];
 
-  const adminActions = [
+  const adminActions: Action[] = [
     {
       title: 'Manage Escrows',
       icon: FileText,
-      onClick: () => router.push('/admin/escrows'),
+      route: '/dashboard/escrow',
       description: 'View all escrow transactions',
     },
     {
       title: 'User Management',
       icon: User,
-      onClick: () => router.push('/admin/users'),
+      route: '/dashboard/users',
       description: 'Manage platform users',
     },
     {
       title: 'System Settings',
       icon: Settings,
-      onClick: () => router.push('/admin/settings'),
+      route: '/dashboard/profile',
       description: 'Configure platform settings',
     },
   ];
@@ -79,62 +134,53 @@ export function QuickActions({ userRole }: QuickActionsProps) {
       ? hotelActions 
       : adminActions;
 
-  const helpAction = {
+  const NOTIFICATIONS_ACTION: Action = {
+    title: 'Notifications',
+    icon: Bell,
+    route: '/dashboard/notifications',
+    description: 'View your recent alerts',
+  };
+
+  const helpAction: Action = {
     title: 'Get Help',
     icon: HelpCircle,
-    onClick: () => router.push('/support'),
+    route: 'https://docs.trustlesswork.com',
     description: 'Contact support or view help docs',
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-sm font-medium dark:text-white">
+        <CardTitle className="text-sm font-medium dark:text-white flex items-center gap-2">
+          <Zap className="h-4 w-4 text-purple-500" />
           Quick Actions
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid gap-2">
-          {actions.map((action, index) => (
-            <Button
-              key={index}
+          {actions.map((action) => (
+            <ActionButton
+              key={action.route}
+              action={action}
               variant="outline"
-              className="w-full justify-start h-auto py-3 px-4 dark:border-gray-700 dark:hover:bg-gray-800"
-              onClick={action.onClick}
-            >
-              <div className="flex items-center space-x-3">
-                <div className="p-1.5 rounded-md bg-primary/10 text-primary dark:bg-primary/20">
-                  <action.icon className="h-4 w-4" />
-                </div>
-                <div className="text-left">
-                  <div className="font-medium dark:text-white">{action.title}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {action.description}
-                  </div>
-                </div>
-              </div>
-            </Button>
+              onClick={() => handleRoute(action.route)}
+            />
           ))}
+          <ActionButton
+            key={NOTIFICATIONS_ACTION.route}
+            action={NOTIFICATIONS_ACTION}
+            variant="outline"
+            onClick={() => handleRoute(NOTIFICATIONS_ACTION.route)}
+          />
         </div>
         
         <div className="border-t dark:border-gray-700 pt-4">
-          <Button
+          <ActionButton
+            key={helpAction.route}
+            action={helpAction}
             variant="ghost"
-            className="w-full justify-start h-auto py-3 px-4 dark:hover:bg-gray-800"
-            onClick={helpAction.onClick}
-          >
-            <div className="flex items-center space-x-3">
-              <div className="p-1.5 rounded-md bg-muted dark:bg-gray-800">
-                <helpAction.icon className="h-4 w-4" />
-              </div>
-              <div className="text-left">
-                <div className="font-medium dark:text-white">{helpAction.title}</div>
-                <div className="text-xs text-muted-foreground">
-                  {helpAction.description}
-                </div>
-              </div>
-            </div>
-          </Button>
+            onClick={() => handleRoute(helpAction.route)}
+          />
         </div>
       </CardContent>
     </Card>

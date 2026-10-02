@@ -1,8 +1,12 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Bell, Menu } from "lucide-react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { SearchHeader } from "@/components/layouts/SearchHeader";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
@@ -12,6 +16,25 @@ interface HeaderProps {
 }
 
 export const Header = ({ onMenuClick }: HeaderProps) => {
+  const router = useRouter();
+  const [displayName, setDisplayName] = useState<string | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setDisplayName(user?.displayName ?? null);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const initials = displayName
+    ? displayName
+        .split(" ")
+        .slice(0, 2)
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+    : "?";
+
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm dark:border-b dark:border-gray-800 dark:bg-gray-900">
@@ -30,7 +53,7 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
 
               <Link href="/" className="flex min-w-0 shrink-0 items-center gap-2">
                 <Image
-                  src="/img/logo-new.png"
+                  src="/img/logo.png"
                   alt="SafeTrust Logo"
                   width={40}
                   height={40}
@@ -53,6 +76,7 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
 
               <button
                 type="button"
+                onClick={() => router.push("/dashboard/notifications")}
                 className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 aria-label="Notifications"
               >
@@ -61,14 +85,16 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
 
               <button
                 type="button"
+                onClick={() => router.push("/dashboard/profile")}
                 className="flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full px-2 py-1 transition-colors"
+                aria-label="Go to profile"
               >
                 <span className="hidden md:block text-sm font-medium text-gray-700 dark:text-gray-200">
-                  Randall Valenciano
+                  {displayName ?? "Account"}
                 </span>
-                <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center shrink-0">
-                  <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">
-                    RV
+                <div className="w-8 h-8 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center shrink-0">
+                  <span className="text-xs font-semibold text-orange-600 dark:text-orange-400">
+                    {initials}
                   </span>
                 </div>
               </button>
@@ -82,5 +108,5 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
   );
 };
 
-
 export default Header;
+

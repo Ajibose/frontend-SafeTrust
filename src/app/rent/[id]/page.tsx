@@ -4,7 +4,7 @@ import {
   ApartmentDetail,
   HotelHeader,
   SuggestionsList,
-} from "@/components/hotel";
+} from "@/components/listings";
 import {
   getApartmentById,
   getSuggestedApartments,

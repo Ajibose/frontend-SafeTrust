@@ -66,21 +66,22 @@ export const useMultiWallet = () => {
       const walletData = await metaMaskWallet.connectWallet();
       connectWalletStore(walletData.address, "MetaMask");
       setSelectedWalletType(null);
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const msg = (error as Error)?.message || "";
       if (
-        error.message.includes("User rejected") ||
-        error.message.includes("User denied") ||
-        error.message.includes("No accounts found") ||
-        error.message.includes("MetaMask is not installed")
+        msg.includes("User rejected") ||
+        msg.includes("User denied") ||
+        msg.includes("No accounts found") ||
+        msg.includes("MetaMask is not installed")
       ) {
         setIsMetaMaskModalOpen(true);
       } else {
-        setError(error.message || `Failed to connect to MetaMask`);
+        setError(msg || `Failed to connect to MetaMask`);
       }
     }
   };
 
-  const handleStellarWalletSelected = async (wallet: any) => {
+  const handleStellarWalletSelected = async (wallet: { id: string; name: string }) => {
     try {
       setError(null);
 
@@ -92,10 +93,10 @@ export const useMultiWallet = () => {
 
       setIsStellarModalOpen(false);
       setSelectedWalletType(null);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error connecting to Stellar wallet:", error);
       setError(
-        `Failed to connect to ${wallet.name}: ${error.message || "Unknown error"}`
+        `Failed to connect to ${wallet.name}: ${(error as Error)?.message || "Unknown error"}`
       );
     }
   };
@@ -106,8 +107,8 @@ export const useMultiWallet = () => {
       connectWalletStore(walletData.address, "MetaMask");
       setIsMetaMaskModalOpen(false);
       setSelectedWalletType(null);
-    } catch (error: any) {
-      setError(error.message || `Failed to connect to MetaMask`);
+    } catch (error: unknown) {
+      setError((error as Error)?.message || `Failed to connect to MetaMask`);
     }
   };
 

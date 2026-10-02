@@ -1,4 +1,4 @@
-import { ArrowUpDown, MoreHorizontal, Eye, FileText, CheckCircle2, XCircle } from 'lucide-react';
+import { MoreHorizontal, Eye, FileText, CheckCircle2, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -45,11 +45,11 @@ const statusText = {
   cancelled: 'Cancelled',
 } as const;
 
-export function EscrowTable({ escrows, userRole }: EscrowTableProps) {
+export function EscrowTable({ escrows }: EscrowTableProps) {
   const router = useRouter();
 
   const handleViewDetails = (escrowId: string) => {
-    router.push(`/escrows/${escrowId}`);
+    router.push(`/dashboard/escrow/${escrowId}`);
   };
 
   const formatCurrency = (amount: number, currency: string) => {
@@ -65,95 +65,55 @@ export function EscrowTable({ escrows, userRole }: EscrowTableProps) {
     if (!dateString) return 'N/A';
     try {
       return format(new Date(dateString), 'MMM d, yyyy');
-    } catch (e) {
+    } catch {
       return 'Invalid date';
     }
   };
 
-  const getActionButton = (escrow: EscrowData) => {
-    if (userRole === 'hotel' && escrow.status === 'funded' && escrow.nextMilestone === 'check_in') {
-      return (
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="w-full"
-          onClick={() => handleViewDetails(escrow.id)}
-        >
-          Approve Check-in
-        </Button>
-      );
-    }
-    
-    if (userRole === 'admin' && escrow.status === 'check_in_approved') {
-      return (
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="w-full"
-          onClick={() => handleViewDetails(escrow.id)}
-        >
-          Complete Check-out
-        </Button>
-      );
-    }
-    
-    return (
-      <Button 
-        variant="ghost" 
-        size="sm"
-        className="w-full justify-start"
-        onClick={() => handleViewDetails(escrow.id)}
-      >
-        <Eye className="h-4 w-4 mr-2" />
-        View
-      </Button>
-    );
-  };
-
   return (
-    <div className="rounded-md border dark:border-gray-700">
+    <div className="bg-white dark:bg-slate-800 rounded-md border border-gray-200 dark:border-slate-700">
       <Table>
         <TableHeader>
-          <TableRow className="dark:border-gray-700">
-            <TableHead className="w-[50px] dark:text-gray-200">
+          <TableRow className="bg-gray-50 dark:bg-slate-700 border-b border-gray-200 dark:border-slate-700">
+            <TableHead className="w-[50px] text-gray-600 dark:text-gray-300 font-semibold">
               <Checkbox />
             </TableHead>
-            <TableHead className="dark:text-gray-200">Booking ID</TableHead>
-            <TableHead className="dark:text-gray-200">Hotel</TableHead>
-            <TableHead className="dark:text-gray-200">Check-in</TableHead>
-            <TableHead className="dark:text-gray-200">Check-out</TableHead>
-            <TableHead className="dark:text-gray-200">Amount</TableHead>
-            <TableHead className="dark:text-gray-200">Status</TableHead>
-            <TableHead className="text-right dark:text-gray-200">Actions</TableHead>
+            <TableHead className="text-gray-600 dark:text-gray-300 font-semibold">Booking ID</TableHead>
+            <TableHead className="text-gray-600 dark:text-gray-300 font-semibold">Hotel</TableHead>
+            <TableHead className="text-gray-600 dark:text-gray-300 font-semibold">Check-in</TableHead>
+            <TableHead className="text-gray-600 dark:text-gray-300 font-semibold">Check-out</TableHead>
+            <TableHead className="text-gray-600 dark:text-gray-300 font-semibold">Amount</TableHead>
+            <TableHead className="text-gray-600 dark:text-gray-300 font-semibold">Status</TableHead>
+            <TableHead className="text-right text-gray-600 dark:text-gray-300 font-semibold">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {escrows.length === 0 ? (
-            <TableRow className="dark:border-gray-700">
-              <TableCell colSpan={8} className="h-24 text-center dark:text-gray-400">
+            <TableRow className="border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+              <TableCell colSpan={8} className="h-24 text-center text-gray-500 dark:text-slate-400">
                 No escrows found
               </TableCell>
             </TableRow>
           ) : (
             escrows.map((escrow) => (
-              <TableRow key={escrow.id} className="dark:border-gray-700 dark:hover:bg-gray-800">
+              <TableRow key={escrow.id} className="border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700/50">
                 <TableCell>
                   <Checkbox />
                 </TableCell>
-                <TableCell className="font-medium dark:text-white">
+                <TableCell className="font-mono text-sm text-gray-500 dark:text-gray-400">
                   {escrow.metadata?.bookingId || 'N/A'}
                 </TableCell>
-                <TableCell className="dark:text-white">
+                <TableCell className="text-gray-900 dark:text-white">
                   <div className="font-medium">
                     {escrow.metadata?.hotelName || 'N/A'}
                   </div>
-                  <div className="text-xs text-muted-foreground">
+                  <div className="text-xs text-muted-foreground dark:text-slate-400">
                     {escrow.marker.slice(0, 6)}...{escrow.marker.slice(-4)}
                   </div>
                 </TableCell>
-                <TableCell className="dark:text-white">{formatDate(escrow.metadata?.checkInDate)}</TableCell>
-                <TableCell className="dark:text-white">{formatDate(escrow.metadata?.checkOutDate)}</TableCell>
-                <TableCell className="dark:text-white">
+                <TableCell className="text-gray-900 dark:text-white">{formatDate(escrow.metadata?.checkInDate)}</TableCell>
+                <TableCell className="text-gray-900 dark:text-white">{formatDate(escrow.metadata?.checkOutDate)}</TableCell>
+                <TableCell className="text-gray-900 dark:text-white">
                   {formatCurrency(escrow.amount, escrow.asset.code)}
                 </TableCell>
                 <TableCell>

@@ -18,7 +18,6 @@ import { EscrowTable } from "./EscrowTable";
 import { AnalyticsDashboard } from "./analytics";
 import type {
   EscrowData,
-  Milestone,
   NotificationData,
 } from "@/types/dashboard";
 

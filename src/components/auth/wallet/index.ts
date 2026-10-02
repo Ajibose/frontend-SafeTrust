@@ -7,7 +7,7 @@ export { WalletSelectionModal } from "./components/WalletSelectionModal";
 export { default as ConnectionStatus } from "./ConnectionStatus";
 
 // Types
-export type * from "./types/wallet.types";
+export type * from "@/types/wallet";
 
 // Utils
 export {

@@ -125,8 +125,6 @@ src/components/auth/wallet/
 ├── README.md                       # This documentation
 ├── index.ts                        # Main exports
 ├── ConnectionStatus.tsx            # Connected wallets display
-├── types/
-│   └── wallet.types.ts             # TypeScript interfaces
 ├── hooks/
 │   ├── multi-wallet.hook.ts       # Drives the live login modal flow
 │   ├── useMultiWallet.ts          # Alternate multi-wallet hook (kit's built-in modal)
@@ -139,6 +137,9 @@ src/components/auth/wallet/
 │   └── walletValidation.ts        # Address validation
 └── constants/
     └── wallet-kit.constant.ts     # Stellar Wallets Kit config
+
+src/types/
+└── wallet.ts                        # Shared TypeScript interfaces
 
 src/lib/stellar/
 └── wallet-status.ts                # getWalletReadiness() / listWalletsWithReadiness()

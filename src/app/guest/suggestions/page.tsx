@@ -4,18 +4,25 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Heart, MapPin, Bed, PawPrint, Bath, MessageCircle } from "lucide-react";
+import {
+  Heart,
+  MapPin,
+  Bed,
+  PawPrint,
+  Bath,
+  MessageCircle,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import HotelHeader from "@/components/listings/HotelHeader";
 import { getConversationIdForApartment } from "@/lib/mockData/messages";
-import { STUB_HOTELS } from "@/lib/mockData/hotels";
+import { APARTMENT_LISTINGS } from "@/lib/mockData/apartmentListings";
 
 export default function GuestSuggestionsPage() {
   const router = useRouter();
-  const [selectedId, setSelectedId] = useState(STUB_HOTELS[0].id);
+  const [selectedId, setSelectedId] = useState(APARTMENT_LISTINGS[0].id);
   const [favorites, setFavorites] = useState<string[]>([]);
 
-  const selected = STUB_HOTELS.find((a) => a.id === selectedId)!;
+  const selected = APARTMENT_LISTINGS.find((a) => a.id === selectedId)!;
   const selectedConversationId = getConversationIdForApartment(selected.name);
 
   const toggleFavorite = (id: string) => {
@@ -25,14 +32,15 @@ export default function GuestSuggestionsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-900
-                    text-gray-900 dark:text-white">
+    <div
+      className="min-h-screen bg-white dark:bg-slate-900
+                    text-gray-900 dark:text-white"
+    >
       {/* Standalone header */}
       <HotelHeader showHostSwitch />
 
       <div className="mx-auto max-w-[1280px] px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr_220px] gap-6">
-
           {/* ── Left: Suggestions sidebar ── */}
           <aside className="space-y-4">
             <div>
@@ -40,7 +48,7 @@ export default function GuestSuggestionsPage() {
                 Suggestions
               </h2>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                {STUB_HOTELS.length} units available
+                {APARTMENT_LISTINGS.length} units available
               </p>
               <Link
                 href="/rent"
@@ -52,7 +60,7 @@ export default function GuestSuggestionsPage() {
             </div>
 
             <div className="space-y-3">
-              {STUB_HOTELS.map((apt) => (
+              {APARTMENT_LISTINGS.map((apt) => (
                 <li
                   key={apt.id}
                   className={cn(
@@ -147,9 +155,11 @@ export default function GuestSuggestionsPage() {
           {/* ── Center: Main image + details ── */}
           <main className="space-y-4">
             {/* Main image */}
-            <div className="relative w-full rounded-2xl overflow-hidden
+            <div
+              className="relative w-full rounded-2xl overflow-hidden
                             bg-gray-200 dark:bg-slate-700"
-                 style={{ height: "340px" }}>
+              style={{ height: "340px" }}
+            >
               <Image
                 src={selected.images[0]}
                 alt={selected.name}
@@ -300,7 +310,6 @@ export default function GuestSuggestionsPage() {
               )}
             </div>
           </aside>
-
         </div>
       </div>
     </div>

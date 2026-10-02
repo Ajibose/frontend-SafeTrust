@@ -1,6 +1,6 @@
 "use client";
 
-import type { HotelListing } from "@/@types/hotel";
+import type { ApartmentListing } from "@/types/hotel";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,7 +13,7 @@ import { formatListingPrice } from "./formatListingPrice";
 import { getConversationIdForApartment } from "@/lib/mockData/messages";
 
 interface ApartmentCardProps {
-  apartment: HotelListing;
+  apartment: ApartmentListing;
   distanceKm?: number;
   loading?: "eager" | "lazy";
   isFavorite?: boolean;

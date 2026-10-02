@@ -1,13 +1,14 @@
 "use client";
 
-import type { HotelListing } from "@/@types/hotel";
-import ApartmentCard from "./ApartmentCard";
+import type { ApartmentListing } from '@/types/hotel';
+import ApartmentCard from './ApartmentCard';
 
 interface ApartmentGridProps {
-  apartments: HotelListing[];
+  apartments: ApartmentListing[];
   distances?: Record<string, number>;
   favorites?: string[];
   onToggleFavorite?: (id: string) => void;
+  onApartmentClick?: (apartment: ApartmentListing) => void;
 }
 
 export default function ApartmentGrid({

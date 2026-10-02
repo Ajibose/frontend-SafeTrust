@@ -1,16 +1,16 @@
 "use client";
 
-import type { HotelListing } from "@/@types/hotel";
+import type { ApartmentListing } from "@/types/hotel";
 import {
   ApartmentGrid,
   BedroomTabs,
   FilterSidebar,
   HotelHeader,
 } from "@/components/listings";
+import { APARTMENT_LISTINGS } from "@/lib/mockData/apartmentListings";
 import { NearMeButton } from "@/components/listings/NearMeButton";
 import { useGeolocation } from "@/hooks/useGeolocation";
 import { distanceKm, sortByDistance } from "@/lib/geo";
-import { STUB_HOTELS } from "@/lib/mockData/hotels";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -24,7 +24,7 @@ import { cn } from "@/lib/utils";
 
 type SortOption = "relevance" | "price-low" | "price-high" | "nearest";
 
-export default function HotelListingPage() {
+export default function ApartmentListingPage() {
   const router = useRouter();
   const geo = useGeolocation();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([
@@ -44,7 +44,9 @@ export default function HotelListingPage() {
     if (!geo.position) return false;
     const origin = geo.position;
     const nearestListingKm = Math.min(
-      ...STUB_HOTELS.map((hotel) => distanceKm(origin, hotel.coordinates)),
+      ...APARTMENT_LISTINGS.map((apartment) =>
+        distanceKm(origin, apartment.coordinates),
+      ),
     );
     return nearestListingKm > 300;
   }, [geo.position]);
@@ -61,9 +63,9 @@ export default function HotelListingPage() {
     () =>
       geo.position
         ? Object.fromEntries(
-            STUB_HOTELS.map((hotel) => [
-              hotel.id,
-              distanceKm(geo.position!, hotel.coordinates),
+            APARTMENT_LISTINGS.map((apartment) => [
+              apartment.id,
+              distanceKm(geo.position!, apartment.coordinates),
             ]),
           )
         : undefined,
@@ -71,7 +73,7 @@ export default function HotelListingPage() {
   );
 
   const filteredApartments = useMemo(() => {
-    const apartments = STUB_HOTELS.filter((apartment) => {
+    const apartments = APARTMENT_LISTINGS.filter((apartment) => {
       const matchesCategory =
         selectedCategories.length === 0 ||
         selectedCategories.includes(apartment.category);
@@ -124,7 +126,7 @@ export default function HotelListingPage() {
       ? values.filter((item) => item !== value)
       : [...values, value];
 
-  const handleApartmentClick = (apartment: HotelListing) => {
+  const handleApartmentClick = (apartment: ApartmentListing) => {
     router.push(`/rent/${apartment.id}`);
   };
 

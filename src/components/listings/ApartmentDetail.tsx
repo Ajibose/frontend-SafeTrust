@@ -1,14 +1,14 @@
 "use client";
 
-import type { HotelListing } from "@/@types/hotel";
-import Image from "next/image";
-import { FaMapMarkerAlt } from "react-icons/fa";
-import AmenityIcons from "./AmenityIcons";
-import { formatListingPrice } from "./formatListingPrice";
-import ImageGallery from "./ImageGallery";
+import type { ApartmentListing } from '@/types/hotel';
+import Image from 'next/image';
+import { FaMapMarkerAlt } from 'react-icons/fa';
+import AmenityIcons from './AmenityIcons';
+import { formatListingPrice } from './formatListingPrice';
+import ImageGallery from './ImageGallery';
 
 interface ApartmentDetailProps {
-  apartment: HotelListing;
+  apartment: ApartmentListing;
   onBook: () => void;
 }
 

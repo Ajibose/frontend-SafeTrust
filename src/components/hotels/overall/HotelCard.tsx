@@ -4,11 +4,11 @@ import Image from "next/image";
 import { Heart, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Hotel } from "@/@types/hotel.entity";
+import type { HotelSearchResult } from "@/types/hotel";
 import { formatPrice } from "@/lib/format";
 
 interface HotelCardProps {
-  hotel: Hotel;
+  hotel: HotelSearchResult;
   onToggleFavorite: (id: number) => void;
 }
 

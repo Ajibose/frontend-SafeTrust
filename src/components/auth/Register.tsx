@@ -178,6 +178,8 @@ export default function RegisterPage() {
                 <Label htmlFor="firstName">First Name</Label>
                 <Input
                   id="firstName"
+                  name="given-name"
+                  autoComplete="given-name"
                   placeholder="First name"
                   required
                   value={firstName}
@@ -191,6 +193,8 @@ export default function RegisterPage() {
                 <Label htmlFor="lastName">Last Name</Label>
                 <Input
                   id="lastName"
+                  name="family-name"
+                  autoComplete="family-name"
                   placeholder="Last name"
                   required
                   value={lastName}
@@ -207,6 +211,7 @@ export default function RegisterPage() {
               <Label htmlFor="phone">Phone Number</Label>
               <div className="flex gap-2">
                 <Select
+                  name="country-code"
                   value={phoneCountryCode}
                   onValueChange={(v) => {
                     setPhoneCountryCode(v);
@@ -226,7 +231,10 @@ export default function RegisterPage() {
                 </Select>
                 <Input
                   id="phone"
+                  name="tel-national"
                   type="tel"
+                  inputMode="tel"
+                  autoComplete="tel-national"
                   placeholder="Enter your phone number"
                   required
                   value={phone}
@@ -242,13 +250,15 @@ export default function RegisterPage() {
             <div className="space-y-2">
               <Label htmlFor="location">Location</Label>
               <Select
+                name="country-name"
+                autoComplete="country-name"
                 value={location}
                 onValueChange={(v) => {
                   setLocation(v);
                   clearError();
                 }}
               >
-                <SelectTrigger>
+                <SelectTrigger id="location">
                   <SelectValue placeholder="Select your location" />
                 </SelectTrigger>
                 <SelectContent position="popper" sideOffset={4}>
@@ -265,7 +275,10 @@ export default function RegisterPage() {
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
+                name="email"
                 type="email"
+                inputMode="email"
+                autoComplete="email"
                 placeholder="Enter your email"
                 required
                 value={email}
@@ -281,7 +294,9 @@ export default function RegisterPage() {
               <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
+                name="password"
                 type="password"
+                autoComplete="new-password"
                 placeholder="Enter your password"
                 required
                 minLength={6}

@@ -4,10 +4,18 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Heart, MapPin, Bed, PawPrint, Bath, MessageCircle } from "lucide-react";
+import {
+  Heart,
+  MapPin,
+  Bed,
+  PawPrint,
+  Bath,
+  MessageCircle,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
-import  HotelHeader from "@/components/hotel/HotelHeader";
+import HotelHeader from "@/components/listings/HotelHeader";
 import { getConversationIdForApartment } from "@/lib/mockData/messages";
+import { formatPrice, formatAmount } from "@/lib/format";
 
 // TODO: replace with Apollo query → public.apartments (Hasura)
 // Reference: dApp/apps/frontend/src/app/dashboard/guest/page.tsx
@@ -67,14 +75,15 @@ export default function GuestSuggestionsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-900
-                    text-gray-900 dark:text-white">
+    <div
+      className="min-h-screen bg-white dark:bg-slate-900
+                    text-gray-900 dark:text-white"
+    >
       {/* Standalone header */}
       <HotelHeader showHostSwitch />
 
       <div className="mx-auto max-w-[1280px] px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr_220px] gap-6">
-
           {/* ── Left: Suggestions sidebar ── */}
           <aside className="space-y-4">
             <div>
@@ -95,12 +104,22 @@ export default function GuestSuggestionsPage() {
 
             <div className="space-y-3">
               {STUB_APARTMENTS.map((apt) => (
-                <button
+                <div
                   key={apt.id}
-                  type="button"
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (
+                      (e.key === "Enter" || e.key === " ") &&
+                      e.target === e.currentTarget
+                    ) {
+                      e.preventDefault();
+                      setSelectedId(apt.id);
+                    }
+                  }}
                   onClick={() => setSelectedId(apt.id)}
                   className={cn(
-                    "w-full text-left rounded-xl border p-3",
+                    "w-full text-left rounded-xl border p-3 cursor-pointer",
                     "flex items-start gap-3 transition-colors",
                     selectedId === apt.id
                       ? "border-orange-400 bg-orange-50 dark:bg-orange-900/10"
@@ -108,9 +127,11 @@ export default function GuestSuggestionsPage() {
                   )}
                 >
                   {/* Thumbnail */}
-                  <div className="relative w-16 h-16 rounded-lg
+                  <div
+                    className="relative w-16 h-16 rounded-lg
                                   overflow-hidden shrink-0 bg-gray-200
-                                  dark:bg-slate-700">
+                                  dark:bg-slate-700"
+                  >
                     <Image
                       src={apt.images[0]}
                       alt={apt.name}
@@ -126,12 +147,15 @@ export default function GuestSuggestionsPage() {
                   {/* Info */}
                   <div className="flex-1 min-w-0 space-y-0.5">
                     <div className="flex items-start justify-between gap-1">
-                      <p className="text-sm font-semibold
+                      <p
+                        className="text-sm font-semibold
                                     text-gray-900 dark:text-white
-                                    line-clamp-2 leading-tight">
+                                    line-clamp-2 leading-tight"
+                      >
                         {apt.name}
                       </p>
                       <button
+                        type="button"
                         onClick={(e) => {
                           e.stopPropagation();
                           toggleFavorite(apt.id);
@@ -148,12 +172,16 @@ export default function GuestSuggestionsPage() {
                         />
                       </button>
                     </div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400
-                                  truncate">
+                    <p
+                      className="text-xs text-gray-500 dark:text-gray-400
+                                  truncate"
+                    >
                       {apt.address}
                     </p>
-                    <div className="flex items-center gap-2
-                                    text-xs text-gray-400 dark:text-gray-500">
+                    <div
+                      className="flex items-center gap-2
+                                    text-xs text-gray-400 dark:text-gray-500"
+                    >
                       <span>{apt.beds}bd</span>
                       <span>·</span>
                       {apt.petFriendly && (
@@ -167,11 +195,11 @@ export default function GuestSuggestionsPage() {
                         className="ml-auto font-bold text-green-600
                                    dark:text-green-400"
                       >
-                        ${apt.price.toLocaleString()}
+                        {formatPrice(apt.price)}
                       </span>
                     </div>
                   </div>
-                </button>
+                </div>
               ))}
             </div>
           </aside>
@@ -179,9 +207,11 @@ export default function GuestSuggestionsPage() {
           {/* ── Center: Main image + details ── */}
           <main className="space-y-4">
             {/* Main image */}
-            <div className="relative w-full rounded-2xl overflow-hidden
+            <div
+              className="relative w-full rounded-2xl overflow-hidden
                             bg-gray-200 dark:bg-slate-700"
-                 style={{ height: "340px" }}>
+              style={{ height: "340px" }}
+            >
               <Image
                 src={selected.images[0]}
                 alt={selected.name}
@@ -194,10 +224,12 @@ export default function GuestSuggestionsPage() {
                 }}
               />
               {selected.isPromoted && (
-                <span className="absolute bottom-3 left-3
+                <span
+                  className="absolute bottom-3 left-3
                                  bg-orange-500 text-white text-xs
                                  px-2.5 py-1 rounded-full font-semibold
-                                 flex items-center gap-1 shadow-md">
+                                 flex items-center gap-1 shadow-md"
+                >
                   🔥 PROMOTED
                 </span>
               )}
@@ -206,32 +238,40 @@ export default function GuestSuggestionsPage() {
             {/* Apartment details */}
             <div className="space-y-3">
               <div className="flex items-start justify-between gap-4">
-                <h1 className="text-2xl font-bold text-gray-900
-                               dark:text-white leading-tight">
+                <h1
+                  className="text-2xl font-bold text-gray-900
+                               dark:text-white leading-tight"
+                >
                   {selected.name}
                 </h1>
                 <div className="text-right shrink-0">
                   <p className="text-xl font-bold text-orange-500">
-                    ${selected.price.toLocaleString()}.00
-                    <span className="text-sm font-normal
-                                     text-gray-500 dark:text-gray-400 ml-1">
+                    {formatAmount(selected.price)}
+                    <span
+                      className="text-sm font-normal
+                                     text-gray-500 dark:text-gray-400 ml-1"
+                    >
                       Per month
                     </span>
                   </p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Deposit: ${selected.deposit.toLocaleString()}
+                    Deposit: {formatPrice(selected.deposit)}
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-1.5
-                              text-sm text-gray-500 dark:text-gray-400">
+              <div
+                className="flex items-center gap-1.5
+                              text-sm text-gray-500 dark:text-gray-400"
+              >
                 <MapPin className="h-4 w-4 text-orange-500 shrink-0" />
                 {selected.address}
               </div>
 
-              <div className="flex items-center gap-4
-                              text-sm text-gray-500 dark:text-gray-400">
+              <div
+                className="flex items-center gap-4
+                              text-sm text-gray-500 dark:text-gray-400"
+              >
                 <span className="flex items-center gap-1.5">
                   <Bed className="h-4 w-4 text-orange-500" />
                   {selected.beds} bd
@@ -249,12 +289,16 @@ export default function GuestSuggestionsPage() {
               </div>
 
               <div className="space-y-1">
-                <p className="text-sm font-semibold
-                               text-gray-900 dark:text-white">
+                <p
+                  className="text-sm font-semibold
+                               text-gray-900 dark:text-white"
+                >
                   Apartment details
                 </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400
-                               leading-relaxed">
+                <p
+                  className="text-sm text-gray-500 dark:text-gray-400
+                               leading-relaxed"
+                >
                   {selected.description}
                 </p>
               </div>
@@ -274,7 +318,9 @@ export default function GuestSuggestionsPage() {
                 {selectedConversationId && (
                   <button
                     onClick={() => {
-                      router.push(`/dashboard/messages/${selectedConversationId}`);
+                      router.push(
+                        `/dashboard/messages/${selectedConversationId}`,
+                      );
                     }}
                     className="rounded-xl border border-orange-500
                                text-orange-500 hover:bg-orange-50
@@ -314,7 +360,6 @@ export default function GuestSuggestionsPage() {
               </div>
             ))}
           </div>
-
         </div>
       </div>
     </div>

@@ -1,0 +1,54 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": [
+    "src/app/**/{page,layout,loading,error,not-found,global-error,route,template,default}.{js,jsx,ts,tsx}",
+    "src/middleware.{js,ts}",
+    "next.config.{js,ts,mjs}"
+  ],
+  "project": ["src/**/*.{js,jsx,ts,tsx}"],
+  "ignore": [
+    "src/components/ui/**",
+    "src/components/auth/wallet/**",
+    "src/components/tw-blocks/**",
+    "src/components/dashboard/apartments/ApartmentFormFields.tsx",
+    "src/components/dashboard/apartments/ApartmentTableFilters.tsx",
+    "src/components/dashboard/apartments/ImageUploader.tsx",
+    "src/components/dashboard/apartments/PropertySummaryHeader.tsx",
+    "src/core/config/axios/notifications.ts",
+    "src/types/escrow.ts",
+    "src/hooks/index.ts"
+  ],
+  "ignoreDependencies": [
+    "@radix-ui/react-tabs",
+    "@reown/walletkit",
+    "@trustless-work/blocks",
+    "@walletconnect/core",
+    "@walletconnect/utils",
+    "eslint-config-next",
+    "eslint-config-prettier",
+    "i18next",
+    "jest-junit",
+    "leaflet-defaulticon-compatibility",
+    "postcss-load-config",
+    "qrcode",
+    "qrcode.react",
+    "react-datepicker",
+    "react-dropzone",
+    "react-i18next",
+    "react-redux",
+    "react-toastify",
+    "vaul",
+    "zxcvbn"
+  ],
+  "rules": {
+    "files": "error",
+    "dependencies": "error",
+    "devDependencies": "error",
+    "unlisted": "error",
+    "binaries": "error",
+    "unresolved": "error",
+    "exports": "off",
+    "types": "off",
+    "duplicates": "off"
+  }
+}

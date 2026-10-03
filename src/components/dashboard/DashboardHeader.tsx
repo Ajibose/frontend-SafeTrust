@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import { NotificationData } from './RoleEscrowDashboard';
+import type { NotificationData } from '@/types/dashboard';
 
 interface DashboardHeaderProps {
   userRole: 'guest' | 'hotel' | 'admin';
@@ -61,7 +61,7 @@ export function DashboardHeader({
             )}
           </div>
           <p className="hidden sm:block text-sm text-muted-foreground">
-            Welcome back! You're logged in as {roleLabels[userRole]}
+            Welcome back! You&rsquo;re logged in as {roleLabels[userRole]}
           </p>
         </div>
 

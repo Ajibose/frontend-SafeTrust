@@ -1,6 +1,6 @@
-import { fileURLToPath } from 'node:url';
-import { dirname } from 'node:path';
-import { FlatCompat } from '@eslint/eslintrc';
+import { fileURLToPath } from "node:url";
+import { dirname } from "node:path";
+import { FlatCompat } from "@eslint/eslintrc";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -9,17 +9,51 @@ const compat = new FlatCompat({
   baseDirectory: __dirname,
 });
 
-const nextConfigs = compat.extends('next/core-web-vitals', 'next/typescript');
-
-export default [
+const eslintConfig = [
   {
-    ignores: ['node_modules/**', '.next/**', 'out/**', 'build/**'],
+    ignores: [
+      "node_modules/**",
+      ".next/**",
+      "out/**",
+      "build/**",
+      "coverage/**",
+      "next-env.d.ts",
+      "src/graphql/generated/**",
+    ],
   },
-  ...nextConfigs,
+  ...compat.extends("next/core-web-vitals", "next/typescript", "prettier"),
   {
-    files: ['jest.config.js'],
+    files: ["jest.config.js"],
     rules: {
-      '@typescript-eslint/no-require-imports': 'off',
+      "@typescript-eslint/no-require-imports": "off",
+    },
+  },
+  {
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/**/*.tsx"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            "Literal[value=/(bg|text|border|ring|fill|stroke)-\\[#[0-9a-fA-F]{3,8}\\]/]",
+          message:
+            "Use a design token (bg-primary, text-muted-foreground, …) instead of a hex colour.",
+        },
+      ],
     },
   },
 ];
+
+export default eslintConfig;

@@ -1,30 +1,9 @@
-import type { ApartmentOccupancyStatus } from "@/components/dashboard/apartments/ApartmentStatusBadge";
+import type { Apartment as SharedApartment } from "@/types/apartment";
 
-export interface Apartment {
-  id: string;
-  name: string;
-  description?: string | null;
-  price: number;
-  warranty_deposit: number;
-  is_available: boolean;
-  image_urls?: string[] | null;
-  address: {
-    street?: string;
-    neighborhood?: string;
-    city?: string;
-    country?: string;
-  };
-  location: string;
+export interface Apartment extends SharedApartment {
   bedrooms: number;
   bathrooms: number;
   pet_friendly?: boolean;
-  offers: number;
-  status: ApartmentOccupancyStatus;
-  promoted: boolean;
-  available_from: string;
-  available_until?: string | null;
-  created_at: string;
-  owner_id: string;
 }
 
 export const MOCK_APARTMENTS: Apartment[] = [

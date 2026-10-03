@@ -2,6 +2,8 @@
  * Wallet address validation utilities for different blockchain networks
  */
 
+import type { ChainType } from "@/types/wallet";
+
 /**
  * Validates a Stellar public key
  * @param address - The Stellar public key to validate
@@ -114,7 +116,7 @@ export const validateWalletConnection = (params: {
     errors.push("Address is required");
   } else if (!params.chain) {
     errors.push("Chain type is required");
-  } else if (!isValidAddress(params.address, params.chain as any)) {
+  } else if (!isValidAddress(params.address, params.chain as ChainType)) {
     errors.push(`Invalid address format for ${params.chain} chain`);
   }
 

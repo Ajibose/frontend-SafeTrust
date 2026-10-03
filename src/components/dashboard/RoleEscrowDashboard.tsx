@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronRight, SlidersHorizontal, Download } from "lucide-react";
+import { ChevronRight, SlidersHorizontal } from "lucide-react";
 import { useEffect, useRef, useState, useMemo } from "react";
 import {
   Popover,
@@ -9,14 +9,24 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { exportTransactionsToCSV } from "@/lib/exportToCSV";
-import type { TransactionRow } from "@/lib/exportToCSV";
+import { formatAmount } from "@/lib/format";
 import { DashboardHeader } from "./DashboardHeader";
 import { EscrowsByStatus } from "./EscrowsByStatus";
 import { RecentActivity } from "./RecentActivity";
 import { QuickActions } from "./QuickActions";
 import { EscrowTable } from "./EscrowTable";
 import { AnalyticsDashboard } from "./analytics";
+import type {
+  EscrowData,
+  NotificationData,
+} from "@/types/dashboard";
+
+export type {
+  EscrowData,
+  EscrowStatus,
+  Milestone,
+  NotificationData,
+} from "@/types/dashboard";
 
 // Placeholder functions for notifications - in a real app, these would be API calls
 async function checkPendingNotifications(): Promise<NotificationData[]> {
@@ -31,56 +41,6 @@ async function checkMilestoneNotifications(): Promise<NotificationData[]> {
   // const response = await fetch('/api/notifications/milestones');
   // return response.json();
   return [];
-}
-
-type EscrowStatus =
-  | "pending"
-  | "funded"
-  | "check_in_approved"
-  | "check_out_approved"
-  | "completed"
-  | "cancelled";
-
-export interface EscrowData {
-  id: string;
-  contractId: string;
-  status: EscrowStatus;
-  amount: number;
-  asset: {
-    code: string;
-    issuer?: string;
-  };
-  metadata?: {
-    bookingId: string;
-    hotelName: string;
-    checkInDate: string;
-    checkOutDate: string;
-    guestName?: string;
-    guestEmail?: string;
-    roomNumber?: string;
-  };
-  nextMilestone?: string;
-  milestones?: Milestone[];
-  marker: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface NotificationData {
-  id: string;
-  type: "milestone" | "payment" | "alert";
-  message: string;
-  timestamp: string;
-  read: boolean;
-  escrowId?: string;
-}
-
-export interface Milestone {
-  id: string;
-  name: string;
-  status: "pending" | "in_progress" | "completed" | "rejected";
-  dueDate?: string;
-  completedAt?: string;
 }
 
 const formatNotificationTimestamp = (timestamp: string) => {
@@ -98,6 +58,22 @@ interface RoleEscrowDashboardProps {
   onRefresh?: () => void;
 }
 
+const STATUS_OPTIONS = [
+  "Completed",
+  "Check-In Approved",
+  "Check-out Approved",
+  "Cancelled",
+  "Pending",
+];
+
+const STATUS_MAP: Record<string, string> = {
+  Completed: "completed",
+  "Check-In Approved": "check_in_approved",
+  "Check-out Approved": "check_out_approved",
+  Cancelled: "cancelled",
+  Pending: "pending",
+};
+
 export function RoleEscrowDashboard({
   userRole,
   escrows = [],
@@ -109,7 +85,6 @@ export function RoleEscrowDashboard({
   const [notifications, setNotifications] =
     useState<NotificationData[]>(initialNotifications);
   const [showAnalytics, setShowAnalytics] = useState(false);
-  const [isPolling, setIsPolling] = useState(false);
   const isMountedRef = useRef(true);
   const isPollingRef = useRef(false);
 
@@ -122,22 +97,6 @@ export function RoleEscrowDashboard({
   const [checkInTo, setCheckInTo] = useState("");
   const [checkOutFrom, setCheckOutFrom] = useState("");
   const [checkOutTo, setCheckOutTo] = useState("");
-
-  const STATUS_OPTIONS = [
-    "Completed",
-    "Check-In Approved",
-    "Check-out Approved",
-    "Cancelled",
-    "Pending",
-  ];
-
-  const STATUS_MAP: Record<string, string> = {
-    "Completed": "completed",
-    "Check-In Approved": "check_in_approved",
-    "Check-out Approved": "check_out_approved",
-    "Cancelled": "cancelled",
-    "Pending": "pending",
-  };
 
   const SORT_OPTIONS = [
     { label: "Most Recent", value: "recent" },
@@ -171,22 +130,30 @@ export function RoleEscrowDashboard({
     }
     if (checkInFrom) {
       result = result.filter(
-        (t) => t.metadata?.checkInDate && new Date(t.metadata.checkInDate) >= new Date(checkInFrom)
+        (t) =>
+          t.metadata?.checkInDate &&
+          new Date(t.metadata.checkInDate) >= new Date(checkInFrom),
       );
     }
     if (checkInTo) {
       result = result.filter(
-        (t) => t.metadata?.checkInDate && new Date(t.metadata.checkInDate) <= new Date(checkInTo)
+        (t) =>
+          t.metadata?.checkInDate &&
+          new Date(t.metadata.checkInDate) <= new Date(checkInTo),
       );
     }
     if (checkOutFrom) {
       result = result.filter(
-        (t) => t.metadata?.checkOutDate && new Date(t.metadata.checkOutDate) >= new Date(checkOutFrom)
+        (t) =>
+          t.metadata?.checkOutDate &&
+          new Date(t.metadata.checkOutDate) >= new Date(checkOutFrom),
       );
     }
     if (checkOutTo) {
       result = result.filter(
-        (t) => t.metadata?.checkOutDate && new Date(t.metadata.checkOutDate) <= new Date(checkOutTo)
+        (t) =>
+          t.metadata?.checkOutDate &&
+          new Date(t.metadata.checkOutDate) <= new Date(checkOutTo),
       );
     }
     if (sortBy === "amount-high") {
@@ -195,18 +162,33 @@ export function RoleEscrowDashboard({
       result.sort((a, b) => a.amount - b.amount);
     } else if (sortBy === "checkin") {
       result.sort((a, b) => {
-        const dateA = a.metadata?.checkInDate ? new Date(a.metadata.checkInDate).getTime() : 0;
-        const dateB = b.metadata?.checkInDate ? new Date(b.metadata.checkInDate).getTime() : 0;
+        const dateA = a.metadata?.checkInDate
+          ? new Date(a.metadata.checkInDate).getTime()
+          : 0;
+        const dateB = b.metadata?.checkInDate
+          ? new Date(b.metadata.checkInDate).getTime()
+          : 0;
         return dateA - dateB;
       });
     } else {
       result.sort(
-        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       );
     }
 
     return result;
-  }, [statusFilter, minAmount, maxAmount, sortBy, checkInFrom, checkInTo, checkOutFrom, checkOutTo, escrows]);
+  }, [
+    statusFilter,
+    minAmount,
+    maxAmount,
+    sortBy,
+    checkInFrom,
+    checkInTo,
+    checkOutFrom,
+    checkOutTo,
+    escrows,
+  ]);
 
   // Real-time updates using Trustless Work notifications
   useEffect(() => {
@@ -218,7 +200,6 @@ export function RoleEscrowDashboard({
       isPollingRef.current = true;
 
       try {
-        if (isMountedRef.current) setIsPolling(true);
         const pendingNotifications = await checkPendingNotifications();
         const milestoneUpdates = await checkMilestoneNotifications();
 
@@ -243,9 +224,6 @@ export function RoleEscrowDashboard({
         console.error("Error checking for updates:", error);
       } finally {
         isPollingRef.current = false;
-        if (isMountedRef.current) {
-          setIsPolling(false);
-        }
       }
     };
 
@@ -403,10 +381,7 @@ export function RoleEscrowDashboard({
                   Total Value
                 </p>
                 <p className="text-2xl font-bold mt-1 dark:text-white">
-                  $
-                  {escrows
-                    .reduce((sum, e) => sum + e.amount, 0)
-                    .toLocaleString()}
+                  {formatAmount(escrows.reduce((sum, e) => sum + e.amount, 0))}
                 </p>
               </div>
               <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/30">
@@ -653,18 +628,22 @@ export function RoleEscrowDashboard({
             <div className="flex items-center gap-3">
               <Popover>
                 <PopoverTrigger asChild>
-                  <button className="flex items-center gap-2 text-sm
+                  <button
+                    className="flex items-center gap-2 text-sm
                                      border border-slate-600 rounded-lg
                                      px-3 py-1.5 hover:bg-slate-700
                                      transition-colors text-gray-700 dark:text-gray-300
-                                     relative">
+                                     relative"
+                  >
                     <SlidersHorizontal className="h-4 w-4" />
                     <span>Filter</span>
                     {activeFilterCount > 0 && (
-                      <span className="absolute -top-1.5 -right-1.5
+                      <span
+                        className="absolute -top-1.5 -right-1.5
                                        bg-orange-500 text-white text-[10px]
                                        font-bold rounded-full w-4 h-4
-                                       flex items-center justify-center">
+                                       flex items-center justify-center"
+                      >
                         {activeFilterCount}
                       </span>
                     )}
@@ -677,8 +656,10 @@ export function RoleEscrowDashboard({
                 >
                   {/* Sort by */}
                   <div className="space-y-2">
-                    <p className="text-xs font-semibold uppercase tracking-wide
-                                  text-gray-500 dark:text-gray-400">
+                    <p
+                      className="text-xs font-semibold uppercase tracking-wide
+                                  text-gray-500 dark:text-gray-400"
+                    >
                       Sort by
                     </p>
                     <div className="grid grid-cols-2 gap-1">
@@ -690,7 +671,7 @@ export function RoleEscrowDashboard({
                             "text-xs px-2 py-1.5 rounded-lg text-left transition-colors",
                             sortBy === opt.value
                               ? "bg-orange-500 text-white"
-                              : "bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600"
+                              : "bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600",
                           )}
                         >
                           {opt.label}
@@ -703,8 +684,10 @@ export function RoleEscrowDashboard({
 
                   {/* Status filter */}
                   <div className="space-y-2">
-                    <p className="text-xs font-semibold uppercase tracking-wide
-                                  text-gray-500 dark:text-gray-400">
+                    <p
+                      className="text-xs font-semibold uppercase tracking-wide
+                                  text-gray-500 dark:text-gray-400"
+                    >
                       Status
                     </p>
                     <div className="flex flex-wrap gap-1.5">
@@ -715,14 +698,14 @@ export function RoleEscrowDashboard({
                             setStatusFilter((prev) =>
                               prev.includes(status)
                                 ? prev.filter((s) => s !== status)
-                                : [...prev, status]
+                                : [...prev, status],
                             )
                           }
                           className={cn(
                             "text-xs px-2.5 py-1 rounded-full border transition-colors",
                             statusFilter.includes(status)
                               ? "bg-orange-500 text-white border-orange-500"
-                              : "border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-slate-500"
+                              : "border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-slate-500",
                           )}
                         >
                           {status}
@@ -735,8 +718,10 @@ export function RoleEscrowDashboard({
 
                   {/* Amount range */}
                   <div className="space-y-2">
-                    <p className="text-xs font-semibold uppercase tracking-wide
-                                  text-gray-500 dark:text-gray-400">
+                    <p
+                      className="text-xs font-semibold uppercase tracking-wide
+                                  text-gray-500 dark:text-gray-400"
+                    >
                       Amount Range
                     </p>
                     <div className="flex items-center gap-2">
@@ -766,8 +751,10 @@ export function RoleEscrowDashboard({
 
                   {/* Date range */}
                   <div className="space-y-2">
-                    <p className="text-xs font-semibold uppercase tracking-wide
-                                  text-gray-500 dark:text-gray-400">
+                    <p
+                      className="text-xs font-semibold uppercase tracking-wide
+                                  text-gray-500 dark:text-gray-400"
+                    >
                       Check-in Date Range
                     </p>
                     <div className="flex items-center gap-2">
@@ -793,8 +780,10 @@ export function RoleEscrowDashboard({
 
                   {/* Check-out date range */}
                   <div className="space-y-2">
-                    <p className="text-xs font-semibold uppercase tracking-wide
-                                  text-gray-500 dark:text-gray-400">
+                    <p
+                      className="text-xs font-semibold uppercase tracking-wide
+                                  text-gray-500 dark:text-gray-400"
+                    >
                       Check-out Date Range
                     </p>
                     <div className="flex items-center gap-2">

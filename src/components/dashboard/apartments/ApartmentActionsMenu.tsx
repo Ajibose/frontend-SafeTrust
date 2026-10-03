@@ -46,7 +46,7 @@ export function ApartmentActionsMenu({
           className="flex items-center justify-center h-8 w-8
                      rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700
                      transition-colors text-gray-500 dark:text-gray-400"
-          aria-label="Apartment actions"
+          aria-label={`Apartment actions for ${apartmentName}`}
         >
           <MoreHorizontal className="h-4 w-4" />
         </button>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Hotel, User, Settings, CreditCard, FileText, HelpCircle, Zap, Bell } from 'lucide-react';
+import { Plus, Hotel, User, Settings, CreditCard, FileText, HelpCircle, Zap, Bell, type LucideIcon } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -11,7 +11,7 @@ interface QuickActionsProps {
 
 interface Action {
   title: string;
-  icon: any;
+  icon: LucideIcon;
   route: string;
   description: string;
 }

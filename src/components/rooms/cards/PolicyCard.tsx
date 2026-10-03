@@ -327,7 +327,7 @@ const PolicyCard = ({
                 </span>
               </div>
               <p className="text-xs text-muted-foreground">
-                This deposit will be held on your payment method and released 7 days after checkout, provided there's no damage to the property.
+                This deposit will be held on your payment method and released 7 days after checkout, provided there&rsquo;s no damage to the property.
               </p>
             </div>
           )}

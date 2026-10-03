@@ -8,12 +8,11 @@ import { useWallet } from '@/components/auth/wallet/hooks/wallet.hook';
 import {
   BookingData,
   HotelData,
-  EscrowType,
   EscrowFormData,
   EscrowMilestone,
   UseBookingEscrowOptions,
   UseBookingEscrowReturn,
-} from '@/interfaces/booking-escrow.interface';
+} from '@/types/booking-escrow';
 import { trustlineOptions } from '@/components/tw-blocks/wallet-kit/trustlines';
 
 // Constants

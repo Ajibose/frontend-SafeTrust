@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronRight, SlidersHorizontal } from "lucide-react";
+import { ChevronRight, Download, SlidersHorizontal } from "lucide-react";
 import { useEffect, useRef, useState, useMemo } from "react";
 import {
   Popover,
@@ -9,17 +9,45 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { exportTransactionsToCSV } from "@/lib/exportToCSV";
+import type { TransactionRow } from "@/lib/exportToCSV";
 import { formatAmount } from "@/lib/format";
 import { DashboardHeader } from "./DashboardHeader";
 import { EscrowsByStatus } from "./EscrowsByStatus";
 import { RecentActivity } from "./RecentActivity";
 import { QuickActions } from "./QuickActions";
 import { EscrowTable } from "./EscrowTable";
-import { AnalyticsDashboard } from "./analytics";
+import { Button } from "@/components/ui/button";
+import dynamic from "next/dynamic";
 import type {
   EscrowData,
   NotificationData,
 } from "@/types/dashboard";
+
+const AnalyticsDashboard = dynamic(
+  () => import("./analytics").then((module) => module.AnalyticsDashboard),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        className="space-y-4 rounded-xl border border-slate-700 bg-slate-900 p-6"
+        role="status"
+        aria-label="Loading analytics"
+      >
+        <div className="h-8 w-48 animate-pulse rounded-lg bg-slate-700" />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[...Array(4)].map((_, index) => (
+            <div
+              key={index}
+              className="h-28 animate-pulse rounded-xl bg-slate-800"
+            />
+          ))}
+        </div>
+        <div className="h-64 animate-pulse rounded-xl bg-slate-800" />
+      </div>
+    ),
+  },
+);
 
 export type {
   EscrowData,
@@ -240,6 +268,16 @@ export function RoleEscrowDashboard({
       clearInterval(interval);
     };
   }, [isLoading]);
+
+  const transactionRows: TransactionRow[] = filteredTransactions.map((escrow) => ({
+    bookingId: escrow.metadata?.bookingId || escrow.id,
+    hotel: escrow.metadata?.hotelName || "Unknown hotel",
+    checkIn: escrow.metadata?.checkInDate || "",
+    checkOut: escrow.metadata?.checkOutDate || "",
+    amount: escrow.amount,
+    asset: escrow.asset.code,
+    status: escrow.status,
+  }));
 
   if (isLoading) {
     return (
@@ -833,6 +871,15 @@ export function RoleEscrowDashboard({
                 View All
                 <ChevronRight className="h-4 w-4" />
               </Link>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => exportTransactionsToCSV(transactionRows)}
+                disabled={transactionRows.length === 0}
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Export CSV
+              </Button>
             </div>
           </div>
           <div className="overflow-x-auto">

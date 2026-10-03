@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Home } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -16,12 +17,14 @@ import {
 import { ApartmentStatusBadge } from "@/components/dashboard/apartments/ApartmentStatusBadge";
 import { ApartmentActionsMenu } from "@/components/dashboard/apartments/ApartmentActionsMenu";
 import { useApartments } from "@/hooks/useApartments";
+import { formatPrice } from "@/lib/format";
 
 const ITEMS_PER_PAGE = 5;
 
 export function MyApartmentsTable() {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
+  const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
   const offset = page * ITEMS_PER_PAGE;
 
   const { data } = useApartments({
@@ -30,11 +33,14 @@ export function MyApartmentsTable() {
     search,
   });
 
-  const apartments = data.apartments;
-  const total = data.apartments_aggregate.aggregate.count;
+  const apartments = data.apartments.filter(
+    (apartment) => !deletedIds.has(String(apartment.id)),
+  );
+  const total = data.apartments_aggregate.aggregate.count - deletedIds.size;
 
   const handleDeleteConfirmed = (id: string) => {
-    console.log("(stub) Apartment deleted:", id);
+    setDeletedIds((previous) => new Set(previous).add(id));
+    toast.success("Apartment removed (skeleton mode)");
   };
 
   return (
@@ -124,11 +130,11 @@ export function MyApartmentsTable() {
                     )}
                   </TableCell>
                   <TableCell className="font-medium text-foreground">
-                    ${apartment.price.toLocaleString()}
+                    {formatPrice(apartment.price)}
                   </TableCell>
                   <TableCell>
                     <ApartmentActionsMenu
-                      apartmentId={apartment.id}
+                      apartmentId={String(apartment.id)}
                       apartmentName={apartment.name}
                       onDeleteConfirm={handleDeleteConfirmed}
                     />

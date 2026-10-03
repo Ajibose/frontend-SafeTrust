@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import GuestDashboard from "./GuestDashboard";
-import { STUB_HOTELS } from "@/lib/mockData/hotels";
+import { APARTMENT_LISTINGS } from "@/lib/mockData/apartmentListings";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
@@ -34,9 +34,9 @@ describe("GuestDashboard – lucide icon rendering", () => {
   it("renders the dashboard header with the unit count", () => {
     render(<GuestDashboard />);
 
+    expect(screen.getByText(/Available for rent in/i)).toBeInTheDocument();
     expect(
-      screen.getByText(/Available for rent in/i),
+      screen.getByText(`${APARTMENT_LISTINGS.length} units available`),
     ).toBeInTheDocument();
-    expect(screen.getByText(`${STUB_HOTELS.length} units available`)).toBeInTheDocument();
   });
 });

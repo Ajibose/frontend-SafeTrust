@@ -7,7 +7,7 @@ import { useGlobalAuthenticationStore } from "@/core/store/data";
 import { useRouter } from "next/navigation";
 import { useState, useCallback } from "react";
 import { useMultiWallet } from "./useMultiWallet";
-import { WalletInfo } from "../types/wallet.types";
+import type { WalletInfo } from "@/types/wallet";
 import { signTransaction } from "@stellar/freighter-api";
 
 export const useWallet = () => {
@@ -81,7 +81,10 @@ export const useWallet = () => {
     }
   };
 
-  const signXDR = async (unsignedXDR: string, networkPassphrase?: string): Promise<string> => {
+  const signXDR = async (
+    unsignedXDR: string,
+    networkPassphrase?: string,
+  ): Promise<string> => {
     try {
       if (!address) {
         throw new Error("No wallet connected");

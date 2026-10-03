@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronRight, SlidersHorizontal } from "lucide-react";
+import { ChevronRight, Download, SlidersHorizontal } from "lucide-react";
 import { useEffect, useRef, useState, useMemo } from "react";
 import {
   Popover,
@@ -9,12 +9,17 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { exportTransactionsToCSV } from "@/lib/exportToCSV";
+import type { TransactionRow } from "@/lib/exportToCSV";
+import { formatAmount } from "@/lib/format";
 import { DashboardHeader } from "./DashboardHeader";
 import { EscrowsByStatus } from "./EscrowsByStatus";
 import { RecentActivity } from "./RecentActivity";
 import { QuickActions } from "./QuickActions";
 import { EscrowTable } from "./EscrowTable";
+import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
+import type { EscrowData, NotificationData } from "@/types/dashboard";
 
 const AnalyticsDashboard = dynamic(
   () => import("./analytics").then((module) => module.AnalyticsDashboard),
@@ -41,6 +46,13 @@ const AnalyticsDashboard = dynamic(
   },
 );
 
+export type {
+  EscrowData,
+  EscrowStatus,
+  Milestone,
+  NotificationData,
+} from "@/types/dashboard";
+
 // Placeholder functions for notifications - in a real app, these would be API calls
 async function checkPendingNotifications(): Promise<NotificationData[]> {
   // In a real implementation, this would fetch from Trustless Work API
@@ -54,56 +66,6 @@ async function checkMilestoneNotifications(): Promise<NotificationData[]> {
   // const response = await fetch('/api/notifications/milestones');
   // return response.json();
   return [];
-}
-
-type EscrowStatus =
-  | "pending"
-  | "funded"
-  | "check_in_approved"
-  | "check_out_approved"
-  | "completed"
-  | "cancelled";
-
-export interface EscrowData {
-  id: string;
-  contractId: string;
-  status: EscrowStatus;
-  amount: number;
-  asset: {
-    code: string;
-    issuer?: string;
-  };
-  metadata?: {
-    bookingId: string;
-    hotelName: string;
-    checkInDate: string;
-    checkOutDate: string;
-    guestName?: string;
-    guestEmail?: string;
-    roomNumber?: string;
-  };
-  nextMilestone?: string;
-  milestones?: Milestone[];
-  marker: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface NotificationData {
-  id: string;
-  type: "milestone" | "payment" | "alert";
-  message: string;
-  timestamp: string;
-  read: boolean;
-  escrowId?: string;
-}
-
-export interface Milestone {
-  id: string;
-  name: string;
-  status: "pending" | "in_progress" | "completed" | "rejected";
-  dueDate?: string;
-  completedAt?: string;
 }
 
 const formatNotificationTimestamp = (timestamp: string) => {
@@ -304,6 +266,18 @@ export function RoleEscrowDashboard({
     };
   }, [isLoading]);
 
+  const transactionRows: TransactionRow[] = filteredTransactions.map(
+    (escrow) => ({
+      bookingId: escrow.metadata?.bookingId || escrow.id,
+      hotel: escrow.metadata?.hotelName || "Unknown hotel",
+      checkIn: escrow.metadata?.checkInDate || "",
+      checkOut: escrow.metadata?.checkOutDate || "",
+      amount: escrow.amount,
+      asset: escrow.asset.code,
+      status: escrow.status,
+    }),
+  );
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -444,10 +418,7 @@ export function RoleEscrowDashboard({
                   Total Value
                 </p>
                 <p className="text-2xl font-bold mt-1 dark:text-white">
-                  $
-                  {escrows
-                    .reduce((sum, e) => sum + e.amount, 0)
-                    .toLocaleString()}
+                  {formatAmount(escrows.reduce((sum, e) => sum + e.amount, 0))}
                 </p>
               </div>
               <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/30">
@@ -899,6 +870,15 @@ export function RoleEscrowDashboard({
                 View All
                 <ChevronRight className="h-4 w-4" />
               </Link>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => exportTransactionsToCSV(transactionRows)}
+                disabled={transactionRows.length === 0}
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Export CSV
+              </Button>
             </div>
           </div>
           <div className="overflow-x-auto">

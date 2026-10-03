@@ -40,6 +40,20 @@ const eslintConfig = [
       ],
     },
   },
+  {
+    files: ["src/**/*.tsx"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            "Literal[value=/(bg|text|border|ring|fill|stroke)-\\[#[0-9a-fA-F]{3,8}\\]/]",
+          message:
+            "Use a design token (bg-primary, text-muted-foreground, …) instead of a hex colour.",
+        },
+      ],
+    },
+  },
 ];
 
 export default eslintConfig;

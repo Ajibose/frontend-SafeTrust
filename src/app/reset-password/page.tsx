@@ -69,13 +69,15 @@ function ResetPasswordContent() {
       ) : (
         <div className="relative z-10 w-full max-w-sm space-y-6 text-center">
           <div className="flex justify-center">
-            <div className="bg-[#2857B8] p-3 rounded-full">
-              <KeyRound className="h-10 w-10 text-white" />
+            <div className="bg-primary p-3 rounded-full">
+              <KeyRound className="h-10 w-10 text-primary-foreground" />
             </div>
           </div>
 
           <h1 className="text-2xl font-bold">Reset Password</h1>
-          <p className="text-gray-500 text-sm">Enter your new password below</p>
+          <p className="text-muted-foreground text-sm">
+            Enter your new password below
+          </p>
 
           <ResetPasswordForm
             onSubmit={handleResetPassword}

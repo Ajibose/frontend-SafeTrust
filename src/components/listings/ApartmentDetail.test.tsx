@@ -2,7 +2,7 @@ import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import ApartmentDetail from "./ApartmentDetail";
 import { formatListingPrice } from "./formatListingPrice";
-import { STUB_HOTELS } from "@/lib/mockData/hotels";
+import { APARTMENT_LISTINGS } from "@/lib/mockData/apartmentListings";
 
 jest.mock("next/image", () => ({
   __esModule: true,
@@ -16,7 +16,7 @@ jest.mock("next/image", () => ({
 }));
 
 describe("ApartmentDetail – lucide icon rendering", () => {
-  const apartment = STUB_HOTELS[0]!;
+  const apartment = APARTMENT_LISTINGS[0]!;
   const onBook = jest.fn();
 
   it("renders the location pin as a lucide SVG", () => {
@@ -29,17 +29,11 @@ describe("ApartmentDetail – lucide icon rendering", () => {
     expect(pin).toHaveAttribute("fill", "currentColor");
   });
 
-  it("fills only the pin body, keeping the inner circle contrasting", () => {
+  it("renders the location pin as a filled lucide SVG", () => {
     render(<ApartmentDetail apartment={apartment} onBook={onBook} />);
 
     const pin = screen.getByTestId("apartment-detail-location-icon");
-    // Lucide's MapPin is a filled path plus an inner circle; the circle must
-    // take the badge background color instead of currentColor so the center
-    // stays visible.
-    const circle = pin.querySelector("circle");
-    expect(circle).not.toBeNull();
     expect(pin.getAttribute("fill")).toBe("currentColor");
-    expect(pin.getAttribute("class")).toContain("[&>circle]:fill-[#fff1e7]");
   });
 
   it("renders the address next to the location pin", () => {

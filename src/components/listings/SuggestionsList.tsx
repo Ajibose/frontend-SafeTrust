@@ -1,11 +1,11 @@
 "use client";
 
-import type { HotelListing } from "@/@types/hotel";
+import type { ApartmentListing } from "@/types/hotel";
 import { useEffect, useState } from "react";
 import SuggestionCard from "./SuggestionCard";
 
 interface SuggestionsListProps {
-  apartments: HotelListing[];
+  apartments: ApartmentListing[];
   onSelect?: (id: string) => void;
 }
 
@@ -34,12 +34,12 @@ export default function SuggestionsList({
   };
 
   return (
-    <aside className="w-full border-b border-[#e8e1da] px-6 py-8 lg:w-[320px] lg:border-b-0 lg:border-r">
+    <aside className="w-full border-b border-border px-6 py-8 lg:w-[320px] lg:border-b-0 lg:border-r">
       <div className="mb-6">
-        <h2 className="text-[28px] font-semibold tracking-[-0.03em] text-[#181818]">
+        <h2 className="text-[28px] font-semibold tracking-[-0.03em] text-foreground">
           Suggestions
         </h2>
-        <p className="mt-4 text-sm text-[#202020]">
+        <p className="mt-4 text-sm text-muted-foreground">
           More than 200 units available
         </p>
       </div>

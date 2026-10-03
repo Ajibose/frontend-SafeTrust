@@ -9,7 +9,7 @@ export { useBookingEscrow, useEscrowValidation } from "./useBookingEscrow";
 export type {
   UseBookingEscrowOptions,
   UseBookingEscrowReturn,
-} from "@/interfaces/booking-escrow.interface";
+} from "@/types/booking-escrow";
 
 // Subscription Hooks
 export { useEscrowSubscription } from "./useEscrowSubscription";

@@ -4,6 +4,7 @@ import * as React from "react";
 import { DateRange } from "react-day-picker";
 import { differenceInDays } from "date-fns";
 import { X } from "lucide-react";
+import { formatAmount } from "@/lib/format";
 
 interface PriceCalculatorProps {
   basePrice: number;
@@ -76,27 +77,27 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
       <div className="space-y-3">
         <div className="flex justify-between text-sm">
           <span className="flex items-center space-x-2">
-            ${basePrice.toFixed(2)} <X className="w-3 h-3" />{" "}
+            {formatAmount(basePrice)} <X className="w-3 h-3" />{" "}
             {priceBreakdown.nights} nights <X className="w-3 h-3" />{" "}
             {guestCount} guest{guestCount > 1 ? "s" : ""}
           </span>
-          <span>${priceBreakdown.basePrice.toFixed(2)}</span>
+          <span>{formatAmount(priceBreakdown.basePrice)}</span>
         </div>
 
         <div className="flex justify-between text-sm">
           <span>Tax ({(taxRate * 100).toFixed(0)}%)</span>
-          <span>${priceBreakdown.tax.toFixed(2)}</span>
+          <span>{formatAmount(priceBreakdown.tax)}</span>
         </div>
 
         <div className="flex justify-between text-sm">
           <span>SafeTrust Fee ({(platformFee * 100).toFixed(0)}%)</span>
-          <span>${priceBreakdown.platformFee.toFixed(2)}</span>
+          <span>{formatAmount(priceBreakdown.platformFee)}</span>
         </div>
 
         <div className="border-t pt-3">
           <div className="flex justify-between font-semibold text-lg">
             <span>Total</span>
-            <span>${priceBreakdown.total.toFixed(2)}</span>
+            <span>{formatAmount(priceBreakdown.total)}</span>
           </div>
         </div>
       </div>

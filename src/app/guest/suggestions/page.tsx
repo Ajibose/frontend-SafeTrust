@@ -170,12 +170,11 @@ export default function GuestSuggestionsPage() {
                           </>
                         )}
                         <span>{apt.bathrooms} ba</span>
-                        <span
-                          className="ml-auto font-bold text-green-700
-                                     dark:text-green-400"
-                        >
-                          ${apt.price.toLocaleString()}
-                        </span>
+                        <ListingPrice
+                          amount={apt.price}
+                          size="sm"
+                          className="ml-auto"
+                        />
                       </div>
                     </div>
                   </button>

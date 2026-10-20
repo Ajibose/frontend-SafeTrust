@@ -48,11 +48,11 @@ test.describe("Home footer", () => {
       .getByRole("link", { name: "List your property", exact: true });
     await expect(listPropertyLink).toHaveAttribute(
       "href",
-      "/login?redirect=/dashboard/hotels/new",
+      "/login?redirect=/dashboard/apartments/new",
     );
     await listPropertyLink.click();
     await expect(page).toHaveURL(
-      /\/login\?redirect=(?:%2F|\/)dashboard(?:%2F|\/)hotels(?:%2F|\/)new$/,
+      /\/login\?redirect=(?:%2F|\/)dashboard(?:%2F|\/)apartments(?:%2F|\/)new$/,
     );
   });
 

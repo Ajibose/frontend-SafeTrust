@@ -49,7 +49,7 @@ describe("HomeFooter", () => {
     });
     expect(listPropertyLink).toHaveAttribute(
       "href",
-      "/login?redirect=/dashboard/hotels/new",
+      "/login?redirect=/dashboard/apartments/new",
     );
 
     const githubLink = screen.getByRole("link", { name: "GitHub" });

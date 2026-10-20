@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Flame, Heart, MessageCircle } from "lucide-react";
 import AmenityIcons from "./AmenityIcons";
 import { ListingPrice } from "./ListingPrice";
-import { getConversationIdForApartment } from "@/lib/conversationRoutes";
 
 interface ApartmentCardProps {
   apartment: ApartmentListing;
@@ -28,7 +27,6 @@ export default function ApartmentCard({
   onToggleFavorite,
 }: ApartmentCardProps) {
   const router = useRouter();
-  const conversationId = getConversationIdForApartment(apartment.name);
 
   return (
     <article
@@ -151,18 +149,18 @@ export default function ApartmentCard({
         >
           <Link href={`/rent/${apartment.id}/escrow/create`}>Book</Link>
         </Button>
-        {conversationId && (
-          <Button
-            asChild
-            variant="outline"
-            className="relative z-10 mt-2 w-full border-orange-700 text-orange-700 hover:bg-orange-50 dark:border-orange-400 dark:text-orange-400 dark:hover:bg-orange-900/10 font-semibold"
+        <Button
+          asChild
+          variant="outline"
+          className="relative z-10 mt-2 w-full border-orange-700 text-orange-700 hover:bg-orange-50 dark:border-orange-400 dark:text-orange-400 dark:hover:bg-orange-900/10 font-semibold"
+        >
+          <Link
+            href={`/dashboard/messages/new?listing=${encodeURIComponent(apartment.id)}`}
           >
-            <Link href={`/dashboard/messages/${conversationId}`}>
-              <MessageCircle className="mr-2 h-4 w-4" aria-hidden="true" />
-              Message host
-            </Link>
-          </Button>
-        )}
+            <MessageCircle className="mr-2 h-4 w-4" aria-hidden="true" />
+            Message host
+          </Link>
+        </Button>
       </div>
     </article>
   );

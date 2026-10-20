@@ -84,7 +84,7 @@ Legacy `/dashboard/hotel/*` URLs redirect via `next.config.ts`.
 ```text
 Escrows → Escrow Dashboard → Suggestions view → Rent →
 Hotels → New Hotel → Notifications → Messages →
-Favorite → Users → My apartments → New Apartment →
+Wishlists → Users → My apartments → New Apartment →
 Profile → [Logout]
 ```
 

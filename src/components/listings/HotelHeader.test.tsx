@@ -17,6 +17,10 @@ jest.mock("@/components/ui/ThemeToggle", () => ({
   ThemeToggle: () => <button type="button">Theme</button>,
 }));
 
+jest.mock("@/components/navigation/AccountMenu", () => ({
+  AccountMenu: () => <button type="button">Account menu</button>,
+}));
+
 describe("HotelHeader rent navigation", () => {
   it("exposes all rent destinations and closes after selection", () => {
     render(<HotelHeader />);
@@ -59,12 +63,19 @@ describe("HotelHeader rent navigation", () => {
   });
 });
 
+describe("HotelHeader account actions", () => {
+  it("uses the account menu instead of a hard-coded name and unread dot", () => {
+    const { container } = render(<HotelHeader />);
+    expect(
+      screen.getByRole("button", { name: "Account menu" }),
+    ).toBeInTheDocument();
+    expect(container).not.toHaveTextContent("Randall Valenciano");
+    expect(container.querySelector(".bg-orange-500")).toBeNull();
+  });
+});
+
 describe("HotelHeader lucide icons", () => {
-  const lucideIconTestIds = [
-    "header-search-icon",
-    "header-notification-icon",
-    "header-user-icon",
-  ] as const;
+  const lucideIconTestIds = ["header-search-icon"] as const;
 
   it("renders the header icons as lucide SVGs", () => {
     render(<HotelHeader />);

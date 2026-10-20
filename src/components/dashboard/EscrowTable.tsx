@@ -1,4 +1,5 @@
-import { MoreHorizontal, FileText, CheckCircle2, XCircle } from "lucide-react";
+import { useState } from "react";
+import { MoreHorizontal, FileText, Receipt, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -19,12 +20,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { format } from "date-fns";
-import type { EscrowData } from "@/types/dashboard";
+import type { BookingAction, EscrowData } from "@/types/dashboard";
+import { CancelBookingDialog } from "./CancelBookingDialog";
 import { useRouter } from "next/navigation";
 
 interface EscrowTableProps {
   escrows: EscrowData[];
-  userRole: "guest" | "hotel" | "admin";
+  onRowUpdated?: (row: EscrowData) => void;
 }
 
 const statusBadgeVariant = {
@@ -45,8 +47,12 @@ const statusText = {
   cancelled: "Cancelled",
 } as const;
 
-export function EscrowTable({ escrows }: EscrowTableProps) {
+const can = (escrow: EscrowData, action: BookingAction) =>
+  escrow.allowedActions?.includes(action) ?? false;
+
+export function EscrowTable({ escrows, onRowUpdated }: EscrowTableProps) {
   const router = useRouter();
+  const [cancelTarget, setCancelTarget] = useState<EscrowData | null>(null);
 
   const handleViewDetails = (escrowId: string) => {
     router.push(`/dashboard/escrow/${escrowId}`);
@@ -64,12 +70,17 @@ export function EscrowTable({ escrows }: EscrowTableProps) {
   );
 
   const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currency === "XLM" ? "USD" : currency,
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 6,
-    }).format(amount);
+    const options = { minimumFractionDigits: 2, maximumFractionDigits: 6 };
+    try {
+      return new Intl.NumberFormat("en-US", {
+        ...options,
+        style: "currency",
+        currency: currency === "XLM" ? "USD" : currency,
+      }).format(amount);
+    } catch {
+      // Not an ISO 4217 code (e.g. USDC): show the plain amount and the code.
+      return `${new Intl.NumberFormat("en-US", options).format(amount)} ${currency}`;
+    }
   };
 
   const formatDate = (dateString?: string) => {
@@ -177,26 +188,38 @@ export function EscrowTable({ escrows }: EscrowTableProps) {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem className="cursor-pointer">
+                        <DropdownMenuItem
+                          className="cursor-pointer"
+                          onSelect={() =>
+                            router.push(
+                              `/dashboard/escrow/${escrow.id}#contract`,
+                            )
+                          }
+                        >
                           <FileText className="h-4 w-4 mr-2" />
-                          View Contract
+                          View contract
                         </DropdownMenuItem>
                         {escrow.status === "completed" && (
-                          <DropdownMenuItem className="cursor-pointer">
-                            <CheckCircle2 className="h-4 w-4 mr-2 text-green-500" />
-                            Mark as Completed
+                          <DropdownMenuItem
+                            className="cursor-pointer"
+                            onSelect={() => handleViewDetails(escrow.id)}
+                          >
+                            <Receipt className="h-4 w-4 mr-2" />
+                            View receipt
                           </DropdownMenuItem>
                         )}
-                        {escrow.status !== "cancelled" &&
-                          escrow.status !== "completed" && (
-                            <>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem className="text-red-600 cursor-pointer">
-                                <XCircle className="h-4 w-4 mr-2" />
-                                Cancel Booking
-                              </DropdownMenuItem>
-                            </>
-                          )}
+                        {can(escrow, "cancel") && (
+                          <>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              className="text-destructive cursor-pointer"
+                              onSelect={() => setCancelTarget(escrow)}
+                            >
+                              <XCircle className="h-4 w-4 mr-2" />
+                              Cancel booking…
+                            </DropdownMenuItem>
+                          </>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
@@ -206,6 +229,13 @@ export function EscrowTable({ escrows }: EscrowTableProps) {
           )}
         </TableBody>
       </Table>
+      {cancelTarget && (
+        <CancelBookingDialog
+          escrow={cancelTarget}
+          onClose={() => setCancelTarget(null)}
+          onCancelled={(updated) => onRowUpdated?.(updated)}
+        />
+      )}
     </div>
   );
 }

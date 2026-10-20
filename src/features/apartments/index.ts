@@ -8,6 +8,7 @@ export type {
   OwnedApartment,
 } from "./repository";
 export {
+  COORDINATES_REQUIRED,
   describeApartmentError,
   type ApartmentErrorDetails,
   type ApartmentField,

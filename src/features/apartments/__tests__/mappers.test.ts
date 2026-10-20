@@ -20,6 +20,10 @@ describe("apartment mappers", () => {
       lat: -33.4,
       lng: 151.2,
     });
+    expect(fromPoint("(1e-05,-2.5E-3)")).toEqual({
+      lat: -0.0025,
+      lng: 0.00001,
+    });
     expect(fromPoint(null)).toBeNull();
     expect(fromPoint("not a point")).toBeNull();
   });
@@ -66,10 +70,9 @@ describe("apartment mappers", () => {
       bathrooms: 1,
       pet_friendly: null,
       created_at: "2026-10-01T10:00:00+00:00",
-      apartment_images: [{ image_url: "https://example.com/a.jpg" }],
     };
 
-    expect(fromRow(row)).toEqual({
+    expect(fromRow(row, ["https://example.com/a.jpg"])).toEqual({
       id: "6f1c2a7e-1111-4222-8333-944455556666",
       name: "Escazú Loft",
       description: null,
@@ -126,6 +129,17 @@ describe("describeApartmentError", () => {
     expect(describeApartmentError(error)).toEqual({
       field: "availableUntil",
       message: "Available Until must be later than Available From.",
+    });
+  });
+
+  it("maps a Not-NULL coordinates violation to the latitude field", () => {
+    const error = new GraphQLError(
+      'Not-NULL violation. null value in column "coordinates" of relation "apartments" violates not-null constraint',
+      "constraint-violation",
+    );
+    expect(describeApartmentError(error)).toEqual({
+      field: "latitude",
+      message: "Enter both latitude and longitude.",
     });
   });
 

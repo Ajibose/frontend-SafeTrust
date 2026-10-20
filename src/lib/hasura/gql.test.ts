@@ -1,5 +1,5 @@
 import { auth } from "@/lib/firebase";
-import { gql, GraphQLError } from "./gql";
+import { currentUid, gql, GraphQLError } from "./gql";
 
 jest.mock("@/lib/firebase", () => ({
   auth: {
@@ -9,7 +9,7 @@ jest.mock("@/lib/firebase", () => ({
 }));
 
 const mockAuth = auth as unknown as {
-  currentUser: { getIdToken: () => Promise<string> } | null;
+  currentUser: { uid?: string; getIdToken: () => Promise<string> } | null;
 };
 
 const jsonResponse = (body: unknown) =>
@@ -99,6 +99,21 @@ describe("gql", () => {
     );
     await expect(gql("query Q { x }")).rejects.toMatchObject({
       code: "NETWORK",
+    });
+  });
+
+  it("currentUid returns the signed-in uid", async () => {
+    mockAuth.currentUser = {
+      uid: "host-1",
+      getIdToken: () => Promise.resolve("t"),
+    };
+    await expect(currentUid()).resolves.toBe("host-1");
+  });
+
+  it("currentUid throws UNAUTHENTICATED without a user", async () => {
+    mockAuth.currentUser = null;
+    await expect(currentUid()).rejects.toMatchObject({
+      code: "UNAUTHENTICATED",
     });
   });
 });

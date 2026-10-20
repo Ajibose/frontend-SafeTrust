@@ -21,6 +21,14 @@ type GraphQLResponse<T> = {
   errors?: Array<{ message: string; extensions?: { code?: string } }>;
 };
 
+/** The signed-in user's Firebase uid (Hasura's x-hasura-user-id). */
+export async function currentUid(): Promise<string> {
+  await auth.authStateReady();
+  const uid = auth.currentUser?.uid;
+  if (!uid) throw new GraphQLError("UNAUTHENTICATED");
+  return uid;
+}
+
 /**
  * Runs a query against Hasura as the signed-in user (Firebase ID token).
  * Never uses the admin secret: permissions are enforced by Hasura roles.

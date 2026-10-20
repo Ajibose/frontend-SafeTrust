@@ -9,7 +9,7 @@ export const toPoint = ({ lat, lng }: Coordinates) => `(${lng},${lat})`;
 export function fromPoint(
   point: string | null | undefined,
 ): Coordinates | null {
-  const match = /^\(\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\)$/.exec(point ?? "");
+  const match = /^\(\s*([-+\d.eE]+)\s*,\s*([-+\d.eE]+)\s*\)$/.exec(point ?? "");
   if (!match) return null;
   const lng = Number(match[1]);
   const lat = Number(match[2]);
@@ -49,10 +49,14 @@ export type ApartmentRow = {
   bathrooms: number | null;
   pet_friendly: boolean | null;
   created_at: string;
-  apartment_images?: Array<{ image_url: string }>;
 };
 
-export function fromRow(row: ApartmentRow): OwnedApartment {
+export type ImageRow = { apartment_id: string; image_url: string };
+
+export function fromRow(
+  row: ApartmentRow,
+  imageUrls: string[] = [],
+): OwnedApartment {
   return {
     id: row.id,
     name: row.name,
@@ -72,13 +76,14 @@ export function fromRow(row: ApartmentRow): OwnedApartment {
     bedrooms: row.bedrooms ?? 1,
     bathrooms: row.bathrooms ?? 1,
     petFriendly: row.pet_friendly ?? false,
-    imageUrls: (row.apartment_images ?? []).map((image) => image.image_url),
+    imageUrls,
     createdAt: row.created_at,
     offers: 0,
   };
 }
 
-export type ApartmentField = "price" | "warrantyDeposit" | "availableUntil";
+export type ApartmentField =
+  "price" | "warrantyDeposit" | "availableUntil" | "latitude";
 
 export type ApartmentErrorDetails = { message: string; field?: ApartmentField };
 
@@ -100,6 +105,8 @@ const CONSTRAINT_FIELDS: Array<[RegExp, Required<ApartmentErrorDetails>]> = [
   ],
 ];
 
+export const COORDINATES_REQUIRED = "Enter both latitude and longitude.";
+
 /** A user-facing message (and the form field it belongs to, if any). */
 export function describeApartmentError(error: unknown): ApartmentErrorDetails {
   if (error instanceof GraphQLError) {
@@ -111,6 +118,12 @@ export function describeApartmentError(error: unknown): ApartmentErrorDetails {
     }
     if (error.code === "UNAUTHENTICATED" || error.code === "invalid-jwt") {
       return { message: "Your session has expired. Sign in again and retry." };
+    }
+    if (
+      /coordinates/.test(error.message) &&
+      (error.code === "constraint-violation" || /not-null/i.test(error.message))
+    ) {
+      return { field: "latitude", message: COORDINATES_REQUIRED };
     }
     if (error.code === "constraint-violation") {
       const match = CONSTRAINT_FIELDS.find(([pattern]) =>

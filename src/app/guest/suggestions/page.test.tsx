@@ -8,6 +8,15 @@ jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
 }));
 
+jest.mock("@/features/listings", () => ({
+  useSaveStay: () => ({
+    isSaved: () => false,
+    toggleSaved: jest.fn(),
+    announcement: "",
+  }),
+  WishlistAnnouncer: () => null,
+}));
+
 jest.mock("next/image", () => ({
   __esModule: true,
   default: () => <div data-testid="mock-image" />,

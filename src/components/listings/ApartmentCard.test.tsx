@@ -70,7 +70,7 @@ describe("ApartmentCard – Interactions and Accessibility", () => {
     );
 
     const favButton = screen.getByRole("button", {
-      name: new RegExp(`Save ${APARTMENT_LISTINGS[0].name} to favorites`, "i"),
+      name: new RegExp(`Save ${APARTMENT_LISTINGS[0].name} to Wishlists`, "i"),
     });
     expect(favButton).toBeInTheDocument();
     expect(favButton).toHaveAttribute("aria-pressed", "false");

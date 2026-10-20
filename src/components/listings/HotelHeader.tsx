@@ -5,6 +5,11 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { AccountMenu } from "@/components/navigation/AccountMenu";
+import {
+  ACCOUNT_ROUTES,
+  loginHref,
+} from "@/components/navigation/account-routes";
+import { useWishlist } from "@/features/listings";
 import { ChevronDown, Grid2X2, Heart, Lightbulb, Search } from "lucide-react";
 
 interface HotelHeaderProps {
@@ -156,9 +161,37 @@ function HotelHeaderContent({ showHostSwitch }: HotelHeaderProps) {
           <div className="hidden md:block">
             <ThemeToggle />
           </div>
+          <WishlistsButton />
           <AccountMenu />
         </div>
       </div>
     </header>
+  );
+}
+
+function WishlistsButton() {
+  const { signedIn, ids } = useWishlist();
+  const count = ids.length;
+
+  return (
+    <Link
+      href={
+        signedIn
+          ? ACCOUNT_ROUTES.wishlists
+          : loginHref(ACCOUNT_ROUTES.wishlists)
+      }
+      aria-label={`Wishlists${count ? `, ${count} saved` : ""}`}
+      className="relative grid h-11 w-11 place-items-center rounded-full text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    >
+      <Heart className="h-5 w-5" aria-hidden="true" />
+      {count > 0 && (
+        <span
+          aria-hidden="true"
+          className="absolute -right-0.5 -top-0.5 min-w-4 rounded-full bg-primary px-1 text-center text-[10px] font-semibold text-primary-foreground"
+        >
+          {count}
+        </span>
+      )}
+    </Link>
   );
 }

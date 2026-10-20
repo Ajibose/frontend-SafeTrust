@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { WishlistAnnouncer, useSaveStay } from "@/features/listings";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -24,15 +25,9 @@ import { ListingPrice } from "@/components/listings/ListingPrice";
 export default function GuestSuggestionsPage() {
   const router = useRouter();
   const [selectedId, setSelectedId] = useState(APARTMENT_LISTINGS[0].id);
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const { isSaved, toggleSaved, announcement } = useSaveStay();
 
   const selected = APARTMENT_LISTINGS.find((a) => a.id === selectedId)!;
-
-  const toggleFavorite = (id: string) => {
-    setFavorites((curr) =>
-      curr.includes(id) ? curr.filter((f) => f !== id) : [...curr, id],
-    );
-  };
 
   return (
     <div
@@ -41,6 +36,7 @@ export default function GuestSuggestionsPage() {
     >
       {/* Standalone header */}
       <HotelHeader />
+      <WishlistAnnouncer message={announcement} />
 
       <PageContainer width="wide" className="py-6">
         <nav
@@ -179,16 +175,20 @@ export default function GuestSuggestionsPage() {
 
                   <button
                     type="button"
-                    onClick={() => toggleFavorite(apt.id)}
-                    aria-pressed={favorites.includes(apt.id)}
-                    aria-label="Toggle favorite"
-                    className="relative z-10 shrink-0 rounded-full p-1 focus-visible:ring-2 focus-visible:ring-ring mt-0.5"
+                    onClick={() => toggleSaved(apt.id)}
+                    aria-pressed={isSaved(apt.id)}
+                    aria-label={
+                      isSaved(apt.id)
+                        ? `Remove ${apt.name} from Wishlists`
+                        : `Save ${apt.name} to Wishlists`
+                    }
+                    className="relative z-10 shrink-0 rounded-full p-1 focus-visible:ring-2 focus-visible:ring-orange-500 mt-0.5"
                   >
                     <Heart
                       aria-hidden="true"
                       className={cn(
                         "h-4 w-4 transition-colors",
-                        favorites.includes(apt.id)
+                        isSaved(apt.id)
                           ? "fill-red-500 text-red-500"
                           : "text-gray-300 hover:text-red-400",
                       )}

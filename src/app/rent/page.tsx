@@ -40,6 +40,7 @@ import {
 import Link from "next/link";
 import { LazyMotionProvider } from "@/components/ui/LazyMotionProvider";
 import { RentReveal } from "@/components/listings/RentMotion";
+import { WishlistAnnouncer, useSaveStay } from "@/features/listings";
 
 const ApartmentGrid = dynamic(
   () => import("@/components/listings/ApartmentGrid"),
@@ -108,6 +109,7 @@ const normalizeSearchText = (value: string) =>
 
 function RentPageContent() {
   const router = useRouter();
+  const { isSaved, toggleSaved, announcement } = useSaveStay();
   const searchParams = useSearchParams();
   const query = searchParams.get("q")?.trim() ?? "";
   const normalizedQuery = normalizeSearchText(query);
@@ -201,6 +203,7 @@ function RentPageContent() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <HotelHeader />
+      <WishlistAnnouncer message={announcement} />
 
       <PageContainer width="wide" className="flex flex-col lg:flex-row">
         <div className="hidden shrink-0 lg:block">
@@ -441,6 +444,10 @@ function RentPageContent() {
                   </RentReveal>
                 )}
                 distances={distances}
+                favorites={results
+                  .filter((a) => isSaved(a.id))
+                  .map((a) => a.id)}
+                onToggleFavorite={toggleSaved}
                 onApartmentClick={handleApartmentClick}
               />
             )}

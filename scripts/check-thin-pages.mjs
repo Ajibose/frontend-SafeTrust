@@ -8,7 +8,6 @@ const allowedClientPages = new Set([
   "dashboard/apartments/[id]/edit/page.tsx",
   "dashboard/apartments/[id]/offers/page.tsx",
   "dashboard/escrow/page.tsx",
-  "dashboard/favorites/page.tsx",
   "dashboard/hotels/[id]/edit/page.tsx",
   "dashboard/hotels/[id]/page.tsx",
   "dashboard/hotels/new/page.tsx",

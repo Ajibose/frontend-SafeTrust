@@ -23,7 +23,7 @@ export default function ApartmentCard({
   apartment,
   distanceKm,
   loading = "lazy",
-  isFavorite = apartment.favorite,
+  isFavorite = false,
   onToggleFavorite,
 }: ApartmentCardProps) {
   const router = useRouter();
@@ -78,8 +78,8 @@ export default function ApartmentCard({
               aria-pressed={isFavorite}
               aria-label={
                 isFavorite
-                  ? `Remove ${apartment.name} from favorites`
-                  : `Save ${apartment.name} to favorites`
+                  ? `Remove ${apartment.name} from Wishlists`
+                  : `Save ${apartment.name} to Wishlists`
               }
               className="relative z-10 shrink-0 rounded-full p-1 text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
             >

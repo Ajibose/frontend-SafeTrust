@@ -199,7 +199,7 @@ function RentPageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="theme-guest min-h-screen bg-background text-foreground">
       <HotelHeader />
 
       <PageContainer width="wide" className="flex flex-col lg:flex-row">
@@ -257,7 +257,7 @@ function RentPageContent() {
                       />
                       Filters
                       {activeCount > 0 && (
-                        <span className="ml-2 inline-flex min-w-5 items-center justify-center rounded-full bg-orange-700 px-1.5 text-xs text-white">
+                        <span className="ml-2 inline-flex min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-xs text-primary-foreground">
                           {activeCount}
                         </span>
                       )}
@@ -340,7 +340,7 @@ function RentPageContent() {
                       <SlidersHorizontal className="h-4 w-4" />
                       <span>Sort</span>
                       {activeCount > 0 ? (
-                        <span className="rounded-full bg-orange-100 px-2 py-0.5 text-xs font-semibold text-orange-700 dark:bg-orange-900/40 dark:text-orange-300">
+                        <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-semibold text-accent-foreground">
                           {activeCount}
                         </span>
                       ) : null}
@@ -371,7 +371,7 @@ function RentPageContent() {
                           className={cn(
                             "flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm transition-colors",
                             effectiveSort === option.value
-                              ? "bg-orange-50 font-medium text-orange-700 dark:bg-orange-900/30 dark:text-orange-300"
+                              ? "bg-accent font-medium text-accent-foreground"
                               : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-slate-700",
                           )}
                         >

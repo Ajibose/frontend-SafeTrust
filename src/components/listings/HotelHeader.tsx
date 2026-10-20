@@ -73,7 +73,7 @@ export function RentDropdown() {
         aria-expanded={open}
         aria-controls="rent-navigation-menu"
         onClick={() => setOpen((current) => !current)}
-        className="flex items-center gap-2 rounded-full bg-background px-4 py-2 text-sm text-foreground shadow-sm transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+        className="flex items-center gap-2 rounded-full bg-background px-4 py-2 text-sm text-foreground shadow-sm transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         Rent
         <ChevronDown
@@ -97,8 +97,11 @@ export function RentDropdown() {
               onClick={() => setOpen(false)}
               className="flex items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-muted focus:bg-muted focus:outline-none"
             >
-              <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-orange-100 dark:bg-orange-900/30">
-                <Icon aria-hidden="true" className="h-4 w-4 text-orange-500" />
+              <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent">
+                <Icon
+                  aria-hidden="true"
+                  className="h-4 w-4 text-accent-foreground"
+                />
               </span>
               <span>
                 <span className="block text-sm font-medium text-gray-900 dark:text-white">
@@ -124,7 +127,7 @@ export default function HotelHeader({
 
 function HotelHeaderContent({ showHostSwitch }: HotelHeaderProps) {
   return (
-    <header className="border-b border-border bg-background">
+    <header className="theme-guest border-b border-border bg-background">
       <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center gap-4 px-4 py-5 sm:flex-nowrap sm:px-6 lg:px-8">
         <Link href="/" className="flex shrink-0 items-center gap-3">
           <Image src="/img/logo.png" alt="SafeTrust" width={36} height={36} />
@@ -150,7 +153,7 @@ function HotelHeaderContent({ showHostSwitch }: HotelHeaderProps) {
           {showHostSwitch && (
             <Link
               href="/dashboard/escrow-dashboard"
-              className="hidden text-sm font-semibold text-orange-700 transition-colors hover:text-orange-800 sm:block whitespace-nowrap"
+              className="hidden text-sm font-semibold text-primary transition-colors hover:text-primary/80 sm:block whitespace-nowrap"
             >
               Switch to Host view
             </Link>

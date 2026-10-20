@@ -15,7 +15,7 @@ export default function Page() {
     <>
       <Header />
       <HomeMotion>
-        <main className="flex min-h-dvh flex-col">
+        <main className="theme-guest flex min-h-dvh flex-col">
           <HomeMotionSection
             revealOnScroll={false}
             className="px-4 py-16 text-center sm:py-24"

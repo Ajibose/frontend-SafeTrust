@@ -96,4 +96,11 @@ describe("bookings api", () => {
     expect(err).toBeInstanceOf(ApiError);
     expect(err.code).toBe("INVALID_RESPONSE");
   });
+
+  it("cancelBooking throws INVALID_RESPONSE on a 200 with the wrong shape", async () => {
+    (global.fetch as jest.Mock).mockResolvedValue(jsonResponse({}));
+    const err = await cancelBooking("res-1").catch((e) => e);
+    expect(err).toBeInstanceOf(ApiError);
+    expect(err.code).toBe("INVALID_RESPONSE");
+  });
 });

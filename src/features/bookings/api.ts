@@ -45,6 +45,22 @@ async function request<T>(url: string, init: RequestInit = {}): Promise<T> {
   return data as T;
 }
 
+function isReservationDto(value: unknown): value is ReservationDto {
+  if (!value || typeof value !== "object") return false;
+  const v = value as Record<string, unknown>;
+  const apartment = v.apartment as Record<string, unknown> | null | undefined;
+  return (
+    typeof v.id === "string" &&
+    typeof v.status === "string" &&
+    typeof v.checkIn === "string" &&
+    typeof v.checkOut === "string" &&
+    typeof v.amount === "string" &&
+    typeof v.asset === "string" &&
+    typeof apartment?.name === "string" &&
+    Array.isArray(v.allowedActions)
+  );
+}
+
 export async function listBookings(): Promise<EscrowData[]> {
   const data = await request<{ reservations: ReservationDto[] }>(
     "/api/bookings",
@@ -66,5 +82,8 @@ export async function cancelBooking(
       body: JSON.stringify(reason ? { reason } : {}),
     },
   );
+  if (!isReservationDto(dto)) {
+    throw new ApiError("Invalid response", 200, "INVALID_RESPONSE");
+  }
   return mapReservation(dto);
 }

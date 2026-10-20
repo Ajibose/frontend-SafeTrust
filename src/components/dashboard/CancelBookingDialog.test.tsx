@@ -120,6 +120,15 @@ describe("CancelBookingDialog", () => {
     expect(mockCancel).toHaveBeenCalledTimes(2);
   });
 
+  it("does not suggest a retry when the response is invalid", async () => {
+    mockCancel.mockRejectedValue(new ApiError("x", 200, "INVALID_RESPONSE"));
+    setup();
+    fireEvent.click(confirmButton());
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "We couldn't confirm the cancellation. Refresh to see the booking's current status.",
+    );
+  });
+
   it("stays open on Escape while pending and disables the button", async () => {
     let resolve!: (row: EscrowData) => void;
     mockCancel.mockReturnValue(
@@ -166,6 +175,9 @@ describe("CancelBookingDialog", () => {
       />,
     );
     expect(confirmButton()).toBeDisabled();
+    expect(
+      screen.getByRole("heading", { name: "Cancel booking" }),
+    ).toBeInTheDocument();
     expect(screen.getByRole("alert")).toHaveTextContent(/no reference/);
   });
 

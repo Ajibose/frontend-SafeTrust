@@ -57,10 +57,13 @@ export function CancelBookingDialog({
       onClose();
     } catch (e) {
       setState("error");
+      const code = e instanceof ApiError ? e.code : undefined;
       setError(
-        e instanceof ApiError && e.code === "RESERVATION_NOT_CANCELLABLE"
+        code === "RESERVATION_NOT_CANCELLABLE"
           ? "This booking can no longer be cancelled. It's already funded; request a refund or open a dispute instead."
-          : "We couldn't cancel the booking. Check your connection and try again.",
+          : code === "INVALID_RESPONSE"
+            ? "We couldn't confirm the cancellation. Refresh to see the booking's current status."
+            : "We couldn't cancel the booking. Check your connection and try again.",
       );
     }
   };
@@ -74,7 +77,7 @@ export function CancelBookingDialog({
       >
         <DialogHeader>
           <DialogTitle>
-            Cancel booking {escrow.metadata?.bookingId}?
+            {bookingId ? `Cancel booking ${bookingId}?` : "Cancel booking"}
           </DialogTitle>
           <DialogDescription>
             {escrow.metadata?.hotelName},{" "}

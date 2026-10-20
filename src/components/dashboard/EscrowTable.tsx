@@ -53,7 +53,8 @@ const can = (escrow: EscrowData, action: BookingAction) =>
 export function EscrowTable({ escrows, onRowUpdated }: EscrowTableProps) {
   const router = useRouter();
   const [cancelTarget, setCancelTarget] = useState<EscrowData | null>(null);
-  const menuTrigger = useRef<HTMLElement | null>(null);
+  const menuTriggerId = useRef<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const handleViewDetails = (escrowId: string) => {
     router.push(`/dashboard/escrow/${escrowId}`);
@@ -94,7 +95,11 @@ export function EscrowTable({ escrows, onRowUpdated }: EscrowTableProps) {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-md border border-gray-200 dark:border-slate-700">
+    <div
+      ref={containerRef}
+      tabIndex={-1}
+      className="bg-white dark:bg-slate-800 rounded-md border border-gray-200 dark:border-slate-700 outline-none"
+    >
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-50 dark:bg-slate-700 border-b border-gray-200 dark:border-slate-700">
@@ -179,17 +184,16 @@ export function EscrowTable({ escrows, onRowUpdated }: EscrowTableProps) {
                     <DropdownMenu>
                       <DropdownMenuTrigger
                         asChild
-                        onPointerDown={(e) =>
-                          (menuTrigger.current = e.currentTarget)
+                        onPointerDown={() =>
+                          (menuTriggerId.current = escrow.id)
                         }
-                        onKeyDown={(e) =>
-                          (menuTrigger.current = e.currentTarget)
-                        }
+                        onKeyDown={() => (menuTriggerId.current = escrow.id)}
                       >
                         <Button
                           variant="ghost"
                           className="h-8 w-8 p-0"
                           aria-label="Open menu"
+                          data-escrow-trigger={escrow.id}
                         >
                           <span className="sr-only">Open menu</span>
                           <MoreHorizontal className="h-4 w-4" />
@@ -244,7 +248,12 @@ export function EscrowTable({ escrows, onRowUpdated }: EscrowTableProps) {
           onClose={() => setCancelTarget(null)}
           onCloseAutoFocus={(e) => {
             e.preventDefault();
-            menuTrigger.current?.focus();
+            const trigger = Array.from(
+              containerRef.current?.querySelectorAll<HTMLElement>(
+                "[data-escrow-trigger]",
+              ) ?? [],
+            ).find((el) => el.dataset.escrowTrigger === menuTriggerId.current);
+            (trigger ?? containerRef.current)?.focus();
           }}
           onCancelled={(updated) => onRowUpdated?.(updated)}
         />

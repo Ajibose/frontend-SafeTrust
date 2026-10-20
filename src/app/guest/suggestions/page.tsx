@@ -182,7 +182,7 @@ export default function GuestSuggestionsPage() {
                         ? `Remove ${apt.name} from Wishlists`
                         : `Save ${apt.name} to Wishlists`
                     }
-                    className="relative z-10 shrink-0 rounded-full p-1 focus-visible:ring-2 focus-visible:ring-orange-500 mt-0.5"
+                    className="relative z-10 shrink-0 rounded-full p-1 focus-visible:ring-2 focus-visible:ring-ring mt-0.5"
                   >
                     <Heart
                       aria-hidden="true"

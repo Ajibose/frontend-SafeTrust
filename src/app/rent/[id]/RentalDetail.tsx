@@ -19,7 +19,7 @@ export default function RentalDetail({
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="theme-guest min-h-screen bg-white">
       <HotelHeader />
       <PageContainer className="flex flex-col lg:flex-row">
         <SuggestionsList

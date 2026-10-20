@@ -53,7 +53,7 @@ export default function FilterSidebar({
                 minPrice: Math.min(Number(event.target.value), maxPrice),
               })
             }
-            className="min-h-10 w-full touch-pan-y accent-orange-500"
+            className="min-h-10 w-full touch-pan-y accent-[hsl(var(--primary))]"
           />
           <label
             className="block text-xs text-muted-foreground"
@@ -73,7 +73,7 @@ export default function FilterSidebar({
                 maxPrice: Math.max(Number(event.target.value), minPrice),
               })
             }
-            className="min-h-10 w-full touch-pan-y accent-orange-500"
+            className="min-h-10 w-full touch-pan-y accent-[hsl(var(--primary))]"
           />
         </div>
       </section>
@@ -81,7 +81,7 @@ export default function FilterSidebar({
       <button
         type="button"
         onClick={reset}
-        className="mt-8 w-full text-left text-sm font-medium text-orange-700 hover:text-orange-800 dark:text-orange-400"
+        className="mt-8 w-full text-left text-sm font-medium text-primary hover:text-primary/80"
       >
         Clear all filters
       </button>

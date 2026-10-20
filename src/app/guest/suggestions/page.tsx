@@ -36,7 +36,7 @@ export default function GuestSuggestionsPage() {
 
   return (
     <div
-      className="min-h-screen bg-white dark:bg-slate-900
+      className="theme-guest min-h-screen bg-white dark:bg-slate-900
                     text-gray-900 dark:text-white"
     >
       {/* Standalone header */}
@@ -83,7 +83,7 @@ export default function GuestSuggestionsPage() {
               </p>
               <Link
                 href="/rent"
-                className="text-sm text-orange-700 hover:text-orange-800
+                className="text-sm text-primary hover:text-primary/80
                            font-medium underline hover:no-underline"
               >
                 Browse all →
@@ -100,7 +100,7 @@ export default function GuestSuggestionsPage() {
                   className={cn(
                     "relative flex w-72 shrink-0 items-start gap-2 rounded-xl border p-3 transition-colors lg:w-full",
                     selectedId === apt.id
-                      ? "border-orange-400 bg-orange-50 dark:bg-orange-900/10"
+                      ? "border-primary bg-accent"
                       : "border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800",
                   )}
                 >
@@ -118,7 +118,7 @@ export default function GuestSuggestionsPage() {
                     }}
                     aria-pressed={selectedId === apt.id}
                     aria-label={`Select ${apt.name}`}
-                    className="flex min-w-0 flex-1 items-start gap-2 rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+                    className="flex min-w-0 flex-1 items-start gap-2 rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     {/* Thumbnail */}
                     <div
@@ -182,7 +182,7 @@ export default function GuestSuggestionsPage() {
                     onClick={() => toggleFavorite(apt.id)}
                     aria-pressed={favorites.includes(apt.id)}
                     aria-label="Toggle favorite"
-                    className="relative z-10 shrink-0 rounded-full p-1 focus-visible:ring-2 focus-visible:ring-orange-500 mt-0.5"
+                    className="relative z-10 shrink-0 rounded-full p-1 focus-visible:ring-2 focus-visible:ring-ring mt-0.5"
                   >
                     <Heart
                       aria-hidden="true"
@@ -218,8 +218,8 @@ export default function GuestSuggestionsPage() {
                 <span
                   className="absolute bottom-4 left-4 inline-flex
                                  items-center gap-1 rounded-lg
-                                 bg-orange-700 px-3 py-1.5 text-xs font-semibold
-                                 text-white shadow-md"
+                                 bg-primary px-3 py-1.5 text-xs font-semibold
+                                 text-primary-foreground shadow-md"
                 >
                   Promoted
                 </span>
@@ -273,17 +273,17 @@ export default function GuestSuggestionsPage() {
                             text-sm text-gray-600 dark:text-gray-300"
             >
               <span className="flex items-center gap-1.5">
-                <Bed className="h-4 w-4 text-orange-700" />
+                <Bed className="h-4 w-4 text-primary" />
                 {selected.bedrooms} Bedrooms
               </span>
               <span>·</span>
               <span className="flex items-center gap-1.5">
-                <Bath className="h-4 w-4 text-orange-700" />
+                <Bath className="h-4 w-4 text-primary" />
                 {selected.bathrooms} Bathrooms
               </span>
               <span>·</span>
               <span className="flex items-center gap-1.5">
-                <PawPrint className="h-4 w-4 text-orange-700" />
+                <PawPrint className="h-4 w-4 text-primary" />
                 {selected.petFriendly ? "Pet friendly" : "No pets"}
               </span>
             </div>
@@ -334,9 +334,9 @@ export default function GuestSuggestionsPage() {
                 onClick={() =>
                   router.push(`/rent/${selected.id}/escrow/create`)
                 }
-                className="w-full rounded-xl bg-orange-700 py-3 text-center
-                           text-sm font-semibold text-white shadow-lg
-                           shadow-orange-500/20 hover:bg-orange-800
+                className="w-full rounded-xl bg-primary py-3 text-center
+                           text-sm font-semibold text-primary-foreground shadow-lg
+                           shadow-primary/20 hover:bg-primary/90
                            transition-colors"
               >
                 Book with Escrow
@@ -357,9 +357,9 @@ export default function GuestSuggestionsPage() {
               <Link
                 href={`/dashboard/messages/new?listing=${encodeURIComponent(selected.id)}`}
                 className="flex w-full items-center justify-center gap-2
-                           rounded-xl border border-orange-700 py-2.5 text-sm
-                           font-semibold text-orange-700 hover:bg-orange-50
-                           dark:hover:bg-orange-950/20 transition-colors"
+                           rounded-xl border border-primary py-2.5 text-sm
+                           font-semibold text-primary hover:bg-accent
+                           transition-colors"
               >
                 <MessageCircle aria-hidden="true" className="h-4 w-4" />
                 Message host

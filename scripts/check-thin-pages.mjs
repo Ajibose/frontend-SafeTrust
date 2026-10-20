@@ -13,8 +13,6 @@ const allowedClientPages = new Set([
   "dashboard/hotels/[id]/page.tsx",
   "dashboard/hotels/new/page.tsx",
   "dashboard/hotels/page.tsx",
-  "dashboard/messages/[conversationId]/page.tsx",
-  "dashboard/messages/page.tsx",
   "dashboard/notifications/page.tsx",
   "guest/suggestions/page.tsx",
   "hotels/search/page.tsx",

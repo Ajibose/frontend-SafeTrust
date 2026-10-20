@@ -63,9 +63,7 @@ export function SideBar({
                 <span className="absolute left-14 z-50 hidden whitespace-nowrap rounded bg-popover px-2 py-1 text-xs text-popover-foreground shadow-md md:group-hover:block lg:group-hover:hidden">
                   {item.label}
                 </span>
-                {item.badge === "messages" && user?.uid && (
-                  <UnreadBadge userId={user.uid} />
-                )}
+                {item.badge === "messages" && user?.uid && <UnreadBadge />}
                 {item.badge === "notifications" && notificationCount > 0 && (
                   <span className="ml-auto rounded-full bg-destructive px-1.5 text-xs text-white">
                     {notificationCount}

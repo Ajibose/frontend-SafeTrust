@@ -18,7 +18,6 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import HotelHeader from "@/components/listings/HotelHeader";
 import { PageContainer } from "@/components/layouts/PageContainer";
-import { getConversationIdForApartment } from "@/lib/conversationRoutes";
 import { APARTMENT_LISTINGS } from "@/lib/mockData/apartmentListings";
 import { ListingPrice } from "@/components/listings/ListingPrice";
 
@@ -28,7 +27,6 @@ export default function GuestSuggestionsPage() {
   const [favorites, setFavorites] = useState<string[]>([]);
 
   const selected = APARTMENT_LISTINGS.find((a) => a.id === selectedId)!;
-  const selectedConversationId = getConversationIdForApartment(selected.name);
 
   const toggleFavorite = (id: string) => {
     setFavorites((curr) =>
@@ -356,21 +354,16 @@ export default function GuestSuggestionsPage() {
                 View full details
               </button>
 
-              {selectedConversationId && (
-                <button
-                  type="button"
-                  onClick={() =>
-                    router.push(`/dashboard/messages/${selectedConversationId}`)
-                  }
-                  className="flex w-full items-center justify-center gap-2
-                             rounded-xl border border-orange-700 py-2.5 text-sm
-                             font-semibold text-orange-700 hover:bg-orange-50
-                             dark:hover:bg-orange-950/20 transition-colors"
-                >
-                  <MessageCircle className="h-4 w-4" />
-                  Message host
-                </button>
-              )}
+              <Link
+                href={`/dashboard/messages/new?listing=${encodeURIComponent(selected.id)}`}
+                className="flex w-full items-center justify-center gap-2
+                           rounded-xl border border-orange-700 py-2.5 text-sm
+                           font-semibold text-orange-700 hover:bg-orange-50
+                           dark:hover:bg-orange-950/20 transition-colors"
+              >
+                <MessageCircle aria-hidden="true" className="h-4 w-4" />
+                Message host
+              </Link>
             </div>
           </aside>
         </div>

@@ -132,7 +132,7 @@ const LocationCard = ({
               <Button
                 variant="secondary"
                 size="sm"
-                className="opacity-0 hover:opacity-100 transition-opacity"
+                className="opacity-0 hover:opacity-100 focus-visible:opacity-100 transition-opacity"
                 onClick={onViewOnMap}
               >
                 View on Map
@@ -146,6 +146,8 @@ const LocationCard = ({
               size="sm"
               className="flex-1"
               onClick={onGetDirections}
+              disabled={!onGetDirections}
+              aria-label="Get Directions (opens in a new tab)"
             >
               <Navigation className="w-4 h-4 mr-2" />
               Get Directions

@@ -9,7 +9,6 @@ import ReportButton from "./ReportButton";
 
 interface RoomActionBarProps {
   isLiked?: boolean;
-  likeCount?: number;
   onShare?: () => void;
   onLike?: () => void;
   onContact?: () => void;
@@ -21,7 +20,6 @@ interface RoomActionBarProps {
 
 const RoomActionBar = ({
   isLiked = false,
-  likeCount = 24,
   onShare,
   onLike,
   onContact,
@@ -45,11 +43,7 @@ const RoomActionBar = ({
         <div className="flex items-center gap-2">
           <ShareButton onShare={onShare} />
 
-          <FavoriteButton
-            isLiked={isLiked}
-            likeCount={likeCount}
-            onLike={onLike}
-          />
+          <FavoriteButton isLiked={isLiked} showCount={false} onLike={onLike} />
         </div>
 
         <div className="flex items-center gap-2">
@@ -95,7 +89,6 @@ const RoomActionBar = ({
         <FavoriteButton
           className="flex-1"
           isLiked={isLiked}
-          likeCount={0}
           showCount={false}
           onLike={onLike}
         />

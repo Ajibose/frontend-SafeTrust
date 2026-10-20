@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
+  COORDINATES_REQUIRED,
   describeApartmentError,
   type ApartmentField,
   type ApartmentInput,
@@ -27,6 +28,13 @@ const errorId = (field: FormField) => `${field}-error`;
 const toOption = (options: string[], value: number) => {
   const last = options[options.length - 1];
   return value >= parseInt(last, 10) ? last : String(value);
+};
+
+/** A finite number, or null when the field is empty or not a number. */
+const parseCoordinate = (value: string) => {
+  if (!value.trim()) return null;
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
 };
 
 const toDateInput = (iso: string | null | undefined) =>
@@ -146,15 +154,21 @@ export function NewApartmentForm({
         message: "Please enter a valid warranty deposit",
       };
     }
-    const lat = parseFloat(latitude);
-    const lng = parseFloat(longitude);
-    if (!isNaN(lat) && (lat < -90 || lat > 90)) {
+    const lat = parseCoordinate(latitude);
+    const lng = parseCoordinate(longitude);
+    if (lat === null) {
+      return { field: "latitude", message: COORDINATES_REQUIRED };
+    }
+    if (lng === null) {
+      return { field: "longitude", message: COORDINATES_REQUIRED };
+    }
+    if (lat < -90 || lat > 90) {
       return {
         field: "latitude",
         message: "Latitude must be between -90 and 90",
       };
     }
-    if (!isNaN(lng) && (lng < -180 || lng > 180)) {
+    if (lng < -180 || lng > 180) {
       return {
         field: "longitude",
         message: "Longitude must be between -180 and 180",
@@ -170,8 +184,8 @@ export function NewApartmentForm({
   };
 
   const toInput = (): ApartmentInput => {
-    const lat = parseFloat(latitude);
-    const lng = parseFloat(longitude);
+    const lat = parseCoordinate(latitude);
+    const lng = parseCoordinate(longitude);
     return {
       name: name.trim(),
       description: description.trim() || null,
@@ -183,7 +197,7 @@ export function NewApartmentForm({
         city: city.trim(),
         country: country.trim(),
       },
-      coordinates: !isNaN(lat) && !isNaN(lng) ? { lat, lng } : null,
+      coordinates: lat !== null && lng !== null ? { lat, lng } : null,
       isAvailable,
       availableFrom: new Date(availableFrom).toISOString(),
       availableUntil: availableUntil
@@ -288,10 +302,11 @@ export function NewApartmentForm({
             {/* Coordinates */}
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label htmlFor="latitude">Latitude</Label>
+                <Label htmlFor="latitude">Latitude *</Label>
                 <Input
                   id="latitude"
                   type="number"
+                  aria-required="true"
                   step="any"
                   placeholder="9.9281"
                   value={latitude}
@@ -301,10 +316,11 @@ export function NewApartmentForm({
                 {fieldError("latitude")}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="longitude">Longitude</Label>
+                <Label htmlFor="longitude">Longitude *</Label>
                 <Input
                   id="longitude"
                   type="number"
+                  aria-required="true"
                   step="any"
                   placeholder="-84.0907"
                   value={longitude}

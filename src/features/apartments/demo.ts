@@ -8,6 +8,16 @@ import type {
   OwnedApartment,
 } from "./repository";
 
+// The mock rows have no coordinates; these match their neighborhoods.
+const DEMO_COORDINATES: Record<string, { lat: number; lng: number }> = {
+  "1": { lat: 9.9389, lng: -84.1003 },
+  "2": { lat: 9.933, lng: -84.056 },
+  "3": { lat: 9.9981, lng: -84.117 },
+  "4": { lat: 9.9157, lng: -84.0346 },
+  "5": { lat: 9.9187, lng: -84.1398 },
+  "6": { lat: 10.0163, lng: -84.2116 },
+};
+
 const fromMock = (apartment: MockApartment): OwnedApartment => ({
   id: apartment.id,
   name: apartment.name,
@@ -20,7 +30,9 @@ const fromMock = (apartment: MockApartment): OwnedApartment => ({
     city: apartment.address.city ?? apartment.location,
     country: apartment.address.country ?? "",
   },
-  coordinates: null,
+  coordinates: DEMO_COORDINATES[apartment.id]
+    ? { ...DEMO_COORDINATES[apartment.id] }
+    : null,
   isAvailable: apartment.is_available,
   availableFrom: apartment.available_from,
   availableUntil: apartment.available_until ?? null,

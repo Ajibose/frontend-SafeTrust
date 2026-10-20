@@ -86,6 +86,12 @@ describe("ApartmentEditor", () => {
     fireEvent.change(screen.getByLabelText("Street Address *"), {
       target: { value: "Calle 1" },
     });
+    fireEvent.change(screen.getByLabelText("Latitude *"), {
+      target: { value: "9.93" },
+    });
+    fireEvent.change(screen.getByLabelText("Longitude *"), {
+      target: { value: "-84.06" },
+    });
     fireEvent.change(screen.getByLabelText("Monthly Price (USD) *"), {
       target: { value: "800" },
     });

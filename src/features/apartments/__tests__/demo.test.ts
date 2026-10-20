@@ -23,6 +23,13 @@ describe("demoApartments", () => {
     });
   });
 
+  it("seeds coordinates so seeded apartments can be edited", async () => {
+    const list = await demoApartments.listMine();
+    expect(list.every((apartment) => apartment.coordinates !== null)).toBe(
+      true,
+    );
+  });
+
   it("lists an apartment after it is created", async () => {
     const created = await demoApartments.create(sampleInput);
     expect(typeof created.id).toBe("string");

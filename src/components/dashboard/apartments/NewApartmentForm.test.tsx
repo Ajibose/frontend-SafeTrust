@@ -43,8 +43,8 @@ function fillValidForm() {
   change("Street Address *", "Calle 5");
   change("Neighborhood", "San Rafael");
   change("City", "Escazú");
-  change("Latitude", "9.93");
-  change("Longitude", "-84.06");
+  change("Latitude *", "9.93");
+  change("Longitude *", "-84.06");
   change("Monthly Price (USD) *", "1100");
   change("Warranty Deposit (USD) *", "2200");
   change("Available From *", "2026-11-01");
@@ -198,6 +198,65 @@ describe("NewApartmentForm", () => {
     expect(onSave).not.toHaveBeenCalled();
   });
 
+  it("requires longitude when only latitude is given", async () => {
+    const onSave = jest.fn();
+    render(<NewApartmentForm onSave={onSave} />);
+    fillValidForm();
+    change("Longitude *", "");
+
+    fireEvent.submit(screen.getByRole("button", { name: "Register" }));
+
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent("Enter both latitude and longitude.");
+    expect(screen.getByLabelText("Longitude *")).toHaveAttribute(
+      "aria-describedby",
+      alert.id,
+    );
+    expect(screen.getByLabelText("Latitude *")).toHaveValue(9.93);
+    expect(onSave).not.toHaveBeenCalled();
+  });
+
+  it("requires coordinates when none are given", async () => {
+    const onSave = jest.fn();
+    render(
+      <NewApartmentForm
+        initialValues={{ ...existing, coordinates: null }}
+        onSave={onSave}
+      />,
+    );
+
+    fireEvent.submit(screen.getByRole("button", { name: "Register" }));
+
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent("Enter both latitude and longitude.");
+    expect(screen.getByLabelText("Latitude *")).toHaveAttribute(
+      "aria-describedby",
+      alert.id,
+    );
+    expect(onSave).not.toHaveBeenCalled();
+  });
+
+  it("ties a Not-NULL coordinates error from the backend to latitude", async () => {
+    const onSave = jest
+      .fn()
+      .mockRejectedValue(
+        new GraphQLError(
+          'Not-NULL violation. null value in column "coordinates" violates not-null constraint',
+          "constraint-violation",
+        ),
+      );
+    render(<NewApartmentForm initialValues={existing} onSave={onSave} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Register" }));
+
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent("Enter both latitude and longitude.");
+    expect(screen.getByLabelText("Latitude *")).toHaveAttribute(
+      "aria-describedby",
+      alert.id,
+    );
+  });
+
   it("prefills every field from initialValues", () => {
     render(<NewApartmentForm initialValues={existing} onSave={jest.fn()} />);
 
@@ -210,8 +269,8 @@ describe("NewApartmentForm", () => {
     expect(screen.getByLabelText("Neighborhood")).toHaveValue("Los Yoses");
     expect(screen.getByLabelText("Monthly Price (USD) *")).toHaveValue(950);
     expect(screen.getByLabelText("Warranty Deposit (USD) *")).toHaveValue(1900);
-    expect(screen.getByLabelText("Latitude")).toHaveValue(9.93);
-    expect(screen.getByLabelText("Longitude")).toHaveValue(-84.06);
+    expect(screen.getByLabelText("Latitude *")).toHaveValue(9.93);
+    expect(screen.getByLabelText("Longitude *")).toHaveValue(-84.06);
     expect(screen.getByLabelText("Available From *")).toHaveValue("2026-07-01");
     expect(screen.getByLabelText("Available Until")).toHaveValue("2027-01-31");
     expect(screen.getByLabelText("Apartment Details")).toHaveValue(

@@ -32,6 +32,8 @@ export interface ReservationDto {
   allowedActions: BookingAction[];
 }
 
+// Display-only: EscrowStatus has no dispute states, so disputed/resolved and the
+// pending fallback are approximations. Permissions come from allowedActions.
 const STATUS_MAP: Record<ReservationStatus, EscrowStatus> = {
   pending: "pending",
   escrow_created: "pending",

@@ -19,6 +19,7 @@ interface CancelBookingDialogProps {
   escrow: EscrowData;
   onClose: () => void;
   onCancelled: (updated: EscrowData) => void;
+  onCloseAutoFocus?: (event: Event) => void;
 }
 
 const formatDate = (dateString?: string) => {
@@ -34,19 +35,21 @@ export function CancelBookingDialog({
   escrow,
   onClose,
   onCancelled,
+  onCloseAutoFocus,
 }: CancelBookingDialogProps) {
   const [reason, setReason] = useState("");
   const [state, setState] = useState<"idle" | "pending" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
   const pending = state === "pending";
+  const bookingId = escrow.metadata?.bookingId;
 
   const confirm = async () => {
-    if (!escrow.metadata) return;
+    if (!bookingId) return;
     setState("pending");
     setError(null);
     try {
       const updated = await cancelBooking(
-        escrow.metadata.bookingId,
+        bookingId,
         reason.trim() || undefined,
       );
       onCancelled(updated);
@@ -65,6 +68,7 @@ export function CancelBookingDialog({
   return (
     <Dialog open onOpenChange={(open) => !open && !pending && onClose()}>
       <DialogContent
+        onCloseAutoFocus={onCloseAutoFocus}
         onEscapeKeyDown={(e) => pending && e.preventDefault()}
         onInteractOutside={(e) => pending && e.preventDefault()}
       >
@@ -87,6 +91,11 @@ export function CancelBookingDialog({
           disabled={pending}
           onChange={(e) => setReason(e.target.value)}
         />
+        {!bookingId && (
+          <p role="alert" className="text-sm text-destructive">
+            This booking has no reference, so it can&apos;t be cancelled here.
+          </p>
+        )}
         {error && (
           <p role="alert" className="text-sm text-destructive">
             {error}
@@ -96,7 +105,11 @@ export function CancelBookingDialog({
           <Button variant="outline" onClick={onClose} disabled={pending}>
             Keep booking
           </Button>
-          <Button variant="destructive" onClick={confirm} disabled={pending}>
+          <Button
+            variant="destructive"
+            onClick={confirm}
+            disabled={pending || !bookingId}
+          >
             {pending ? "Cancelling…" : "Cancel booking"}
           </Button>
         </DialogFooter>

@@ -96,4 +96,30 @@ describe("proxyToBackend", () => {
     expect(res.status).toBe(502);
     expect(await res.json()).toEqual({ error: "BACKEND_UNREACHABLE" });
   });
+
+  it("passes a 204 through without treating it as unreachable", async () => {
+    (global.fetch as jest.Mock).mockResolvedValue(
+      new Response(null, { status: 204 }),
+    );
+    const res = await proxyToBackend(
+      makeRequest({ authorization: "Bearer t" }),
+      "/api/reservations",
+    );
+    expect(res.status).toBe(204);
+  });
+
+  it("passes the status through for a non-JSON body", async () => {
+    (global.fetch as jest.Mock).mockResolvedValue(
+      new Response("<html>bad gateway</html>", {
+        status: 500,
+        headers: { "content-type": "text/html" },
+      }),
+    );
+    const res = await proxyToBackend(
+      makeRequest({ authorization: "Bearer t" }),
+      "/api/reservations",
+    );
+    expect(res.status).toBe(500);
+    expect(await res.json()).toEqual({});
+  });
 });

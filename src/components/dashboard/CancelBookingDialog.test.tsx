@@ -144,6 +144,31 @@ describe("CancelBookingDialog", () => {
     await waitFor(() => expect(onCancelled).toHaveBeenCalledWith(cancelled));
   });
 
+  it("ignores an outside pointer-down while pending", async () => {
+    mockCancel.mockReturnValue(new Promise(() => {}));
+    const { onClose } = setup();
+    fireEvent.click(confirmButton());
+    await screen.findByRole("button", { name: "Cancelling…" });
+
+    fireEvent.pointerDown(document.body);
+    fireEvent.mouseDown(document.body);
+    fireEvent.click(document.body);
+    expect(onClose).not.toHaveBeenCalled();
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+
+  it("disables confirm and explains when the booking has no id", () => {
+    render(
+      <CancelBookingDialog
+        escrow={{ ...escrow, metadata: undefined }}
+        onClose={jest.fn()}
+        onCancelled={jest.fn()}
+      />,
+    );
+    expect(confirmButton()).toBeDisabled();
+    expect(screen.getByRole("alert")).toHaveTextContent(/no reference/);
+  });
+
   it("closes on Escape when idle", () => {
     const { onClose } = setup();
     fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });

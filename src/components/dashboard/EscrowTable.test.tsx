@@ -114,4 +114,24 @@ describe("EscrowTable actions menu", () => {
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
     );
   });
+
+  it("leaves the page interactive and returns focus after the dialog closes", async () => {
+    await openMenu(row("pending", ["view", "cancel"]));
+    const trigger = screen.getByRole("button", {
+      name: "Open menu",
+      hidden: true,
+    });
+    fireEvent.click(
+      await screen.findByRole("menuitem", { name: /cancel booking/i }),
+    );
+    await screen.findByRole("dialog");
+    fireEvent.click(screen.getByRole("button", { name: "Keep booking" }));
+    await waitFor(() =>
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
+    );
+    await waitFor(() => {
+      expect(document.body.style.pointerEvents).not.toBe("none");
+      expect(trigger).toHaveFocus();
+    });
+  });
 });

@@ -83,4 +83,17 @@ describe("bookings api", () => {
     expect(rows).toHaveLength(1);
     expect(rows[0].id).toBe("res-1");
   });
+
+  it("listBookings throws ApiError INVALID_RESPONSE on a non-JSON 200", async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => {
+        throw new SyntaxError("Unexpected token");
+      },
+    });
+    const err = await listBookings().catch((e) => e);
+    expect(err).toBeInstanceOf(ApiError);
+    expect(err.code).toBe("INVALID_RESPONSE");
+  });
 });

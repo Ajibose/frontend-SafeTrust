@@ -30,8 +30,9 @@ export async function proxyToBackend(
     }
   }
 
+  let response: Response;
   try {
-    const response = await fetch(`${backendUrl}${path}`, {
+    response = await fetch(`${backendUrl}${path}`, {
       method,
       headers: {
         Authorization: authorization,
@@ -39,15 +40,24 @@ export async function proxyToBackend(
       },
       ...(body ? { body } : {}),
     });
-
-    const data = response.headers
-      .get("content-type")
-      ?.includes("application/json")
-      ? await response.json()
-      : null;
-    return NextResponse.json(data, { status: response.status });
   } catch (error) {
     console.error("Backend proxy error:", error);
     return NextResponse.json({ error: "BACKEND_UNREACHABLE" }, { status: 502 });
   }
+
+  const isJson = response.headers
+    .get("content-type")
+    ?.includes("application/json");
+  let data: unknown = {};
+  if (isJson && response.status !== 204) {
+    try {
+      data = await response.json();
+    } catch {
+      data = {};
+    }
+  }
+  if (response.status === 204 || response.status === 205) {
+    return new Response(null, { status: response.status });
+  }
+  return NextResponse.json(data, { status: response.status });
 }

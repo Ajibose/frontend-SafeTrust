@@ -32,6 +32,9 @@ async function request<T>(url: string, init: RequestInit = {}): Promise<T> {
   }
 
   const data = await res.json().catch(() => null);
+  if (res.ok && (data === null || typeof data !== "object")) {
+    throw new ApiError("Invalid response", res.status, "INVALID_RESPONSE");
+  }
   if (!res.ok) {
     throw new ApiError(
       data?.error ?? `Request failed with status ${res.status}`,
@@ -46,6 +49,9 @@ export async function listBookings(): Promise<EscrowData[]> {
   const data = await request<{ reservations: ReservationDto[] }>(
     "/api/bookings",
   );
+  if (!Array.isArray(data.reservations)) {
+    throw new ApiError("Invalid response", 200, "INVALID_RESPONSE");
+  }
   return data.reservations.map(mapReservation);
 }
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { MoreHorizontal, FileText, Receipt, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -53,6 +53,7 @@ const can = (escrow: EscrowData, action: BookingAction) =>
 export function EscrowTable({ escrows, onRowUpdated }: EscrowTableProps) {
   const router = useRouter();
   const [cancelTarget, setCancelTarget] = useState<EscrowData | null>(null);
+  const menuTrigger = useRef<HTMLElement | null>(null);
 
   const handleViewDetails = (escrowId: string) => {
     router.push(`/dashboard/escrow/${escrowId}`);
@@ -176,7 +177,15 @@ export function EscrowTable({ escrows, onRowUpdated }: EscrowTableProps) {
                   <div className="flex justify-end items-center gap-2">
                     {getActionButton(escrow)}
                     <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
+                      <DropdownMenuTrigger
+                        asChild
+                        onPointerDown={(e) =>
+                          (menuTrigger.current = e.currentTarget)
+                        }
+                        onKeyDown={(e) =>
+                          (menuTrigger.current = e.currentTarget)
+                        }
+                      >
                         <Button
                           variant="ghost"
                           className="h-8 w-8 p-0"
@@ -233,6 +242,10 @@ export function EscrowTable({ escrows, onRowUpdated }: EscrowTableProps) {
         <CancelBookingDialog
           escrow={cancelTarget}
           onClose={() => setCancelTarget(null)}
+          onCloseAutoFocus={(e) => {
+            e.preventDefault();
+            menuTrigger.current?.focus();
+          }}
           onCancelled={(updated) => onRowUpdated?.(updated)}
         />
       )}

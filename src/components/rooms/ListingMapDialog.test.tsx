@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { ListingMapDialog } from "./ListingMapDialog";
 
@@ -19,19 +19,31 @@ jest.mock("@/components/hotels/payment/Map", () => ({
 
 function Harness({
   coordinates,
+  explicit = false,
 }: {
   coordinates?: { lat: number; lng: number } | null;
+  explicit?: boolean;
 }) {
   const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   return (
     <>
-      <button onClick={() => setOpen(true)}>View on Map</button>
+      <button
+        ref={triggerRef}
+        onClick={() => {
+          if (explicit) triggerRef.current?.blur();
+          setOpen(true);
+        }}
+      >
+        View on Map
+      </button>
       <ListingMapDialog
         open={open}
         onOpenChange={setOpen}
         name="Casa Test"
         address="1 Test Street"
         coordinates={coordinates}
+        returnFocusRef={explicit ? triggerRef : undefined}
       />
     </>
   );
@@ -54,6 +66,18 @@ describe("ListingMapDialog", () => {
     await waitFor(() =>
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
     );
+    await waitFor(() => expect(trigger).toHaveFocus());
+  });
+
+  it("returns focus to the trigger even when it was not focused on open", async () => {
+    render(<Harness coordinates={{ lat: 9.93, lng: -84.06 }} explicit />);
+    const trigger = screen.getByRole("button", { name: "View on Map" });
+
+    fireEvent.click(trigger);
+    const dialog = await screen.findByRole("dialog");
+    expect(trigger).not.toHaveFocus();
+
+    fireEvent.keyDown(dialog, { key: "Escape" });
     await waitFor(() => expect(trigger).toHaveFocus());
   });
 

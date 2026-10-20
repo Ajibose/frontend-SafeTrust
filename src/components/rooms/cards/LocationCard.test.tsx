@@ -2,12 +2,21 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import LocationCard from "./LocationCard";
 
 describe("LocationCard", () => {
-  it("disables Get Directions without a callback and labels the new tab", () => {
+  it("disables Get Directions without a callback and says why", () => {
     render(<LocationCard />);
     const button = screen.getByRole("button", {
-      name: "Get Directions (opens in a new tab)",
+      name: "Get Directions (location unavailable)",
     });
     expect(button).toBeDisabled();
+  });
+
+  it("labels the enabled button as opening a new tab", () => {
+    render(<LocationCard onGetDirections={jest.fn()} />);
+    expect(
+      screen.getByRole("button", {
+        name: "Get Directions (opens in a new tab)",
+      }),
+    ).toBeEnabled();
   });
 
   it("calls the handlers", async () => {

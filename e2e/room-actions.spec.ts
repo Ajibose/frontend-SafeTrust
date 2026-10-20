@@ -11,7 +11,7 @@ test.describe("Room page actions", () => {
   test("signed out: Contact → login → back on /room", async ({ page }) => {
     await page.goto("/room");
     await page
-      .getByRole("button", { name: "Contact Host" })
+      .getByRole("button", { name: "Contact host", exact: true })
       .filter({ visible: true })
       .first()
       .click();
@@ -39,6 +39,8 @@ test.describe("Room page actions", () => {
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
     await expect(dialog.getByRole("heading")).not.toHaveText("");
+
+    await expect(dialog.getByRole("button", { name: "Close" })).toBeFocused();
 
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();

@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import RoomPage from "../page";
+import { getApartmentById } from "@/lib/mockData/apartmentListings";
 
 const push = jest.fn();
 let mockUser: { uid: string } | null = null;
@@ -50,7 +51,9 @@ describe("RoomPage actions", () => {
     const alertSpy = jest.spyOn(window, "alert").mockImplementation(() => {});
     render(<RoomPage />);
 
-    fireEvent.click(screen.getAllByRole("button", { name: /Contact Host/ })[0]);
+    fireEvent.click(
+      screen.getAllByRole("button", { name: /contact host/i })[0],
+    );
 
     expect(push).toHaveBeenCalledWith("/login?redirect=%2Froom");
     expect(alertSpy).not.toHaveBeenCalled();
@@ -61,7 +64,7 @@ describe("RoomPage actions", () => {
     mockUser = { uid: "u1" };
     render(<RoomPage />);
 
-    const buttons = screen.getAllByRole("button", { name: /Contact Host/ });
+    const buttons = screen.getAllByRole("button", { name: /contact host/i });
     fireEvent.click(buttons[0]);
     expect(push).toHaveBeenLastCalledWith(MESSAGES);
     fireEvent.click(buttons[buttons.length - 1]);
@@ -71,23 +74,47 @@ describe("RoomPage actions", () => {
   it("does nothing while auth is loading", async () => {
     mockLoading = true;
     render(<RoomPage />);
-    fireEvent.click(screen.getAllByRole("button", { name: /Contact Host/ })[0]);
+    fireEvent.click(
+      screen.getAllByRole("button", { name: /contact host/i })[0],
+    );
     expect(push).not.toHaveBeenCalled();
   });
 
-  it("opens the map dialog, and never asks for geolocation", async () => {
-    const getCurrentPosition = jest.fn();
-    Object.defineProperty(navigator, "geolocation", {
-      configurable: true,
-      value: { getCurrentPosition, watchPosition: jest.fn() },
+  describe("geolocation", () => {
+    const original = Object.getOwnPropertyDescriptor(navigator, "geolocation");
+    afterEach(() => {
+      if (original) Object.defineProperty(navigator, "geolocation", original);
+      else Reflect.deleteProperty(navigator, "geolocation");
     });
-    render(<RoomPage />);
 
-    const trigger = screen.getAllByRole("button", { name: "View on Map" })[1];
-    fireEvent.click(trigger);
-    expect(await screen.findByRole("dialog")).toBeInTheDocument();
-    expect(await screen.findByTestId("map")).toBeInTheDocument();
-    expect(getCurrentPosition).not.toHaveBeenCalled();
+    it("opens the map dialog, and never asks for geolocation", async () => {
+      const getCurrentPosition = jest.fn();
+      Object.defineProperty(navigator, "geolocation", {
+        configurable: true,
+        value: { getCurrentPosition, watchPosition: jest.fn() },
+      });
+      render(<RoomPage />);
+
+      const trigger = screen.getAllByRole("button", { name: "View on Map" })[1];
+      fireEvent.click(trigger);
+      expect(await screen.findByRole("dialog")).toBeInTheDocument();
+      expect(await screen.findByTestId("map")).toBeInTheDocument();
+      expect(getCurrentPosition).not.toHaveBeenCalled();
+    });
+  });
+
+  it("disables Get Directions when the listing coordinates are invalid", () => {
+    const listing = getApartmentById("1");
+    const original = listing.coordinates;
+    listing.coordinates = { lat: Number.NaN, lng: 0 };
+    try {
+      render(<RoomPage />);
+      expect(
+        screen.getByRole("button", { name: /get directions/i }),
+      ).toBeDisabled();
+    } finally {
+      listing.coordinates = original;
+    }
   });
 
   it("opens directions in a new tab without an opener", async () => {

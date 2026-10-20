@@ -21,6 +21,7 @@ export default function ContactButton({
       size="sm"
       onClick={onContact}
       disabled={disabled}
+      aria-label="Contact host"
       className={cn("flex items-center gap-2", className)}
     >
       <MessageCircle className="w-4 h-4" />

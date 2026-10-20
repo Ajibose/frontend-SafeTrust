@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, type RefObject } from "react";
 import dynamic from "next/dynamic";
 import {
   Dialog,
@@ -24,6 +24,8 @@ interface ListingMapDialogProps {
   name: string;
   address: string;
   coordinates?: { lat: number; lng: number } | null;
+  /** Element that opened the dialog; focus returns here on close. */
+  returnFocusRef?: RefObject<HTMLElement | null>;
 }
 
 export function ListingMapDialog({
@@ -32,12 +34,13 @@ export function ListingMapDialog({
   name,
   address,
   coordinates,
+  returnFocusRef,
 }: ListingMapDialogProps) {
   // The dialog has no DialogTrigger (buttons live in other cards), so Radix
   // has nothing to hand focus back to on close.
-  const returnFocusRef = useRef<HTMLElement | null>(null);
+  const activeRef = useRef<HTMLElement | null>(null);
   useLayoutEffect(() => {
-    if (open) returnFocusRef.current = document.activeElement as HTMLElement;
+    if (open) activeRef.current = document.activeElement as HTMLElement;
   }, [open]);
 
   return (
@@ -45,8 +48,10 @@ export function ListingMapDialog({
       <DialogContent
         className="max-w-3xl"
         onCloseAutoFocus={(event) => {
+          const target = returnFocusRef?.current ?? activeRef.current;
+          if (!target || target === document.body) return;
           event.preventDefault();
-          returnFocusRef.current?.focus();
+          target.focus();
         }}
       >
         <DialogHeader>

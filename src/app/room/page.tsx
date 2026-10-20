@@ -2,7 +2,7 @@
 
 export const dynamic = "force-dynamic";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   RoomPhotos,
   AdditionalRoomPhotos,
@@ -50,6 +50,7 @@ export default function RoomPage() {
   const [mobileBookingOpen, setMobileBookingOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [mapOpen, setMapOpen] = useState(false);
+  const mapTriggerRef = useRef<HTMLElement | null>(null);
   const { user, loading } = useCurrentUser();
   const pathname = usePathname();
 
@@ -148,7 +149,10 @@ export default function RoomPage() {
             city={roomListing.location}
             coordinates={roomListing.coordinates}
             isLoading={isLoading}
-            onViewOnMap={() => setMapOpen(true)}
+            onViewOnMap={(event) => {
+              mapTriggerRef.current = event.currentTarget;
+              setMapOpen(true);
+            }}
             onGetDirections={
               isValidCoordinate(roomListing.coordinates)
                 ? () =>
@@ -212,6 +216,7 @@ export default function RoomPage() {
       <ListingMapDialog
         open={mapOpen}
         onOpenChange={setMapOpen}
+        returnFocusRef={mapTriggerRef}
         name={listing.name}
         address={roomListing.address}
         coordinates={roomListing.coordinates}

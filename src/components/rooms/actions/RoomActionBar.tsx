@@ -12,7 +12,6 @@ interface RoomActionBarProps {
   onShare?: () => void;
   onLike?: () => void;
   onContact?: () => void;
-  onReport?: () => void;
   onCall?: () => void;
   showTrustBadges?: boolean;
   className?: string;
@@ -23,7 +22,6 @@ const RoomActionBar = ({
   onShare,
   onLike,
   onContact,
-  onReport,
   onCall,
   showTrustBadges = true,
   className = "",
@@ -43,7 +41,7 @@ const RoomActionBar = ({
         <div className="flex items-center gap-2">
           <ShareButton onShare={onShare} />
 
-          <FavoriteButton isLiked={isLiked} showCount={false} onLike={onLike} />
+          <FavoriteButton isLiked={isLiked} onLike={onLike} />
         </div>
 
         <div className="flex items-center gap-2">
@@ -79,19 +77,14 @@ const RoomActionBar = ({
             </div>
           </div>
 
-          <ReportButton onReport={onReport} />
+          <ReportButton />
         </div>
       )}
 
       {/* Mobile Actions */}
       <div className="flex sm:hidden gap-2">
         <ShareButton className="flex-1" onShare={onShare} />
-        <FavoriteButton
-          className="flex-1"
-          isLiked={isLiked}
-          showCount={false}
-          onLike={onLike}
-        />
+        <FavoriteButton className="flex-1" isLiked={isLiked} onLike={onLike} />
         <ContactButton className="flex-1" onContact={onContact} />
       </div>
     </div>

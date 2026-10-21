@@ -1,9 +1,12 @@
 import type { StubEscrowDetail } from "@/types/escrow";
 
+const SOROBAN_CONTRACT_ID = /^C[A-Z2-7]{55}$/;
+
 // TODO: replace with useQuery(GET_ESCROW_BY_ID) in GraphQL wiring issue
 export function getStubEscrow(escrowId: string): StubEscrowDetail {
   return {
     id: escrowId,
+    contractId: SOROBAN_CONTRACT_ID.test(escrowId) ? escrowId : undefined,
     invoiceNumber: "INV4257-09-012",
     // Safe fallback when subscription has no row yet (maps to pending → redirect).
     // Override locally (e.g. "funded") to demo views without backend.

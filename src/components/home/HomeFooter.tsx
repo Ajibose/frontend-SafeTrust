@@ -8,7 +8,7 @@ const LEFT = [
 ];
 const RIGHT = [
   {
-    href: "/login?redirect=/dashboard/hotels/new",
+    href: "/login?redirect=/dashboard/apartments/new",
     label: "List your property",
   },
   { href: "https://github.com/safetrustcr", label: "GitHub", external: true },

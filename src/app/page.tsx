@@ -44,7 +44,7 @@ export default function Page() {
                 <Button asChild size="lg" variant="outline">
                   <Link
                     className="motion-safe:transition-transform motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-[0.98]"
-                    href="/login?redirect=/dashboard/hotels/new"
+                    href="/login?redirect=/dashboard/apartments/new"
                   >
                     List your property
                   </Link>

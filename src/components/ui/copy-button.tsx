@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CheckCircle2, Copy } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -16,12 +16,26 @@ export function CopyButton({
   className,
 }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(text);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      timeoutRef.current = setTimeout(() => {
+        setCopied(false);
+      }, 2000);
     } catch (err) {
       console.error("Failed to copy:", err);
     }
@@ -31,6 +45,7 @@ export function CopyButton({
     <button
       type="button"
       onClick={handleCopy}
+      aria-live="polite"
       className={cn(
         "flex shrink-0 items-center gap-2 rounded-lg bg-slate-100 px-3 py-2 text-sm transition-colors hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700",
         className,

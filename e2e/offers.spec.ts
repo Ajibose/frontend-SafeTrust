@@ -7,6 +7,8 @@ import {
 } from "./fixtures";
 import { MOCK_USERS, mockFirebaseAuth } from "./support/mock-auth";
 
+test.use({ video: "on" });
+
 test.beforeEach(async ({ page }, testInfo) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   if (testInfo.project.name === "desktop") {
@@ -27,7 +29,7 @@ test.beforeEach(async ({ page }, testInfo) => {
 
 test("profile sidebar opens the overview and a property's existing applicant table", async ({
   page,
-}) => {
+}, testInfo) => {
   await page
     .getByRole("navigation", { name: "Profile settings" })
     .getByRole("link", { name: "Offers", exact: true })
@@ -49,6 +51,10 @@ test("profile sidebar opens the overview and a property's existing applicant tab
   await expect(main.getByText("Demo", { exact: true })).toBeVisible();
   await expect(main.getByRole("table")).toHaveCount(0);
   await expect(main.getByText(/Diego Duarte|6483252|XR6/)).toHaveCount(0);
+  await page.screenshot({
+    path: testInfo.outputPath("overview.png"),
+    fullPage: true,
+  });
   await expectHealthyPage(page);
 
   // The whole row must work with a keyboard as well as a pointer.
@@ -64,6 +70,10 @@ test("profile sidebar opens the overview and a property's existing applicant tab
   ).toBeVisible();
   await expect(main.getByRole("table")).toBeVisible();
   await expect(main.getByText(/Diego Duarte/)).toHaveCount(5);
+  await page.screenshot({
+    path: testInfo.outputPath("property-offers.png"),
+    fullPage: true,
+  });
   await expect(main.getByText("Demo", { exact: true })).toBeVisible();
   await expect(
     main
@@ -90,7 +100,7 @@ test("profile sidebar opens the overview and a property's existing applicant tab
 
 test("an unknown UUID stays on its URL and offers a way back", async ({
   page,
-}) => {
+}, testInfo) => {
   const pathname =
     "/dashboard/apartments/3f1c2b0a-a246-4519-a8ca-b94494429623/offers";
   await page.goto(pathname);
@@ -98,6 +108,10 @@ test("an unknown UUID stays on its URL and offers a way back", async ({
     page.getByRole("heading", { name: "Property not found" }),
   ).toBeVisible();
   await expectPathname(page, pathname);
+  await page.screenshot({
+    path: testInfo.outputPath("property-not-found.png"),
+    fullPage: true,
+  });
   await expect(
     page
       .getByRole("navigation", { name: "Profile settings" })

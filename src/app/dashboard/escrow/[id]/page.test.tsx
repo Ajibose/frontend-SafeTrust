@@ -38,4 +38,20 @@ describe("EscrowDetailPage", () => {
       screen.getByRole("link", { name: /view on stellar\.expert/i }),
     ).toBeInTheDocument();
   });
+
+  it("renders the contract ID and link for demo escrow records loaded by row ID", async () => {
+    const Component = await EscrowDetailPage({
+      params: Promise.resolve({ id: "demo-escrow-0001" }),
+    });
+    const { container } = render(Component);
+
+    const contractSection = container.querySelector("#contract");
+    expect(contractSection).toBeInTheDocument();
+    expect(contractSection).toHaveTextContent(
+      "CA3D5KRYMCMFZVACNOHQPB2DBQLPRDHTPH5VFFH75BLTXFTRYVVPOCCZ",
+    );
+    expect(
+      screen.getByRole("link", { name: /view on stellar\.expert/i }),
+    ).toBeInTheDocument();
+  });
 });

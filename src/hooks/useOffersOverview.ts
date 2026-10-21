@@ -8,6 +8,7 @@ export type OfferSummary = {
   name: string;
   address: string;
   offers: number;
+  newest?: string;
 };
 
 /**

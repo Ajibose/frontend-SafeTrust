@@ -10,14 +10,10 @@ import { useApartmentOffers } from "@/hooks/useApartmentOffers";
 export default function InterestedPeoplePage() {
   const params = useParams();
   const router = useRouter();
-  const apartmentId = Number(params.id);
+  const apartmentId = typeof params.id === "string" ? params.id : "";
   const { data, loading, error } = useApartmentOffers(apartmentId);
 
-  if (
-    !apartmentId ||
-    Number.isNaN(apartmentId) ||
-    (!data.apartment && !loading && !error)
-  ) {
+  if (!apartmentId || (!data.apartment && !loading && !error)) {
     router.push("/dashboard/apartments");
     return null;
   }

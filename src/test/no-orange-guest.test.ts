@@ -1,5 +1,5 @@
 /** @jest-environment node */
-import { execSync } from "node:child_process";
+import { spawnSync } from "node:child_process";
 
 const GUEST_PATHS = [
   "src/app/rent",
@@ -11,8 +11,21 @@ const GUEST_PATHS = [
 ];
 
 it("guest UI has no hard-coded orange", () => {
-  const out = execSync(
-    `git grep -nE "orange-[0-9]|accent-orange" -- ${GUEST_PATHS.join(" ")} ':!*.test.*' || true`,
-  ).toString();
-  expect(out).toBe("");
+  const result = spawnSync(
+    "git",
+    [
+      "grep",
+      "-nE",
+      "orange-[0-9]|accent-orange",
+      "--",
+      ...GUEST_PATHS,
+      ":!*.test.*",
+    ],
+    { encoding: "utf8" },
+  );
+  expect(result.error).toBeUndefined();
+  expect(result.stderr).toBe("");
+  expect(result.stdout).toBe("");
+  // git grep exits with 1 when no matches exist, and 0 when the guard fails.
+  expect(result.status).toBe(1);
 });

@@ -71,7 +71,8 @@ test.describe("granted location", () => {
     expect(await locationRequests(page)).toBe(1);
 
     // Open a listing, then come back: the in-memory location is still there.
-    await page.getByRole("article").first().getByRole("link").click();
+    const [firstListing] = await listingNames(page);
+    await page.getByRole("link", { name: firstListing!, exact: true }).click();
     await expect.poll(() => new URL(page.url()).pathname).toMatch(/^\/rent\/./);
     await page.goBack();
     await expect(clear).toBeVisible();
@@ -93,24 +94,42 @@ test.describe("granted location", () => {
   });
 });
 
+/** Blocks location for the site, like a user who chose "Block" earlier. */
+const blockLocation = (page: Page) =>
+  page.addInitScript(() => {
+    const denied = Object.assign(new EventTarget(), {
+      name: "geolocation",
+      state: "denied",
+      onchange: null,
+    });
+    Object.defineProperty(navigator, "permissions", {
+      configurable: true,
+      value: { query: () => Promise.resolve(denied) },
+    });
+    navigator.geolocation.getCurrentPosition = (_success, error) =>
+      error?.({
+        code: 1,
+        message: "User denied Geolocation",
+        PERMISSION_DENIED: 1,
+        POSITION_UNAVAILABLE: 2,
+        TIMEOUT: 3,
+      } as GeolocationPositionError);
+  });
+
 test("denied location shows a persistent message and destinations still work", async ({
   page,
-  context,
 }) => {
-  // No permission granted: the emulated browser rejects the request.
-  await context.clearPermissions();
+  await blockLocation(page);
   const useLocation = await openRent(page);
-
-  await useLocation.click();
 
   const status = page.getByTestId("location-status");
   await expect(status).toHaveAttribute("aria-live", "polite");
+  // Known from the Permissions API on load, before any click.
   await expect(status).toHaveText(/Location is blocked for this site/);
-  await expect(
-    page.getByRole("button", { name: "Use my location" }),
-  ).toBeEnabled();
+  await expect(useLocation).toBeEnabled();
+  await useLocation.click();
+  await expect(status).toHaveText(/Location is blocked for this site/);
   await expect(page.getByTestId("distance-label")).toHaveCount(0);
-
   await page
     .getByRole("list", { name: "Destination choices" })
     .getByRole("button", { name: /^San José,/ })

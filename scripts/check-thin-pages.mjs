@@ -5,7 +5,6 @@ const appDirectory = join(process.cwd(), "src", "app");
 const allowedClientPages = new Set([
   "bookings/[bookingId]/escrow/page.tsx",
   "bookings/new/escrow/page.tsx",
-  "dashboard/apartments/[id]/offers/page.tsx",
   "dashboard/escrow/page.tsx",
   "dashboard/hotels/[id]/edit/page.tsx",
   "dashboard/hotels/[id]/page.tsx",

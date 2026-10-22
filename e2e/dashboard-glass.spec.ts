@@ -74,9 +74,11 @@ test("profile editing works with reduced motion and a failed glass chunk", async
   const manifest = JSON.parse(
     readFileSync(resolve(".next/react-loadable-manifest.json"), "utf8"),
   );
-  const files: string[] =
-    manifest["components/dashboard/ui/DashboardGlassCard.tsx -> ./GlassSurface"]
-      .files;
+  const manifestKey =
+    "components/dashboard/ui/DashboardGlassCard.tsx -> ./GlassSurface";
+  const entry =
+    manifest[manifestKey] ?? manifest[manifestKey.replace(/\//g, "\\")];
+  const files: string[] = entry?.files ?? [];
   for (const file of files.filter((file) => file.endsWith(".js"))) {
     await page.route(`**/_next/${file}`, (route) =>
       route.abort("blockedbyclient"),

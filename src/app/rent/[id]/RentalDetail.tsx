@@ -10,6 +10,7 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import type { BookingIntent } from "@/features/listings/detail/BookingSummaryBar";
+import { WishlistAnnouncer, useSaveStay } from "@/features/listings";
 
 function RentalDetailContent({
   apartment,
@@ -20,6 +21,7 @@ function RentalDetailContent({
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { isSaved, toggleSaved, announcement } = useSaveStay();
 
   const intent: BookingIntent = useMemo(() => {
     const checkIn = searchParams.get("checkIn") || undefined;
@@ -77,11 +79,14 @@ function RentalDetailContent({
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="theme-guest min-h-screen bg-white">
       <HotelHeader />
+      <WishlistAnnouncer message={announcement} />
       <PageContainer className="flex flex-col lg:flex-row">
         <SuggestionsList
           apartments={suggestions}
+          isSaved={isSaved}
+          onToggleSaved={toggleSaved}
           onSelect={(id) => router.push(`/rent/${id}`)}
         />
         <ApartmentDetail
@@ -89,6 +94,8 @@ function RentalDetailContent({
           intent={intent}
           onBook={handleBook}
           onBookExact={handleBookExact}
+          isSaved={isSaved(apartment.id)}
+          onToggleSaved={() => toggleSaved(apartment.id)}
         />
       </PageContainer>
     </div>

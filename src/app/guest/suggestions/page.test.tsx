@@ -2,9 +2,19 @@ import "@testing-library/jest-dom";
 import { fireEvent, render, screen } from "@testing-library/react";
 import GuestSuggestionsPage from "./page";
 import { useRouter } from "next/navigation";
+import { APARTMENT_LISTINGS } from "@/lib/mockData/apartmentListings";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
+}));
+
+jest.mock("@/features/listings", () => ({
+  useSaveStay: () => ({
+    isSaved: () => false,
+    toggleSaved: jest.fn(),
+    announcement: "",
+  }),
+  WishlistAnnouncer: () => null,
 }));
 
 jest.mock("next/image", () => ({
@@ -25,32 +35,28 @@ describe("GuestSuggestionsPage – Message host", () => {
     (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
   });
 
-  it("renders the Message host button next to Book for the selected apartment", () => {
+  it("renders the Message host link next to Book for the selected apartment", () => {
     render(<GuestSuggestionsPage />);
 
     expect(screen.getByRole("button", { name: /Book/i })).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /Message host/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Message host/i })).toHaveAttribute(
+      "href",
+      `/dashboard/messages/new?listing=${APARTMENT_LISTINGS[0].id}`,
+    );
   });
 
-  it("navigates to the conversation thread for the selected apartment", () => {
+  it("targets the listing id of whichever apartment is selected", () => {
     render(<GuestSuggestionsPage />);
 
-    fireEvent.click(screen.getByRole("button", { name: /Message host/i }));
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: `Select ${APARTMENT_LISTINGS[1].name}`,
+      }),
+    );
 
-    expect(mockPush).toHaveBeenCalledWith("/dashboard/messages/conv-4");
-  });
-
-  it("updates the target conversation when another apartment is selected", () => {
-    render(<GuestSuggestionsPage />);
-
-    const losYosesButtons = screen.getAllByRole("button", {
-      name: /Los yoses/i,
-    });
-    fireEvent.click(losYosesButtons[0]);
-    fireEvent.click(screen.getByRole("button", { name: /Message host/i }));
-
-    expect(mockPush).toHaveBeenCalledWith("/dashboard/messages/conv-5");
+    expect(screen.getByRole("link", { name: /Message host/i })).toHaveAttribute(
+      "href",
+      `/dashboard/messages/new?listing=${APARTMENT_LISTINGS[1].id}`,
+    );
   });
 });

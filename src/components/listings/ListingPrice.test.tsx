@@ -1,13 +1,13 @@
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
-import { ListingPrice } from "./ListingPrice";
+import { ListingPrice, LISTING_PRICE_UNIT } from "./ListingPrice";
 
-describe("ListingPrice (SD-00)", () => {
-  it("renders formatted amount and '/ night' suffix", () => {
-    render(<ListingPrice amount={1500} />);
+describe("ListingPrice", () => {
+  it("renders amount and / night unit", () => {
+    render(<ListingPrice amount={86} />);
 
-    expect(screen.getByText("$1,500")).toBeInTheDocument();
-    expect(screen.getByText("/ night")).toBeInTheDocument();
+    expect(screen.getByText("$86")).toBeInTheDocument();
+    expect(screen.getByText(`/ ${LISTING_PRICE_UNIT}`)).toBeInTheDocument();
   });
 
   it("does not render any fee, total, rating or cancellation text", () => {
@@ -20,11 +20,21 @@ describe("ListingPrice (SD-00)", () => {
     expect(screen.queryByText(/rating/i)).not.toBeInTheDocument();
   });
 
-  it("applies the appropriate size styling", () => {
-    const { rerender } = render(<ListingPrice amount={3200} size="sm" />);
-    expect(screen.getByText("$3,200")).toHaveClass("text-base");
+  it("supports sm, md, and lg sizes", () => {
+    const { rerender } = render(<ListingPrice amount={100} size="sm" />);
+    expect(screen.getByText("$100")).toHaveClass("text-sm");
 
-    rerender(<ListingPrice amount={3200} size="lg" />);
-    expect(screen.getByText("$3,200")).toHaveClass("text-2xl");
+    rerender(<ListingPrice amount={100} size="md" />);
+    expect(screen.getByText("$100")).toHaveClass("text-2xl");
+
+    rerender(<ListingPrice amount={100} size="lg" />);
+    expect(screen.getByText("$100")).toHaveClass("text-3xl");
+  });
+
+  it("applies additional custom className", () => {
+    const { container } = render(
+      <ListingPrice amount={50} className="custom-class" />,
+    );
+    expect(container.firstChild).toHaveClass("custom-class");
   });
 });

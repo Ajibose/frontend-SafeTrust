@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { UnreadBadge } from "@/components/messages/UnreadBadge";
+import { DemoBadge } from "@/components/ui/demo-badge";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { NAV_ITEMS, isActive } from "./nav-items";
 
@@ -60,12 +61,13 @@ export function SideBar({
               >
                 <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
                 <span className="md:hidden lg:block">{item.label}</span>
+                {item.demo && (
+                  <DemoBadge className="ml-auto px-1.5 py-0 text-[10px] md:hidden lg:inline-flex" />
+                )}
                 <span className="absolute left-14 z-50 hidden whitespace-nowrap rounded bg-popover px-2 py-1 text-xs text-popover-foreground shadow-md md:group-hover:block lg:group-hover:hidden">
                   {item.label}
                 </span>
-                {item.badge === "messages" && user?.uid && (
-                  <UnreadBadge userId={user.uid} />
-                )}
+                {item.badge === "messages" && user?.uid && <UnreadBadge />}
                 {item.badge === "notifications" && notificationCount > 0 && (
                   <span className="ml-auto rounded-full bg-destructive px-1.5 text-xs text-white">
                     {notificationCount}

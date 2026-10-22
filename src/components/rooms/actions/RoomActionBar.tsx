@@ -9,11 +9,10 @@ import ReportButton from "./ReportButton";
 
 interface RoomActionBarProps {
   isLiked?: boolean;
-  likeCount?: number;
+  disabled?: boolean;
   onShare?: () => void;
   onLike?: () => void;
   onContact?: () => void;
-  onReport?: () => void;
   onCall?: () => void;
   showTrustBadges?: boolean;
   className?: string;
@@ -21,11 +20,10 @@ interface RoomActionBarProps {
 
 const RoomActionBar = ({
   isLiked = false,
-  likeCount = 24,
+  disabled = false,
   onShare,
   onLike,
   onContact,
-  onReport,
   onCall,
   showTrustBadges = true,
   className = "",
@@ -45,15 +43,11 @@ const RoomActionBar = ({
         <div className="flex items-center gap-2">
           <ShareButton onShare={onShare} />
 
-          <FavoriteButton
-            isLiked={isLiked}
-            likeCount={likeCount}
-            onLike={onLike}
-          />
+          <FavoriteButton isLiked={isLiked} onLike={onLike} />
         </div>
 
         <div className="flex items-center gap-2">
-          <ContactButton onContact={onContact} />
+          <ContactButton disabled={disabled} onContact={onContact} />
 
           <Button
             variant="outline"
@@ -85,21 +79,19 @@ const RoomActionBar = ({
             </div>
           </div>
 
-          <ReportButton onReport={onReport} />
+          <ReportButton />
         </div>
       )}
 
       {/* Mobile Actions */}
       <div className="flex sm:hidden gap-2">
         <ShareButton className="flex-1" onShare={onShare} />
-        <FavoriteButton
+        <FavoriteButton className="flex-1" isLiked={isLiked} onLike={onLike} />
+        <ContactButton
           className="flex-1"
-          isLiked={isLiked}
-          likeCount={0}
-          showCount={false}
-          onLike={onLike}
+          disabled={disabled}
+          onContact={onContact}
         />
-        <ContactButton className="flex-1" onContact={onContact} />
       </div>
     </div>
   );

@@ -52,12 +52,18 @@ test.describe("Host apartments (demo)", () => {
       page.getByRole("heading", { name: "My apartments" }),
     ).toBeVisible();
     await expect(demoNotice(page)).toBeVisible();
+    await expect(
+      page.getByRole("main").getByText("Demo", { exact: true }),
+    ).toBeVisible();
 
     await page
       .getByRole("link", { name: "New apartment", exact: true })
       .click();
     await expectPathname(page, "/dashboard/apartments/new");
     await expect(demoNotice(page)).toBeVisible();
+    await expect(
+      page.getByRole("main").getByText("Demo", { exact: true }),
+    ).toBeVisible();
     await page.getByLabel("Apartment Name *").fill(NAME);
     await page.getByLabel("Street Address *").fill("Calle 5");
     await page.getByLabel("Latitude").fill("9.93");

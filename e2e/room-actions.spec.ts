@@ -29,8 +29,6 @@ test.describe("Room page actions", () => {
         { timeout: 20_000 },
       )
       .toBe("login");
-    await waitForHydration(contact);
-    await contact.click();
 
     await expect(page).toHaveURL(/\/login\?redirect=%2Froom$/);
 

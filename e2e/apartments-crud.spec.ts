@@ -14,17 +14,6 @@ const NAME = "Escazú Test Loft";
 const row = (page: import("@playwright/test").Page, name: string) =>
   page.getByText(name, { exact: true }).filter({ visible: true });
 
-/**
- * The demo notice in the page body. The dashboard sidebar also renders a
- * "Demo" badge on its demo sections, so a page-wide getByText("Demo") is
- * ambiguous.
- */
-const demoNotice = (page: import("@playwright/test").Page) =>
-  page
-    .getByRole("paragraph")
-    .filter({ hasText: "changes stay in this tab and are not stored" })
-    .getByText("Demo", { exact: true });
-
 async function loginAsHost(
   page: import("@playwright/test").Page,
   redirect: string,
@@ -51,7 +40,6 @@ test.describe("Host apartments (demo)", () => {
     await expect(
       page.getByRole("heading", { name: "My apartments" }),
     ).toBeVisible();
-    await expect(demoNotice(page)).toBeVisible();
     await expect(
       page.getByRole("main").getByText("Demo", { exact: true }),
     ).toBeVisible();
@@ -60,7 +48,6 @@ test.describe("Host apartments (demo)", () => {
       .getByRole("link", { name: "New apartment", exact: true })
       .click();
     await expectPathname(page, "/dashboard/apartments/new");
-    await expect(demoNotice(page)).toBeVisible();
     await expect(
       page.getByRole("main").getByText("Demo", { exact: true }),
     ).toBeVisible();

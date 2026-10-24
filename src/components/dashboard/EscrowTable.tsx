@@ -1,4 +1,5 @@
-import { MoreHorizontal, FileText, CheckCircle2, XCircle } from "lucide-react";
+import { useRef, useState } from "react";
+import { MoreHorizontal, FileText, Receipt, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -19,12 +20,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { format } from "date-fns";
-import type { EscrowData } from "@/types/dashboard";
+import type { BookingAction, EscrowData } from "@/types/dashboard";
+import { CancelBookingDialog } from "./CancelBookingDialog";
 import { useRouter } from "next/navigation";
+import { formatEscrowAmount } from "@/lib/formatEscrowAmount";
 
 interface EscrowTableProps {
   escrows: EscrowData[];
-  userRole: "guest" | "hotel" | "admin";
+  onRowUpdated?: (row: EscrowData) => void;
 }
 
 const statusBadgeVariant = {
@@ -45,8 +48,14 @@ const statusText = {
   cancelled: "Cancelled",
 } as const;
 
-export function EscrowTable({ escrows }: EscrowTableProps) {
+const can = (escrow: EscrowData, action: BookingAction) =>
+  escrow.allowedActions?.includes(action) ?? false;
+
+export function EscrowTable({ escrows, onRowUpdated }: EscrowTableProps) {
   const router = useRouter();
+  const [cancelTarget, setCancelTarget] = useState<EscrowData | null>(null);
+  const menuTriggerId = useRef<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const handleViewDetails = (escrowId: string) => {
     router.push(`/dashboard/escrow/${escrowId}`);
@@ -63,15 +72,6 @@ export function EscrowTable({ escrows }: EscrowTableProps) {
     </Button>
   );
 
-  const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currency === "XLM" ? "USD" : currency,
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 6,
-    }).format(amount);
-  };
-
   const formatDate = (dateString?: string) => {
     if (!dateString) return "N/A";
     try {
@@ -82,7 +82,11 @@ export function EscrowTable({ escrows }: EscrowTableProps) {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-md border border-gray-200 dark:border-slate-700">
+    <div
+      ref={containerRef}
+      tabIndex={-1}
+      className="bg-white dark:bg-slate-800 rounded-md border border-gray-200 dark:border-slate-700 outline-none"
+    >
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-50 dark:bg-slate-700 border-b border-gray-200 dark:border-slate-700">
@@ -151,7 +155,7 @@ export function EscrowTable({ escrows }: EscrowTableProps) {
                   {formatDate(escrow.metadata?.checkOutDate)}
                 </TableCell>
                 <TableCell className="text-gray-900 dark:text-white">
-                  {formatCurrency(escrow.amount, escrow.asset.code)}
+                  {formatEscrowAmount(escrow.amount, escrow.asset.code)}
                 </TableCell>
                 <TableCell>
                   <Badge
@@ -165,11 +169,18 @@ export function EscrowTable({ escrows }: EscrowTableProps) {
                   <div className="flex justify-end items-center gap-2">
                     {getActionButton(escrow)}
                     <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
+                      <DropdownMenuTrigger
+                        asChild
+                        onPointerDown={() =>
+                          (menuTriggerId.current = escrow.id)
+                        }
+                        onKeyDown={() => (menuTriggerId.current = escrow.id)}
+                      >
                         <Button
                           variant="ghost"
                           className="h-8 w-8 p-0"
                           aria-label="Open menu"
+                          data-escrow-trigger={escrow.id}
                         >
                           <span className="sr-only">Open menu</span>
                           <MoreHorizontal className="h-4 w-4" />
@@ -177,26 +188,41 @@ export function EscrowTable({ escrows }: EscrowTableProps) {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem className="cursor-pointer">
-                          <FileText className="h-4 w-4 mr-2" />
-                          View Contract
+                        <DropdownMenuItem
+                          className="cursor-pointer"
+                          onSelect={() =>
+                            router.push(
+                              `/dashboard/escrow/${encodeURIComponent(escrow.id)}#contract`,
+                            )
+                          }
+                        >
+                          <FileText
+                            className="mr-2 h-4 w-4"
+                            aria-hidden="true"
+                          />
+                          View contract
                         </DropdownMenuItem>
                         {escrow.status === "completed" && (
-                          <DropdownMenuItem className="cursor-pointer">
-                            <CheckCircle2 className="h-4 w-4 mr-2 text-green-500" />
-                            Mark as Completed
+                          <DropdownMenuItem
+                            className="cursor-pointer"
+                            onSelect={() => handleViewDetails(escrow.id)}
+                          >
+                            <Receipt className="h-4 w-4 mr-2" />
+                            View receipt
                           </DropdownMenuItem>
                         )}
-                        {escrow.status !== "cancelled" &&
-                          escrow.status !== "completed" && (
-                            <>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem className="text-red-600 cursor-pointer">
-                                <XCircle className="h-4 w-4 mr-2" />
-                                Cancel Booking
-                              </DropdownMenuItem>
-                            </>
-                          )}
+                        {can(escrow, "cancel") && (
+                          <>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              className="text-destructive cursor-pointer"
+                              onSelect={() => setCancelTarget(escrow)}
+                            >
+                              <XCircle className="h-4 w-4 mr-2" />
+                              Cancel booking…
+                            </DropdownMenuItem>
+                          </>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
@@ -206,6 +232,22 @@ export function EscrowTable({ escrows }: EscrowTableProps) {
           )}
         </TableBody>
       </Table>
+      {cancelTarget && (
+        <CancelBookingDialog
+          escrow={cancelTarget}
+          onClose={() => setCancelTarget(null)}
+          onCloseAutoFocus={(e) => {
+            e.preventDefault();
+            const trigger = Array.from(
+              containerRef.current?.querySelectorAll<HTMLElement>(
+                "[data-escrow-trigger]",
+              ) ?? [],
+            ).find((el) => el.dataset.escrowTrigger === menuTriggerId.current);
+            (trigger ?? containerRef.current)?.focus();
+          }}
+          onCancelled={(updated) => onRowUpdated?.(updated)}
+        />
+      )}
     </div>
   );
 }

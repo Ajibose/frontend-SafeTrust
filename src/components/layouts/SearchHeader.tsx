@@ -14,14 +14,14 @@ export const SearchHeader = () => {
   const [searchType, setSearchType] = useState("rent");
 
   return (
-    <div className="relative bg-gray-100 dark:bg-gray-800 dark:border dark:border-gray-700 rounded-full">
+    <div className="relative bg-white/70 backdrop-blur border border-border shadow-sm dark:bg-slate-900/80 dark:border-slate-700 rounded-full">
       <div className="absolute left-2 top-1/2 -translate-y-1/2">
         <Select value={searchType} onValueChange={setSearchType}>
           <SelectTrigger
             aria-label="Search type"
             className="w-[90px] h-8 bg-white dark:bg-gray-700 dark:text-white rounded-full border-0 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600"
           >
-            <SelectValue placeholder="Type" />
+            <SelectValue placeholder="Type" className="dark:text-white" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="rent">Rent</SelectItem>

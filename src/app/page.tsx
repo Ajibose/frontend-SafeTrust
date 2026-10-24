@@ -8,13 +8,14 @@ import {
   HomeMotionItem,
   HomeMotionStep,
 } from "@/components/home/HomeMotion";
+import { HomeFooter } from "@/components/home/HomeFooter";
 
 export default function Page() {
   return (
     <>
       <Header />
       <HomeMotion>
-        <main className="flex min-h-dvh flex-col">
+        <main className="theme-guest flex min-h-dvh flex-col">
           <HomeMotionSection
             revealOnScroll={false}
             className="px-4 py-16 text-center sm:py-24"
@@ -43,7 +44,7 @@ export default function Page() {
                 <Button asChild size="lg" variant="outline">
                   <Link
                     className="motion-safe:transition-transform motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-[0.98]"
-                    href="/login?redirect=/dashboard/hotels/new"
+                    href="/login?redirect=/dashboard/apartments/new"
                   >
                     List your property
                   </Link>
@@ -101,6 +102,7 @@ export default function Page() {
             </div>
           </HomeMotionSection>
         </main>
+        <HomeFooter />
       </HomeMotion>
     </>
   );

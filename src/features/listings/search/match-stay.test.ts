@@ -2,7 +2,7 @@ import { applyRentFilters } from "@/components/listings/filters/applyRentFilters
 import { DEFAULT_FILTERS } from "@/components/listings/filters/useRentFilters";
 import { APARTMENT_LISTINGS } from "@/lib/mockData/apartmentListings";
 import type { ApartmentListing } from "@/types/hotel";
-import { addDays, type IsoDate } from "./date-only";
+import { addDays } from "./date-only";
 import {
   applyStaySearch,
   candidateStays,
@@ -12,13 +12,13 @@ import {
   overlaps,
   type StayRange,
 } from "./match-stay";
-import { parseStaySearch, type StaySearch } from "./stay-search";
+import { parseStaySearch, type IsoDate, type StaySearch } from "./stay-search";
 
 /** Fixed "today" so every expected id below is deterministic. */
 const TODAY: IsoDate = "2026-03-02";
 
 const stay = (query: string): StaySearch =>
-  parseStaySearch(new URLSearchParams(query));
+  parseStaySearch(new URLSearchParams(query), TODAY);
 
 const idsOf = (listings: ApartmentListing[]) =>
   listings.map((listing) => listing.id).sort((left, right) => +left - +right);
@@ -72,11 +72,14 @@ describe("applyStaySearch on the demo fixtures", () => {
   it("excludes booked listings for an exact range", () => {
     // [today+5, today+7) sits inside the bookings of listings 1, 2, 4, 7 and 12.
     const search: StaySearch = {
+      q: "",
+      place: null,
       guests: { adults: 0, children: 0, infants: 0, pets: 0 },
       dates: {
         mode: "exact",
         checkIn: addDays(TODAY, 5),
         checkOut: addDays(TODAY, 7),
+        tolerance: 0,
       },
     };
     expect(idsOf(applyStaySearch(APARTMENT_LISTINGS, search, TODAY))).toEqual([
@@ -96,6 +99,7 @@ describe("applyStaySearch on the demo fixtures", () => {
       mode: "exact",
       checkIn: addDays(TODAY, 5),
       checkOut: addDays(TODAY, 7),
+      tolerance: 0,
     };
     // Listings 4 and 7 are booked on those nights; 10 fits 6 guests.
     expect(idsOf(applyStaySearch(APARTMENT_LISTINGS, search, TODAY))).toEqual([
@@ -249,11 +253,21 @@ describe("candidateStays and matchesDates", () => {
     expect(candidateStays({ mode: "any" }, TODAY)).toBeNull();
     expect(
       candidateStays(
-        { mode: "exact", checkIn: "2026-05-01", checkOut: "2026-05-08" },
+        {
+          mode: "exact",
+          checkIn: "2026-05-01",
+          checkOut: "2026-05-08",
+          tolerance: 0,
+        },
         TODAY,
       ),
     ).toEqual([{ start: "2026-05-01", end: "2026-05-08" }]);
-    expect(candidateStays({ mode: "flexible" }, TODAY)).toEqual([]);
+    expect(
+      candidateStays(
+        { mode: "flexible", stay: "weekend", months: ["2026-05"] },
+        TODAY,
+      ),
+    ).toEqual([]);
   });
 
   it('matches every listing for "any" dates and none for flexible dates', () => {
@@ -264,7 +278,11 @@ describe("candidateStays and matchesDates", () => {
     ).toBe(true);
     expect(
       APARTMENT_LISTINGS.some((item) =>
-        matchesDates(item, { mode: "flexible" }, TODAY),
+        matchesDates(
+          item,
+          { mode: "flexible", stay: "week", months: ["2026-05"] },
+          TODAY,
+        ),
       ),
     ).toBe(false);
   });
@@ -290,7 +308,12 @@ describe("listings without stay metadata", () => {
     expect(
       matchesDates(
         bare,
-        { mode: "exact", checkIn: TODAY, checkOut: addDays(TODAY, 1) },
+        {
+          mode: "exact",
+          checkIn: TODAY,
+          checkOut: addDays(TODAY, 1),
+          tolerance: 0,
+        },
         TODAY,
       ),
     ).toBe(false);
@@ -310,11 +333,14 @@ describe("listings without stay metadata", () => {
       applyStaySearch(
         listings,
         {
+          q: "",
+          place: null,
           guests: { adults: 0, children: 0, infants: 0, pets: 0 },
           dates: {
             mode: "exact",
             checkIn: TODAY,
             checkOut: addDays(TODAY, 1),
+            tolerance: 0,
           },
         },
         TODAY,

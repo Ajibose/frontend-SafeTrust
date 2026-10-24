@@ -1,36 +1,72 @@
-/**
- * Calendar dates as local-timezone `YYYY-MM-DD` strings.
- *
- * Strings of this shape compare correctly with `<`/`>`, which the stay
- * matchers rely on. Day arithmetic goes through UTC so a local DST shift
- * can never move a night across a calendar day.
- */
-export type IsoDate = string;
+﻿const pad = (n: number) => String(n).padStart(2, "0");
+const parts = (iso: string) =>
+  iso.split("-").map(Number) as [number, number, number];
 
-const pad = (value: number) => String(value).padStart(2, "0");
+export function isIsoDate(value: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const [y, m, d] = parts(value);
+  const date = new Date(Date.UTC(y, m - 1, d));
+  return (
+    date.getUTCFullYear() === y &&
+    date.getUTCMonth() === m - 1 &&
+    date.getUTCDate() === d
+  );
+}
 
-/** Format a Date as the guest's local calendar day (never UTC: that can be "tomorrow"). */
-export function localToday(now: Date = new Date()): IsoDate {
+export const isIsoMonth = (value: string) =>
+  /^\d{4}-(0[1-9]|1[0-2])$/.test(value);
+
+export function addDays(iso: string, days: number): string {
+  const [y, m, d] = parts(iso);
+  return new Date(Date.UTC(y, m - 1, d + days)).toISOString().slice(0, 10);
+}
+
+export function nightsBetween(start: string, end: string): number {
+  const [ys, ms, ds] = parts(start);
+  const [ye, me, de] = parts(end);
+  return Math.round(
+    (Date.UTC(ye, me - 1, de) - Date.UTC(ys, ms - 1, ds)) / 86_400_000,
+  );
+}
+
+export function addMonths(month: string, count: number): string {
+  const [y, m] = month.split("-").map(Number);
+  const date = new Date(Date.UTC(y, m - 1 + count, 1));
+  return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}`;
+}
+
+/** The guest's local calendar day. Pass `now` in tests. */
+export function localToday(now: Date = new Date()): string {
   return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
 }
 
-/** Shift a calendar day by `days` (may be negative) without DST drift. */
-export function addDays(date: IsoDate, days: number): IsoDate {
-  const [year = 0, month = 1, day = 1] = date.split("-").map(Number);
-  const shifted = new Date(Date.UTC(year, month - 1, day + days));
-  return `${shifted.getUTCFullYear()}-${pad(shifted.getUTCMonth() + 1)}-${pad(
-    shifted.getUTCDate(),
-  )}`;
+export function toIsoDate(date: Date): string {
+  return localToday(date);
 }
 
-const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+export function fromIsoDate(iso: string): Date {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(y, m - 1, d); // local midnight, never new Date("YYYY-MM-DD")
+}
 
-/** True for `YYYY-MM-DD` strings that name a real calendar day. */
-export function isIsoDate(value: string): value is IsoDate {
-  if (!ISO_DATE_PATTERN.test(value)) return false;
-  const parsed = new Date(`${value}T00:00:00Z`);
-  return (
-    !Number.isNaN(parsed.getTime()) &&
-    parsed.toISOString().slice(0, 10) === value
-  );
+export function formatDateRangeSummary(
+  checkIn?: string,
+  checkOut?: string,
+): string {
+  if (!checkIn || !checkOut) return "Any dates";
+  const start = fromIsoDate(checkIn);
+  const end = fromIsoDate(checkOut);
+  const formatter = new Intl.DateTimeFormat("en", {
+    month: "short",
+    day: "numeric",
+  });
+  const startMonth = start.getMonth();
+  const endMonth = end.getMonth();
+  const startYear = start.getFullYear();
+  const endYear = end.getFullYear();
+
+  if (startYear !== endYear || startMonth !== endMonth) {
+    return `${formatter.format(start)} – ${formatter.format(end)}`;
+  }
+  return `${formatter.format(start)} – ${end.getDate()}`;
 }

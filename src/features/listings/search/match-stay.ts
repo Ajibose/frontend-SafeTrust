@@ -1,6 +1,11 @@
 import type { ApartmentListing } from "@/types/hotel";
-import { addDays, type IsoDate } from "./date-only";
-import type { DateSearch, GuestSearch, StaySearch } from "./stay-search";
+import { addDays } from "./date-only";
+import type {
+  DateSearch,
+  GuestCounts,
+  IsoDate,
+  StaySearch,
+} from "./stay-search";
 
 /** Half-open [start, end): check-out day is free for the next guest. */
 export interface StayRange {
@@ -30,7 +35,7 @@ export function isRangeAvailable(
 
 export function matchesGuests(
   listing: ApartmentListing,
-  guests: GuestSearch,
+  guests: GuestCounts,
 ): boolean {
   const { adults, children, infants, pets } = guests;
   if (adults + children + infants + pets === 0) return true; // "Any guests"

@@ -10,11 +10,25 @@ test.describe("Room page actions", () => {
 
   test("signed out: Contact → login → back on /room", async ({ page }) => {
     await page.goto("/room");
-    await page
+    const contact = page
       .getByRole("button", { name: "Contact host", exact: true })
       .filter({ visible: true })
-      .first()
-      .click();
+      .first();
+    // The page ignores clicks while the Firebase session is still being
+    // restored (useCurrentUser starts in `loading`), so a single click right
+    // after load can be dropped. Retry until the app handles it; the URL
+    // assertion still proves the guest is sent to login and back.
+    await waitForHydration(contact);
+    await expect
+      .poll(
+        async () => {
+          if (new URL(page.url()).pathname === "/login") return "login";
+          await contact.click({ timeout: 2_000 }).catch(() => {});
+          return new URL(page.url()).pathname;
+        },
+        { timeout: 20_000 },
+      )
+      .toBe("login");
 
     await expect(page).toHaveURL(/\/login\?redirect=%2Froom$/);
 

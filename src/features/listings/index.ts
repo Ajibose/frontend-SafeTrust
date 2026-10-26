@@ -16,3 +16,5 @@ export {
 } from "./search/match-stay";
 
 export * from "./wishlist";
+export * from "./rent-results";
+export * from "./useNearestOnGrant";

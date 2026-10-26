@@ -11,7 +11,7 @@ import {
   APARTMENT_LISTINGS,
 } from "@/lib/mockData/apartmentListings";
 import { STUB_DESTINATIONS } from "@/lib/mockData/destinations";
-import { useGeolocation } from "@/hooks/useGeolocation";
+import { useGeolocation } from "@/features/location";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";

@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/popover";
 import { NearMeButton } from "@/components/listings/NearMeButton";
 import { MobileFiltersDrawer } from "./MobileFiltersDrawer";
-import type { useGeolocation } from "@/hooks/useGeolocation";
+import type { useGeolocation } from "@/features/location";
 import type {
   RentFilters,
   SortOption,
